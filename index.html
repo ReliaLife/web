@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ReliaLife</title>
+  <meta name="description" content="ReliaLife is a maintenance tracker for everything you own, and for the machines a small business runs on. On iPhone and the web." />
+  <link rel="icon" type="image/svg+xml" href="logo.svg" />
+  <style>
+    :root {
+      --ink: #1a1a1a;
+      --body: #333333;
+      --muted: #707070;
+      --faint: #a8a8a8;
+      --line: #e4e4e4;
+      --hover: #f6f6f6;
+      --bg: #ffffff;
+      --mono: SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
+    }
+    * { box-sizing: border-box; }
+    html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      margin: 0; color: var(--ink); background: var(--bg); line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    .wrap { max-width: 1080px; margin: 0 auto; padding: 44px 32px 96px; }
+    a { color: var(--ink); }
+    :focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+
+    /* Masthead */
+    header.masthead {
+      display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap;
+      padding-bottom: 20px; border-bottom: 1px solid var(--line);
+    }
+    .wordmark {
+      font-family: Georgia, 'Times New Roman', serif; font-weight: 400;
+      font-size: clamp(28px, 4vw, 36px); letter-spacing: -0.015em;
+      color: var(--ink); margin: 0; line-height: 1;
+    }
+    .mast-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--ink); color: #fff; text-decoration: none; cursor: pointer;
+      padding: 10px 20px; border-radius: 8px; font-size: 14px; font-weight: 600;
+      border: 1px solid var(--ink); font-family: inherit;
+      transition: opacity .15s ease;
+    }
+    .btn:hover { opacity: 0.85; }
+    .btn.secondary { background: #fff; color: var(--ink); border-color: var(--line); }
+    .btn.secondary:hover { background: var(--hover); opacity: 1; }
+
+    /* Hero */
+    .hero { padding: 56px 0 48px; border-bottom: 1px solid var(--line); }
+    .hero h2 {
+      font-family: Georgia, 'Times New Roman', serif; font-weight: 400;
+      font-size: clamp(30px, 5vw, 46px); letter-spacing: -0.01em; line-height: 1.15;
+      margin: 0 0 16px; max-width: 22ch; text-wrap: balance;
+    }
+    .hero .lead { font-size: 17px; color: var(--muted); max-width: 58ch; margin: 0 0 32px; }
+    .doors { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; max-width: 720px; }
+    .door {
+      appearance: none; font: inherit; text-align: left; cursor: pointer; background: none;
+      border: 1px solid var(--line); border-radius: 10px; padding: 20px 22px;
+      transition: background .12s ease, border-color .12s ease;
+    }
+    .door:hover { background: var(--hover); border-color: var(--faint); }
+    .door .k { font-size: 11px; text-transform: uppercase; letter-spacing: 0.16em; color: var(--faint); font-weight: 600; }
+    .door .nm { display: block; font-family: Georgia, serif; font-size: 22px; margin: 6px 0 6px; color: var(--ink); }
+    .door .d-p { display: block; margin: 0; font-size: 14px; color: var(--muted); line-height: 1.55; }
+
+    /* Two-pane layout */
+    .layout { display: grid; grid-template-columns: 240px 1fr; gap: 56px; align-items: start; padding-top: 48px; }
+
+    nav.sections { display: flex; flex-direction: column; border-top: 1px solid var(--line); position: sticky; top: 24px; }
+    .sec-btn {
+      appearance: none; -webkit-appearance: none; background: none; cursor: pointer;
+      width: 100%; font: inherit; text-align: left;
+      border: 0; border-bottom: 1px solid var(--line); border-left: 2px solid transparent;
+      padding: 15px 12px 15px 16px;
+      display: flex; align-items: baseline; justify-content: space-between; gap: 10px;
+      color: var(--muted); transition: background .12s ease, color .12s ease, border-color .12s ease;
+    }
+    .sec-btn:hover { background: var(--hover); color: var(--ink); }
+    .sec-btn.active { background: var(--hover); color: var(--ink); border-left-color: var(--ink); }
+    .sec-btn .nm { font-size: 15px; font-weight: 500; }
+    .sec-btn.active .nm { font-weight: 650; }
+    .sec-btn .st { font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--faint); white-space: nowrap; }
+
+    /* Panels */
+    .detail { min-height: 400px; min-width: 0; }
+    .panel { display: none; }
+    .panel.active { display: block; animation: fade .22s ease; }
+    @keyframes fade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+    @media (prefers-reduced-motion: reduce) {
+      .panel.active { animation: none; }
+      html { scroll-behavior: auto; }
+    }
+
+    .panel h2 {
+      font-family: Georgia, 'Times New Roman', serif; font-weight: 400;
+      font-size: clamp(26px, 4vw, 36px); letter-spacing: -0.01em;
+      margin: 0 0 8px; line-height: 1.12;
+    }
+    .panel .lead { font-size: 16.5px; color: var(--muted); margin: 0 0 26px; max-width: 60ch; }
+    .panel p { font-size: 15px; line-height: 1.78; color: var(--body); margin: 0 0 16px; max-width: 64ch; }
+    .panel ul { margin: 0 0 16px; padding-left: 20px; max-width: 64ch; }
+    .panel li { font-size: 15px; line-height: 1.7; color: var(--body); margin-bottom: 7px; }
+    .panel h3 {
+      font-family: Georgia, 'Times New Roman', serif; font-weight: 400; font-size: 22px;
+      margin: 40px 0 10px; letter-spacing: -0.005em;
+    }
+    .panel h3:first-of-type { margin-top: 28px; }
+    .meta-label {
+      font-size: 11px; text-transform: uppercase; letter-spacing: 0.16em; color: var(--faint);
+      margin: 30px 0 8px; font-weight: 600;
+    }
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 22px; }
+    .chip {
+      font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.12em;
+      padding: 4px 11px; border-radius: 999px; border: 1px solid var(--line);
+      color: var(--faint); white-space: nowrap;
+    }
+    .chip.on { color: var(--ink); border-color: var(--ink); }
+    .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 26px; }
+
+    /* Module lists (ReliaBase / ReliaPro panels) */
+    .modules { border-top: 1px solid var(--line); margin: 8px 0 4px; max-width: 64ch; }
+    .module { padding: 16px 0 14px; border-bottom: 1px solid var(--line); }
+    .module .m-name { font-weight: 650; font-size: 15px; margin: 0 0 3px; display: flex; align-items: baseline; gap: 10px; }
+    .module .m-soon { font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--faint); font-weight: 600; }
+    .module p { margin: 0; font-size: 14.5px; color: var(--body); }
+
+    /* Guide */
+    .toc { columns: 2; column-gap: 40px; margin: 0 0 8px; padding: 18px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); max-width: 64ch; }
+    .toc a { display: block; font-size: 14px; color: var(--muted); text-decoration: none; padding: 3px 0; break-inside: avoid; }
+    .toc a:hover { color: var(--ink); text-decoration: underline; }
+    .guide-sec { scroll-margin-top: 24px; }
+
+    /* Releases */
+    .release { border-top: 1px solid var(--line); padding: 24px 0 10px; max-width: 64ch; }
+    .release:last-child { border-bottom: 1px solid var(--line); margin-bottom: 24px; }
+    .rel-head { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; margin-bottom: 4px; }
+    .rel-v { font-family: var(--mono); font-size: 15px; font-weight: 700; }
+    .rel-date { font-size: 12px; color: var(--faint); text-transform: uppercase; letter-spacing: 0.1em; }
+    .rel-name { font-family: Georgia, serif; font-size: 19px; margin: 2px 0 10px; }
+
+    /* Strategy library */
+    .signin-card { border: 1px solid var(--line); border-radius: 10px; padding: 26px 28px; max-width: 420px; margin-top: 8px; }
+    .signin-card label { display: block; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin: 14px 0 5px; }
+    .signin-card label:first-of-type { margin-top: 0; }
+    .signin-card input {
+      width: 100%; font: inherit; font-size: 15px; padding: 9px 12px;
+      border: 1px solid var(--line); border-radius: 7px; background: var(--bg); color: var(--ink);
+    }
+    .signin-card input:focus { outline: none; border-color: var(--ink); }
+    .signin-card .btn { width: 100%; justify-content: center; margin-top: 18px; }
+    .signin-msg { font-size: 13.5px; color: var(--muted); margin: 12px 0 0; min-height: 1.2em; }
+    .signin-msg.err { color: #9c2b2b; }
+    .signin-note { font-size: 13px; color: var(--faint); margin-top: 14px; }
+
+    .str-toolbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; padding: 14px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); margin-bottom: 4px; }
+    .str-toolbar select, .str-toolbar input {
+      font: inherit; font-size: 14px; padding: 7px 10px; border: 1px solid var(--line);
+      border-radius: 7px; background: var(--bg); color: var(--ink); max-width: 100%;
+    }
+    .str-toolbar input { flex: 1 1 180px; min-width: 140px; }
+    .str-toolbar select:focus, .str-toolbar input:focus { outline: none; border-color: var(--ink); }
+    .str-session { margin-left: auto; display: flex; align-items: center; gap: 10px; font-size: 12.5px; color: var(--faint); }
+    .linklike { appearance: none; background: none; border: 0; cursor: pointer; font: inherit; font-size: 12.5px; color: var(--muted); text-decoration: underline; padding: 0; }
+    .linklike:hover { color: var(--ink); }
+
+    .str-count { font-size: 12px; color: var(--faint); margin: 10px 0 2px; text-transform: uppercase; letter-spacing: 0.1em; }
+    .str-group { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.16em; color: var(--faint); margin: 22px 0 4px; }
+    .str-row {
+      appearance: none; background: none; font: inherit; cursor: pointer; text-align: left;
+      display: flex; align-items: baseline; justify-content: space-between; gap: 14px; width: 100%;
+      border: 0; border-bottom: 1px solid var(--line); padding: 11px 4px;
+      color: var(--body); transition: background .1s ease;
+    }
+    .str-row:hover { background: var(--hover); color: var(--ink); }
+    .str-row .r-nm { font-size: 14.5px; font-weight: 500; }
+    .str-row .r-k { font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--faint); white-space: nowrap; }
+
+    .str-back { margin: 4px 0 18px; }
+    #str-detail h3 { font-size: 26px; margin: 0 0 6px; }
+    .src-note { font-size: 14px; color: var(--muted); max-width: 62ch; margin: 0 0 6px; }
+    .src-link { font-size: 13.5px; }
+    .task-list { border-top: 1px solid var(--line); margin-top: 6px; }
+    .task { border-bottom: 1px solid var(--line); padding: 12px 2px; max-width: 70ch; }
+    .task .t-line { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+    .task .t-title { font-size: 14.5px; font-weight: 550; color: var(--ink); }
+    .task .t-int { font-size: 13px; color: var(--muted); white-space: nowrap; }
+    .task .t-src { font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.1em; padding: 2px 8px; border-radius: 999px; border: 1px solid var(--line); color: var(--faint); }
+    .task .t-src.oem { color: var(--ink); border-color: var(--ink); }
+    .task .t-comp { font-size: 12px; color: var(--faint); margin-top: 2px; }
+    .task .t-note { font-size: 13px; color: var(--muted); margin-top: 5px; max-width: 62ch; }
+    .task details { margin-top: 5px; }
+    .task summary { font-size: 12px; color: var(--faint); cursor: pointer; }
+    .task summary:hover { color: var(--muted); }
+    .task blockquote { margin: 6px 0 0 0; padding: 6px 12px; border-left: 2px solid var(--line); font-size: 13px; color: var(--muted); font-style: italic; }
+    .task .t-evsrc { font-size: 12px; color: var(--faint); font-style: normal; }
+    .spares-list { display: flex; flex-direction: column; gap: 0; border-top: 1px solid var(--line); max-width: 62ch; }
+    .spare { display: flex; justify-content: space-between; gap: 16px; border-bottom: 1px solid var(--line); padding: 9px 2px; font-size: 14px; }
+    .spare .pn { font-family: var(--mono); font-size: 12.5px; color: var(--muted); white-space: nowrap; }
+    .tier-note { font-size: 12.5px; color: var(--faint); margin-top: 14px; max-width: 62ch; }
+
+    footer {
+      margin-top: 80px; padding-top: 22px; border-top: 1px solid var(--line);
+      font-size: 13px; color: var(--faint); display: flex; flex-wrap: wrap; gap: 6px 24px;
+    }
+    footer a { color: var(--muted); }
+
+    @media (max-width: 760px) {
+      .wrap { padding: 32px 20px 72px; }
+      .hero { padding: 40px 0 36px; }
+      .doors { grid-template-columns: 1fr; }
+      .layout { grid-template-columns: 1fr; gap: 32px; padding-top: 36px; }
+      nav.sections { position: static; }
+      .toc { columns: 1; }
+      .str-session { margin-left: 0; width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+
+    <header class="masthead">
+      <h1 class="wordmark">ReliaLife</h1>
+      <div class="mast-actions">
+        <a class="btn" href="https://relialife.vercel.app/" target="_blank" rel="noopener">Sign in on the web</a>
+        <a class="btn secondary" href="https://apps.apple.com/app/id6761790779" target="_blank" rel="noopener">Get the iPhone app</a>
+      </div>
+    </header>
+
+    <section class="hero">
+      <h2>Stay ahead of the maintenance on everything you own.</h2>
+      <p class="lead">ReliaLife is a maintenance tracker for your house, your cars, and your equipment, and for the machines a small business runs on. Tell it what you have, and it tells you what needs doing and when. It runs on iPhone and in any web browser, on the same account.</p>
+      <div class="doors">
+        <button class="door" data-goto="reliabase">
+          <span class="k">Personal</span>
+          <span class="nm">ReliaBase</span>
+          <span class="d-p">Your home, cars, appliances, mower, boat. One list of what needs doing, instead of eight sticky notes and a guess.</span>
+        </button>
+        <button class="door" data-goto="reliapro">
+          <span class="k">Business</span>
+          <span class="nm">ReliaPro</span>
+          <span class="d-p">For coffee shops, breweries, wineries, laundromats. Anywhere a broken machine costs you a day of business.</span>
+        </button>
+      </div>
+    </section>
+
+    <div class="layout">
+      <nav class="sections" aria-label="Sections">
+        <button class="sec-btn active" data-target="overview" aria-controls="overview"><span class="nm">What it does</span><span class="st">Start here</span></button>
+        <button class="sec-btn" data-target="reliabase" aria-controls="reliabase"><span class="nm">ReliaBase</span><span class="st">Personal</span></button>
+        <button class="sec-btn" data-target="reliapro" aria-controls="reliapro"><span class="nm">ReliaPro</span><span class="st">Business</span></button>
+        <button class="sec-btn" data-target="guide" aria-controls="guide"><span class="nm">User guide</span><span class="st">How-to</span></button>
+        <button class="sec-btn" data-target="releases" aria-controls="releases"><span class="nm">Releases</span><span class="st">What's new</span></button>
+        <button class="sec-btn" data-target="strategies" aria-controls="strategies"><span class="nm">Strategy library</span><span class="st">Sign in</span></button>
+      </nav>
+
+      <div class="detail">
+
+        <!-- ============================================================ Overview -->
+        <article class="panel active" id="overview">
+          <h2>What ReliaLife does</h2>
+          <p class="lead">One app that keeps track of the maintenance on everything you own, and tells you when something needs attention.</p>
+
+          <p>You add your assets: the house, the truck, the espresso machine. Big things break into components, so the furnace filter and the water heater each get their own record. Then each one gets its maintenance tasks. A task can repeat on a time interval, a usage interval like miles or running hours, or both at once, the way an oil change is due at 5,000 miles or six months, whichever comes first.</p>
+
+          <p>The dashboard sorts it all into three piles: overdue, due soon, and further out. When you do the work, you mark it done, add a note if you want, and the app builds a service history you can actually look things up in later. Notifications keep the quiet stuff from sneaking past you.</p>
+
+          <p>You don't have to invent the schedules yourself. For many cars, ReliaLife carries the maintenance schedule from the manufacturer's own guide for your exact year and model. The same goes for a growing list of commercial machines, espresso machines and brewery gear among them. Where a manufacturer publishes nothing, the app falls back on sensible general practice and says so, instead of dressing a guess up as fact.</p>
+
+          <p class="meta-label">One app, two modes</p>
+          <p><strong>ReliaBase</strong> is the personal side and what you start in: your household, laid out simply. <strong>ReliaPro</strong> is the business side: the same tracking, plus the structure a shop needs, like locations, equipment tags, staff roles, and daily checklists.</p>
+          <p>Switching is one setting. Open <strong>Settings</strong>, pick the mode, and the app changes over. Nothing is installed, nothing is lost, and you can flip back whenever you like. Plenty of people use both: the house in ReliaBase, the shop in ReliaPro, one account.</p>
+
+          <p class="meta-label">Who it's for</p>
+          <p>ReliaLife started as a personal tool, and that's still its heart: anyone who wants their stuff to last and is tired of asking "when did I last change that filter?" But the same habits matter even more to a small business whose machines are the business. When the washer at a laundromat or the group head at a coffee bar goes down, the day's revenue goes with it, and most small shops don't have a maintenance planner on staff. ReliaPro is that planner.</p>
+
+          <div class="actions">
+            <a class="btn" href="https://relialife.vercel.app/" target="_blank" rel="noopener">Open the web app &nearr;</a>
+            <a class="btn secondary" href="https://apps.apple.com/app/id6761790779" target="_blank" rel="noopener">Get the iPhone app &nearr;</a>
+          </div>
+        </article>
+
+        <!-- ============================================================ ReliaBase -->
+        <article class="panel" id="reliabase">
+          <h2>ReliaBase</h2>
+          <p class="lead">The personal side of ReliaLife: one place for everything the house, the driveway, and the garage need from you.</p>
+
+          <div class="chips">
+            <span class="chip on">Personal</span>
+            <span class="chip on">Included</span>
+            <span class="chip on">iPhone + Web</span>
+          </div>
+
+          <p>ReliaBase covers the things a household owns: Home, Car, Appliance, Lawn &amp; Garden, Pet Care, Aircraft, Watercraft, Firearm, and a catch-all Other. Each category comes with suggested maintenance to start from, so a new asset isn't a blank page. Add your car by year, make, and model and, for many vehicles, the schedule comes straight from the manufacturer's maintenance guide.</p>
+
+          <p class="meta-label">The modules</p>
+          <div class="modules">
+            <div class="module">
+              <p class="m-name">Dashboard</p>
+              <p>The screen you actually check. What's overdue, what's due soon, and what's coming up over the horizon, across everything you own.</p>
+            </div>
+            <div class="module">
+              <p class="m-name">My Assets</p>
+              <p>Everything you own, each with its components and its own task list. This is where you add things, edit them, and drill into one machine's world.</p>
+            </div>
+            <div class="module">
+              <p class="m-name">All Tasks</p>
+              <p>Every maintenance task in one list, regardless of which asset it belongs to. Good for planning a Saturday.</p>
+            </div>
+            <div class="module">
+              <p class="m-name">History</p>
+              <p>Every completion you've logged, with dates and notes. A real service record, useful at resale time and for settling "when did we last do that?"</p>
+            </div>
+            <div class="module">
+              <p class="m-name">People</p>
+              <p>Share with your household or a family member. Two accounts link both ways, each keeps its own records, and both of you can see and work the same lists.</p>
+            </div>
+            <div class="module">
+              <p class="m-name">Settings</p>
+              <p>Notifications and how often they arrive, light or dark appearance, your account, and the switch between ReliaBase and ReliaPro.</p>
+            </div>
+          </div>
+
+          <div class="actions">
+            <a class="btn" href="https://relialife.vercel.app/" target="_blank" rel="noopener">Open the web app &nearr;</a>
+            <a class="btn secondary" href="https://apps.apple.com/app/id6761790779" target="_blank" rel="noopener">Get the iPhone app &nearr;</a>
+          </div>
+        </article>
+
+        <!-- ============================================================ ReliaPro -->
+        <article class="panel" id="reliapro">
+          <h2>ReliaPro</h2>
+          <p class="lead">The business side: maintenance for shops where the machines earn the money and nobody has spare time to be a maintenance planner.</p>
+
+          <div class="chips">
+            <span class="chip on">Business</span>
+            <span class="chip on">In the same app</span>
+            <span class="chip on">iPhone + Web</span>
+          </div>
+
+          <p>ReliaPro is built for small businesses with production-critical equipment: coffee shops, breweries, wineries, laundromats, and shops like them. The kind of place where the espresso machine, the fermenter, or the washer-extractor isn't background equipment; it's the reason the doors are open. If it goes down, so does the day.</p>
+
+          <p>Your equipment gets real structure: a business, its locations, and the systems inside each one, with short tags so the fourth washer has a name everyone on staff uses. From there, ReliaPro builds a maintenance plan from real manufacturer service schedules where we have them, sized to how critical each machine is to you, and splits the quick daily checks into rounds your staff can walk with a phone.</p>
+
+          <p class="meta-label">The modules</p>
+          <div class="modules">
+            <div class="module">
+              <p class="m-name">Assets</p>
+              <p>The equipment registry: every machine with its make, model, tag, location, and how critical it is. The single honest list of what you own.</p>
+            </div>
+            <div class="module">
+              <p class="m-name">Preventative Maintenance</p>
+              <p>The scheduled work, grouped by location and system so a service day has an order to it. Plans come from manufacturer documents where they exist, with the source cited, and manufacturer intervals are never stretched to fit.</p>
+            </div>
+            <div class="module">
+              <p class="m-name">Rounds</p>
+              <p>The daily walk. Quick routine checks, like draining the compressor tank or eyeballing the oil sight glass, collected into a checklist. Each check gets an OK, a flag with a note, or a skip, and every walk is saved so you can see it was actually done.</p>
+            </div>
+            <div class="module">
+              <p class="m-name">People</p>
+              <p>Bring your staff in with roles: some run the rounds and log work, some can edit the plan, some just view. The shop's records stay the shop's.</p>
+            </div>
+            <div class="module">
+              <p class="m-name">Metrics</p>
+              <p>How the work is actually going: what's getting done, what keeps slipping, and where the effort is landing.</p>
+            </div>
+            <div class="module">
+              <p class="m-name">Corrective Maintenance <span class="m-soon">Coming soon</span></p>
+              <p>Breakdowns and repairs, tracked next to the planned work they interrupted.</p>
+            </div>
+            <div class="module">
+              <p class="m-name">Spare Parts <span class="m-soon">Coming soon</span></p>
+              <p>The gaskets, filters, and belts each machine needs on the shelf, tied to the tasks that consume them.</p>
+            </div>
+          </div>
+
+          <div class="actions">
+            <a class="btn" href="https://relialife.vercel.app/" target="_blank" rel="noopener">Open the web app &nearr;</a>
+            <a class="btn secondary" href="https://apps.apple.com/app/id6761790779" target="_blank" rel="noopener">Get the iPhone app &nearr;</a>
+          </div>
+        </article>
+
+        <!-- ============================================================ User guide -->
+        <article class="panel" id="guide">
+          <h2>User guide</h2>
+          <p class="lead">How to use ReliaLife, section by section. The first half covers everyone; the second half covers ReliaPro.</p>
+
+          <nav class="toc" aria-label="Guide contents">
+            <a href="#guide" data-scroll="g-start">Getting started</a>
+            <a href="#guide" data-scroll="g-dashboard">The dashboard</a>
+            <a href="#guide" data-scroll="g-assets">Assets and components</a>
+            <a href="#guide" data-scroll="g-tasks">Tasks and intervals</a>
+            <a href="#guide" data-scroll="g-done">Marking work done</a>
+            <a href="#guide" data-scroll="g-notifications">Notifications</a>
+            <a href="#guide" data-scroll="g-people">Sharing with People</a>
+            <a href="#guide" data-scroll="g-web">Phone and web</a>
+            <a href="#guide" data-scroll="g-modes">Switching modes</a>
+            <a href="#guide" data-scroll="g-pro-setup">ReliaPro: first setup</a>
+            <a href="#guide" data-scroll="g-pro-pm">ReliaPro: the PM plan</a>
+            <a href="#guide" data-scroll="g-pro-rounds">ReliaPro: rounds</a>
+            <a href="#guide" data-scroll="g-pro-people">ReliaPro: staff and roles</a>
+          </nav>
+
+          <h3 class="guide-sec" id="g-start">Getting started</h3>
+          <p>Create an account with an email and password, either in the iPhone app or at the web app. Then add your first asset: pick what kind of thing it is, give it a name, and fill in the basics. For a car that's year, make, and model, and it's worth being exact, because that's how the app finds the manufacturer's schedule.</p>
+          <p>After the asset, the app offers to break it into components and to set up tasks. The suggested tasks are a starting list, not homework: tick the ones that apply, skip the rest. When you accept a task you'll be asked when it was last done. Answer as best you remember, because that's what makes the due dates honest from day one instead of everything showing up as overdue.</p>
+
+          <h3 class="guide-sec" id="g-dashboard">The dashboard</h3>
+          <p>The dashboard is the home screen and the only screen you need on a normal day. It sorts every task you have into overdue, due soon, and coming up. Tap anything to see the details or mark it done. The quick links at the bottom take you to your assets, the full task list, People, and Settings.</p>
+
+          <h3 class="guide-sec" id="g-assets">Assets and components</h3>
+          <p>An asset is a thing you own. A component is a part of it that gets serviced on its own: the house is an asset, the HVAC filter and the water heater are components. Splitting things this way keeps each task attached to the part it belongs to, so history stays useful.</p>
+          <p>When something leaves your life, you have two options. <strong>Deactivate</strong> retires the asset but keeps its history, which is the right call for a car you sold. <strong>Delete</strong> is permanent. Deactivated assets can be reviewed and restored from the web app.</p>
+
+          <h3 class="guide-sec" id="g-tasks">Tasks and intervals</h3>
+          <p>A task is a piece of maintenance that repeats. It can repeat by time (every 90 days), by usage (every 5,000 miles or every 200 running hours), or by both at once, in which case it comes due at whichever lands first, the way an oil change works.</p>
+          <p>For usage-based tasks, keep the reading current: update the odometer or hour meter now and then, and the due dates follow along. You can add your own custom tasks anywhere, and edit any interval, including the suggested ones. If a schedule feels too tight for how you actually use the thing, change it. It's your stuff.</p>
+
+          <h3 class="guide-sec" id="g-done">Marking work done</h3>
+          <p>When work happens, mark the task done. You can set the date it was actually done, if that wasn't today, and add a note: what it cost, what parts went in, what looked worn. Each completion lands in History, per asset and across everything. Six months later, when the same noise comes back, the note is where you left it.</p>
+
+          <h3 class="guide-sec" id="g-notifications">Notifications</h3>
+          <p>Turn notifications on in Settings and pick how often you want to hear from the app. Reminders arrive grouped into summaries rather than one ping per task, so a busy week doesn't turn into a wall of noise. If you'd rather just check the dashboard on your own schedule, leave them off; nothing else depends on them.</p>
+
+          <h3 class="guide-sec" id="g-people">Sharing with People</h3>
+          <p>The People screen lets more than one person work the same lists. Send an invite and the other person joins with a code. Invites expire, so a code that's floating around loose goes stale on its own.</p>
+          <p>For households, the link runs both ways: you're a member of their account, they're a member of yours, and each of you keeps your own records. For a business, it runs one way: staff join the shop's account, because the shop's equipment is the shop's. Each member gets a role that says what they can do, from full admin down to view-only.</p>
+
+          <h3 class="guide-sec" id="g-web">Phone and web</h3>
+          <p>The same account works in the iPhone app and at the web app, and they share their data through the cloud. On the phone, changes save to the device first, so the app works fine with no signal, then sync up. On the web, you're working with the cloud copy directly.</p>
+          <p>In practice the phone is the tool you carry and the web is where the bigger setup jobs are comfortable: building out a business's equipment, reviewing plans on a real keyboard, and managing deactivated assets, which lives on the web only.</p>
+
+          <h3 class="guide-sec" id="g-modes">Switching modes</h3>
+          <p>Open <strong>Settings</strong> and pick ReliaBase or ReliaPro. That's the whole procedure. The switch changes what the app shows, not what it stores, so you can move between your household and your business freely, and nothing is lost when you do.</p>
+
+          <h3 class="guide-sec" id="g-pro-setup">ReliaPro: first setup</h3>
+          <p>Buildout is most comfortable on the web, and reading and doing work fine on the phone. Start with the structure: create your business, then its location or locations. The type of site you pick shapes which systems the app suggests, so a brewery gets brewing suggestions and not laundry ones. Add the systems that match how you think about the place: brewing, cold side, front of house.</p>
+          <p>Then register the equipment. Pick each machine's type and its make and model from the equipment list, say how critical it is to you (high, medium, or low), and the app suggests a short tag, like MAIN-BREW-PUMP-01, so every machine has a name people can say out loud. If a machine isn't in the list, add it by hand; nothing requires the catalog.</p>
+
+          <h3 class="guide-sec" id="g-pro-pm">ReliaPro: the PM plan</h3>
+          <p>With assets registered, generate the maintenance plan. Where we have the manufacturer's service schedule for your make and model, tasks come from it with the source document cited, and those intervals are never stretched or shrunk. Where there's no published schedule, tasks come from general practice for that kind of machine, and they're labeled that way so you always know which is which.</p>
+          <p>Criticality decides how much of the plan you get: a high-critical machine gets the full treatment, a low-critical one gets the essentials. It never drops anything safety-related. The generated plan is a proposal, so review it and cut what your shop genuinely doesn't do. The Preventative Maintenance module then shows the work grouped by site and system, most critical first.</p>
+
+          <h3 class="guide-sec" id="g-pro-rounds">ReliaPro: rounds</h3>
+          <p>Anything due weekly or faster isn't really scheduled maintenance; it's a walk. Rounds collects those quick checks into checklists so they don't clutter the PM schedule. Build a site's rounds from a pick list where everything starts ticked, and untick what your shop doesn't do. A check you leave out isn't remembered against you; it's simply offered again next time you build.</p>
+          <p>Running a round is tapping through it: each check gets an OK, a flag with a note for anything that looks wrong, or a skip. Skipping asks whether to drop the check for this round or keep it open to finish later, and a walk in progress can be put down and picked back up on the same device. One activity that spans several machines, like washing four blind filters, shows up once with a checkbox per machine. Every completed walk is saved with who ran it and when, flags first when you read it back.</p>
+
+          <h3 class="guide-sec" id="g-pro-people">ReliaPro: staff and roles</h3>
+          <p>Invite staff from the People screen with the role that fits: <strong>admin</strong> runs the account, <strong>editor</strong> can change the plan, <strong>doer</strong> can execute work and run rounds, and <strong>viewer</strong> can look. Whether someone can invite others is a separate switch from what they can touch. When someone leaves, revoke their membership and the records stay put, because they were always the shop's.</p>
+        </article>
+
+        <!-- ============================================================ Releases -->
+        <article class="panel" id="releases">
+          <h2>Releases</h2>
+          <p class="lead">What each version brought. The web app updates continuously; iPhone releases go through the App Store, with small fixes arriving over the air in between.</p>
+
+          <div class="release">
+            <div class="rel-head"><span class="rel-v">1.3.0</span><span class="rel-date">September 2026 &middot; Current</span></div>
+            <p class="rel-name">ReliaPro becomes real, and the schedules get sources</p>
+            <ul>
+              <li>ReliaPro is now a working product, not a placeholder: switch modes in Settings, no separate app to buy or install.</li>
+              <li>Business structure: businesses, sites, and systems, with an equipment registry, criticality, and short tags for every machine.</li>
+              <li>A library of maintenance schedules read from manufacturers' own service documents, covering espresso and coffee equipment, brewery, winery, and laundromat machines, with the source cited on every task. Where a maker publishes nothing, the entry says so plainly.</li>
+              <li>Car schedules from the manufacturers' maintenance guides for Toyota, Lexus, Scion, Subaru, Mazda, and Nissan, by year and model. Honda doesn't publish mileage intervals, so Honda vehicles get the dashboard-code table instead, which is what Honda actually uses.</li>
+              <li>General maintenance plans for every household category, labeled as general practice rather than dressed up as manufacturer data.</li>
+              <li>Rounds: quick daily and weekly checks split out of the PM schedule into walkable checklists, with OK / flag / skip, saved records, and multi-machine activities handled sensibly.</li>
+              <li>Sync repairs: several kinds of data could quietly fail to reach the cloud or reappear after deletion; both are fixed, and sync failures now say so instead of staying silent.</li>
+              <li>Confirmation dialogs on the web actually confirm now (they previously did nothing at all).</li>
+              <li>Fixes can now reach the iPhone app over the air between App Store releases.</li>
+            </ul>
+          </div>
+
+          <div class="release">
+            <div class="rel-head"><span class="rel-v">1.2.0</span><span class="rel-date">June 2026</span></div>
+            <p class="rel-name">The web app</p>
+            <ul>
+              <li>ReliaLife in the browser: same account, same data, no install.</li>
+              <li>Cross-device sync redesigned: the phone pulls the cloud copy on open, and signing out clears the device.</li>
+              <li>Usage readings (odometer, hours) now sync across devices.</li>
+              <li>Deactivate an asset instead of deleting it: history is kept, and a web-only manager lets you review and restore inactive assets.</li>
+              <li>Fixed a visible line on the launch screen in dark mode; the About screen now shows the real version number.</li>
+            </ul>
+          </div>
+
+          <div class="release">
+            <div class="rel-head"><span class="rel-v">1.1.1</span><span class="rel-date">June 2026</span></div>
+            <p class="rel-name">Fixes</p>
+            <ul>
+              <li>Usage-based due dates calculate more precisely, and a task tracked by both time and usage now reports the right status.</li>
+              <li>Notification and export fixes.</li>
+              <li>Android: the keyboard and navigation bar no longer cover content.</li>
+            </ul>
+          </div>
+
+          <div class="release">
+            <div class="rel-head"><span class="rel-v">1.1.0</span><span class="rel-date">April 2026</span></div>
+            <p class="rel-name">Notifications worth keeping on</p>
+            <ul>
+              <li>Push notifications reworked: pick your frequency, and reminders arrive as grouped summaries instead of one ping per task.</li>
+              <li>Deleting keeps history at every level, so removing a component doesn't erase what you did to it.</li>
+              <li>Add several suggested tasks at once, each asking when it was last done so due dates start out true.</li>
+              <li>Adding a component now offers its tasks right away.</li>
+              <li>Fixes: account deletion reliability, text scaling, large-screen and foldable layouts, and assorted Android display issues.</li>
+            </ul>
+          </div>
+
+          <div class="release">
+            <div class="rel-head"><span class="rel-v">1.0.0</span><span class="rel-date">April 2026</span></div>
+            <p class="rel-name">First release</p>
+            <ul>
+              <li>ReliaLife arrives on the App Store for iPhone: assets, components, and tasks; intervals by time, usage, or both; the dashboard; completion history with notes; notifications; light and dark mode.</li>
+            </ul>
+          </div>
+        </article>
+
+        <!-- ============================================================ Strategy library -->
+        <article class="panel" id="strategies">
+          <h2>Strategy library</h2>
+          <p class="lead">The maintenance schedules behind ReliaLife, one machine at a time, with the manufacturer's document cited on every task that came from one.</p>
+
+          <p>When the app suggests maintenance for your car or your espresso machine, the suggestions come from here. For many machines that means the schedule from the maker's own service documents, with a link to the document and the exact line quoted. Where a maker publishes nothing, the entry says so instead of inventing numbers, and general-practice entries are labeled as exactly that.</p>
+          <p>Browsing the library requires a ReliaLife account. Sign in below with the same email and password you use in the app. If you don't have an account yet, create one in the iPhone app or the <a href="https://relialife.vercel.app/" target="_blank" rel="noopener">web app</a> first.</p>
+
+          <!-- Sign-in gate -->
+          <div class="signin-card" id="str-signin">
+            <label for="str-email">Email</label>
+            <input type="email" id="str-email" autocomplete="email" />
+            <label for="str-password">Password</label>
+            <input type="password" id="str-password" autocomplete="current-password" />
+            <button class="btn" id="str-signin-btn">Sign in</button>
+            <p class="signin-msg" id="str-msg" role="status"></p>
+            <p class="signin-note">Your login goes straight to ReliaLife's own sign-in service, the same one the app uses. This page stores nothing else.</p>
+          </div>
+
+          <!-- Browser (hidden until signed in) -->
+          <div id="str-app" hidden>
+            <div class="str-toolbar">
+              <select id="str-type" aria-label="Equipment type"></select>
+              <input type="search" id="str-search" placeholder="Search make or model&hellip;" aria-label="Search make or model" />
+              <span class="str-session"><span id="str-user"></span><button class="linklike" id="str-signout">Sign out</button></span>
+            </div>
+
+            <div id="str-list-view">
+              <p class="str-count" id="str-count"></p>
+              <div id="str-list"></div>
+            </div>
+
+            <div id="str-detail-view" hidden>
+              <div class="str-back"><button class="linklike" id="str-back">&larr; All machines</button></div>
+              <div id="str-detail"></div>
+            </div>
+          </div>
+        </article>
+
+      </div>
+    </div>
+
+    <footer>
+      <span>&copy; ReliaLife</span>
+      <a href="https://relialife.vercel.app/" target="_blank" rel="noopener">Web app</a>
+      <a href="https://apps.apple.com/app/id6761790779" target="_blank" rel="noopener">App Store</a>
+      <a href="https://tools.relialife.app/" target="_blank" rel="noopener">Tools</a>
+      <a href="privacy.html">Privacy</a>
+      <a href="mailto:wkhoefler@gmail.com">Support</a>
+    </footer>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script>
+    /* ---------------------------------------------------------- section nav */
+    (function () {
+      var buttons = Array.prototype.slice.call(document.querySelectorAll('.sec-btn'));
+      var panels = Array.prototype.slice.call(document.querySelectorAll('.panel'));
+      var layout = document.querySelector('.layout');
+
+      function select(id) {
+        var matched = false;
+        buttons.forEach(function (b) {
+          var on = b.dataset.target === id;
+          b.classList.toggle('active', on);
+          if (on) matched = true;
+        });
+        if (!matched) return false;
+        panels.forEach(function (p) { p.classList.toggle('active', p.id === id); });
+        return true;
+      }
+      window.__selectSection = select;
+
+      buttons.forEach(function (b) {
+        b.addEventListener('click', function () {
+          select(b.dataset.target);
+          history.replaceState(null, '', '#' + b.dataset.target);
+        });
+      });
+
+      // Hero doors jump to their section
+      Array.prototype.slice.call(document.querySelectorAll('.door')).forEach(function (d) {
+        d.addEventListener('click', function () {
+          select(d.dataset.goto);
+          history.replaceState(null, '', '#' + d.dataset.goto);
+          layout.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+      });
+
+      // Guide table of contents scrolls within the guide panel
+      Array.prototype.slice.call(document.querySelectorAll('.toc a')).forEach(function (a) {
+        a.addEventListener('click', function (e) {
+          e.preventDefault();
+          var el = document.getElementById(a.dataset.scroll);
+          if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+      });
+
+      // Deep links: relialife.app/#guide etc.
+      var hash = (location.hash || '').replace('#', '');
+      if (hash) select(hash);
+    })();
+
+    /* ---------------------------------------------------------- strategy library */
+    (function () {
+      var SUPABASE_URL = 'https://nudusciaguyhpqosousr.supabase.co';
+      var SUPABASE_KEY = 'sb_publishable_4UgIyGvbJZlp2-r9BYWtjg_kDF4yxIP';
+
+      var el = {
+        signin: document.getElementById('str-signin'),
+        app: document.getElementById('str-app'),
+        email: document.getElementById('str-email'),
+        password: document.getElementById('str-password'),
+        signinBtn: document.getElementById('str-signin-btn'),
+        msg: document.getElementById('str-msg'),
+        user: document.getElementById('str-user'),
+        signout: document.getElementById('str-signout'),
+        type: document.getElementById('str-type'),
+        search: document.getElementById('str-search'),
+        count: document.getElementById('str-count'),
+        list: document.getElementById('str-list'),
+        listView: document.getElementById('str-list-view'),
+        detailView: document.getElementById('str-detail-view'),
+        detail: document.getElementById('str-detail'),
+        back: document.getElementById('str-back')
+      };
+
+      var client = null;
+      var DATA = null;      // { tasks: [], strategies: [] }
+      var current = null;   // strategy shown in detail view
+
+      function setMsg(text, isErr) {
+        el.msg.textContent = text || '';
+        el.msg.classList.toggle('err', !!isErr);
+      }
+
+      try {
+        client = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+      } catch (e) {
+        setMsg('The sign-in service could not be loaded. Check your connection and reload the page.', true);
+      }
+
+      /* ----------------------------- labels and formatting */
+      var TYPE_LABELS = {
+        'car': 'Cars and trucks',
+        'base-home': 'Home (general)', 'base-car': 'Car (general)', 'base-appliance': 'Appliances (general)',
+        'base-lawn-garden': 'Lawn and garden (general)', 'base-pet-care': 'Pet care (general)',
+        'base-aircraft': 'Aircraft (general)', 'base-watercraft': 'Watercraft (general)',
+        'base-firearm': 'Firearms (general)',
+        'pos-terminal': 'POS terminal'
+      };
+      function typeLabel(t) {
+        if (TYPE_LABELS[t]) return TYPE_LABELS[t];
+        var s = t.replace(/-/g, ' ');
+        return s.charAt(0).toUpperCase() + s.slice(1);
+      }
+      function typeCategory(t) {
+        if (t === 'car') return 'Vehicles';
+        if (t.indexOf('base-') === 0) return 'Around the house';
+        return 'Commercial equipment';
+      }
+      var KIND_LABELS = {
+        'model': 'Make and model',
+        'make': 'Whole-make guide',
+        'type-default': 'Typical practice',
+        'no-published-schedule': 'No published schedule',
+        'condition-based': 'Condition-based'
+      };
+      function yearsText(y) {
+        if (!y || !y.length) return '';
+        if (y.length === 1) return String(y[0]);
+        return y[0] + '–' + y[y.length - 1];
+      }
+      function stratName(s) {
+        var yrs = yearsText(s.years);
+        if (s.kind === 'type-default') return typeLabel(s.equipmentType) + ' — general plan';
+        if (s.kind === 'no-published-schedule') return s.make + (s.models ? ' ' + s.models.join(' / ') : '');
+        if (s.kind === 'condition-based') return s.make + ' — maintenance codes';
+        if (s.kind === 'make') return s.make + (yrs ? ' — ' + yrs + ' guide' : ' — all models');
+        var nm = (s.make || '') + ' ' + (s.models ? s.models.join(' / ') : '');
+        if (s.variant) nm += ' ' + s.variant;
+        if (yrs) nm += ' (' + yrs + ')';
+        return nm.trim();
+      }
+      function fmtNum(n) { return n.toLocaleString('en-US'); }
+      function daysText(d) {
+        if (d % 365 === 0) return (d === 365 ? '12 months' : (d / 365) + ' years');
+        if (d % 30 === 0) {
+          var m = d / 30;
+          if (m % 12 === 0 && m >= 24) return (m / 12) + ' years';
+          return (m === 1 ? 'month' : m + ' months');
+        }
+        if (d % 7 === 0 && d < 30) return (d === 7 ? 'week' : (d / 7) + ' weeks');
+        return d + ' days';
+      }
+      // The car schedules are read out of manufacturer PDFs, and a few extraction
+      // artifacts ride along (log-page blanks, PDF glyph escapes). Keep them out of
+      // the display; the data itself is left as shipped.
+      function isArtifact(t) {
+        return /_{3,}/.test(t.title) || t.title.indexOf('/uni') !== -1;
+      }
+      function cleanTitle(s) {
+        return String(s).replace(/[❑❏❐☑□☐]/g, '').replace(/\s+/g, ' ').trim();
+      }
+      function intervalText(t) {
+        var parts = [];
+        if (t.intervalUsage) parts.push(fmtNum(t.intervalUsage) + (t.usageUnit ? ' ' + t.usageUnit : ''));
+        if (t.intervalDays) parts.push(daysText(t.intervalDays));
+        if (parts.length) return (t.once ? 'At ' : 'Every ') + parts.join(' or ');
+        if (t.milestonesUsage && t.milestonesUsage.length) {
+          var ms = t.milestonesUsage.slice(0, 4).map(fmtNum).join(', ');
+          if (t.milestonesUsage.length > 4) ms += ', …';
+          return 'At ' + ms + (t.usageUnit ? ' ' + t.usageUnit : '');
+        }
+        if (t.onCondition) return 'When indicated';
+        return t.once ? 'Once' : 'As needed';
+      }
+      function esc(s) {
+        return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+      }
+
+      /* ----------------------------- auth */
+      function showApp(session) {
+        el.signin.hidden = true;
+        el.app.hidden = false;
+        el.user.textContent = (session && session.user && session.user.email) || '';
+        loadData();
+      }
+      function showSignin() {
+        el.app.hidden = true;
+        el.signin.hidden = false;
+        setMsg('');
+      }
+
+      if (client) {
+        client.auth.getSession().then(function (r) {
+          if (r && r.data && r.data.session) showApp(r.data.session);
+        }).catch(function () {});
+      }
+
+      function doSignIn() {
+        if (!client) { setMsg('The sign-in service could not be loaded. Check your connection and reload the page.', true); return; }
+        var email = el.email.value.trim();
+        var password = el.password.value;
+        if (!email || !password) { setMsg('Enter your email and password.', true); return; }
+        setMsg('Signing in…');
+        el.signinBtn.disabled = true;
+        client.auth.signInWithPassword({ email: email, password: password }).then(function (r) {
+          el.signinBtn.disabled = false;
+          if (r.error) {
+            setMsg(r.error.message === 'Invalid login credentials'
+              ? 'That email and password didn’t match. Passwords can be reset in the app.'
+              : r.error.message, true);
+            return;
+          }
+          setMsg('');
+          showApp(r.data.session);
+        }).catch(function () {
+          el.signinBtn.disabled = false;
+          setMsg('Couldn’t reach the sign-in service. Check your connection and try again.', true);
+        });
+      }
+      el.signinBtn.addEventListener('click', doSignIn);
+      el.password.addEventListener('keydown', function (e) { if (e.key === 'Enter') doSignIn(); });
+      el.signout.addEventListener('click', function () {
+        if (client) client.auth.signOut().catch(function () {});
+        showSignin();
+      });
+
+      /* ----------------------------- data */
+      // The data lives in a private storage bucket, not on this site, so a signed-in
+      // session is required to read it at all — the gate is enforced server-side.
+      function loadData() {
+        if (DATA) { render(); return; }
+        el.count.textContent = 'Loading the library…';
+        client.storage.from('strategy-library').download('strategies.json').then(function (r) {
+          if (r.error) throw r.error;
+          return r.data.text();
+        }).then(function (txt) {
+          DATA = JSON.parse(txt);
+          buildTypeOptions();
+          render();
+        }).catch(function () {
+          el.count.textContent = '';
+          el.list.innerHTML = '<p style="color:#9c2b2b;font-size:14px;">The library couldn’t be loaded. Reload the page to try again, and if it keeps happening, email support.</p>';
+        });
+      }
+
+      function buildTypeOptions() {
+        var byCat = { 'Vehicles': {}, 'Around the house': {}, 'Commercial equipment': {} };
+        DATA.strategies.forEach(function (s) {
+          byCat[typeCategory(s.equipmentType)][s.equipmentType] = true;
+        });
+        var html = '<option value="">All equipment</option>';
+        Object.keys(byCat).forEach(function (cat) {
+          var types = Object.keys(byCat[cat]).sort(function (a, b) { return typeLabel(a).localeCompare(typeLabel(b)); });
+          if (!types.length) return;
+          html += '<optgroup label="' + esc(cat) + '">';
+          types.forEach(function (t) { html += '<option value="' + esc(t) + '">' + esc(typeLabel(t)) + '</option>'; });
+          html += '</optgroup>';
+        });
+        el.type.innerHTML = html;
+      }
+
+      /* ----------------------------- list view */
+      function render() {
+        var q = el.search.value.trim().toLowerCase();
+        var typ = el.type.value;
+        var rows = DATA.strategies.filter(function (s) {
+          if (typ && s.equipmentType !== typ) return false;
+          if (q) {
+            var hay = (stratName(s) + ' ' + typeLabel(s.equipmentType)).toLowerCase();
+            if (hay.indexOf(q) === -1) return false;
+          }
+          return true;
+        });
+
+        // Group by category, then by type
+        var order = ['Vehicles', 'Around the house', 'Commercial equipment'];
+        var groups = {};
+        rows.forEach(function (s) {
+          var key = typeCategory(s.equipmentType);
+          (groups[key] = groups[key] || []).push(s);
+        });
+
+        var html = '';
+        order.forEach(function (cat) {
+          var list = groups[cat];
+          if (!list) return;
+          list.sort(function (a, b) { return stratName(a).localeCompare(stratName(b)); });
+          html += '<p class="str-group">' + esc(cat) + '</p>';
+          list.forEach(function (s) {
+            var idx = DATA.strategies.indexOf(s);
+            var rk = (s.kind === 'model' || s.kind === 'make')
+              ? (s.equipmentType === 'car' ? '' : typeLabel(s.equipmentType))
+              : (KIND_LABELS[s.kind] || '');
+            html += '<button class="str-row" data-i="' + idx + '">' +
+              '<span class="r-nm">' + esc(stratName(s)) + '</span>' +
+              (rk ? '<span class="r-k">' + esc(rk) + '</span>' : '') +
+              '</button>';
+          });
+        });
+
+        el.count.textContent = rows.length + ' of ' + DATA.strategies.length + ' machines';
+        el.list.innerHTML = html || '<p style="color:var(--muted);font-size:14px;padding-top:12px;">Nothing matches that search.</p>';
+
+        Array.prototype.slice.call(el.list.querySelectorAll('.str-row')).forEach(function (r) {
+          r.addEventListener('click', function () { openDetail(DATA.strategies[+r.dataset.i]); });
+        });
+      }
+      el.search.addEventListener('input', function () { if (DATA) render(); });
+      el.type.addEventListener('change', function () { if (DATA) render(); });
+
+      /* ----------------------------- detail view */
+      function openDetail(s) {
+        current = s;
+        el.listView.hidden = true;
+        el.detailView.hidden = false;
+        renderDetail();
+        el.detailView.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+      el.back.addEventListener('click', function () {
+        el.detailView.hidden = true;
+        el.listView.hidden = false;
+        current = null;
+      });
+
+      function taskHtml(t) {
+        var srcOem = t.source === 'oem';
+        var h = '<div class="task"><div class="t-line">' +
+          '<span class="t-title">' + esc(cleanTitle(t.title)) + '</span>' +
+          '<span class="t-int">' + esc(intervalText(t)) + '</span>' +
+          '<span class="t-src' + (srcOem ? ' oem' : '') + '">' + (srcOem ? 'Manufacturer' : 'Typical') + '</span>' +
+          '</div>';
+        if (t.component) h += '<p class="t-comp">' + esc(t.component) + '</p>';
+        if (t.note) h += '<p class="t-note">' + esc(cleanTitle(t.note)) + '</p>';
+        if (t.severeOnly) h += '<p class="t-note">Under severe use: ' + esc(cleanTitle(t.severeOnly)) + '</p>';
+        if (t.onCondition) h += '<p class="t-note">Due when the machine indicates: ' + esc(cleanTitle(t.onCondition)) + '</p>';
+        if (t.parts && t.parts.length) h += '<p class="t-note">Parts: ' + esc(t.parts.join(', ')) + '</p>';
+        if (t.evidence && t.evidence.quote) {
+          h += '<details><summary>Where this comes from</summary><blockquote>&ldquo;' + esc(t.evidence.quote) + '&rdquo;' +
+            '<div class="t-evsrc">' + (t.evidence.page ? 'Page ' + esc(t.evidence.page) + ' · ' : '') +
+            (t.evidence.url ? '<a href="' + esc(t.evidence.url) + '" target="_blank" rel="noopener">source document &nearr;</a>' : '') +
+            '</div></blockquote></details>';
+        }
+        return h + '</div>';
+      }
+
+      function renderDetail() {
+        var s = current;
+        if (!s) return;
+        var tasks = (s.p || []).map(function (i) { return DATA.tasks[i]; })
+          .filter(function (t) { return t && !isArtifact(t); });
+        var rounds = s.rounds || [];
+
+        var h = '<h3>' + esc(stratName(s)) + '</h3>' +
+          '<div class="chips" style="margin-bottom:16px;">' +
+          '<span class="chip on">' + esc(typeLabel(s.equipmentType)) + '</span>' +
+          '<span class="chip">' + esc(KIND_LABELS[s.kind] || s.kind) + '</span>' +
+          '</div>';
+
+        if (s.source && s.source.note) h += '<p class="src-note">' + esc(s.source.note) + '</p>';
+        if (s.source && s.source.url) h += '<p class="src-link"><a href="' + esc(s.source.url) + '" target="_blank" rel="noopener">View the source document &nearr;</a></p>';
+
+        if (rounds.length) {
+          h += '<p class="meta-label">Routine checks</p><div class="task-list">';
+          rounds.forEach(function (r) {
+            h += '<div class="task"><div class="t-line">' +
+              '<span class="t-title">' + esc(r.title) + '</span>' +
+              '<span class="t-int">Every ' + esc(daysText(r.cadenceDays || 7)) + '</span>' +
+              '<span class="t-src' + (r.source === 'oem' ? ' oem' : '') + '">' + (r.source === 'oem' ? 'Manufacturer' : 'Typical') + '</span>' +
+              '</div>' + (r.component ? '<p class="t-comp">' + esc(r.component) + '</p>' : '') + '</div>';
+          });
+          h += '</div>';
+        }
+
+        if (tasks.length) {
+          h += '<p class="meta-label">Scheduled maintenance</p><div class="task-list">';
+          tasks.forEach(function (t) { h += taskHtml(t); });
+          h += '</div>';
+        }
+
+        if (!tasks.length && !rounds.length) {
+          h += '<p style="color:var(--muted);">No schedule to show. ' +
+            (s.kind === 'no-published-schedule'
+              ? 'This manufacturer doesn’t publish interval data, and the library refuses to invent it. In the app, a machine like this falls back on the general plan for its equipment type.'
+              : 'This entry carries reference information rather than a task list.') + '</p>';
+        }
+
+        if (s.spares && s.spares.length) {
+          h += '<p class="meta-label">Spares worth keeping</p><div class="spares-list">';
+          s.spares.forEach(function (sp) {
+            h += '<div class="spare"><span>' + esc(sp.name) + '</span>' + (sp.partNumber ? '<span class="pn">' + esc(sp.partNumber) + '</span>' : '') + '</div>';
+          });
+          h += '</div>';
+        }
+
+        var hasOverlay = tasks.some(function (t) { return t.tiersSource === 'relia-rcm'; });
+        if (hasOverlay) {
+          h += '<p class="tier-note">In the app, how much of this plan a machine gets depends on how critical you say it is. On manufacturer schedules that weighting is ReliaLife’s own overlay, not the manufacturer’s; the intervals themselves are the manufacturer’s and are never changed.</p>';
+        }
+
+        el.detail.innerHTML = h;
+      }
+    })();
+  </script>
+</body>
+</html>
