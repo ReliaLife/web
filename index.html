@@ -161,12 +161,30 @@
     .signin-note { font-size: 13px; color: var(--faint); margin-top: 14px; }
 
     .str-toolbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; padding: 14px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); margin-bottom: 4px; }
-    .str-toolbar select, .str-toolbar input {
+    .str-toolbar input {
       font: inherit; font-size: 14px; padding: 7px 10px; border: 1px solid var(--line);
       border-radius: 7px; background: var(--bg); color: var(--ink); max-width: 100%;
+      flex: 1 1 180px; min-width: 140px;
     }
-    .str-toolbar input { flex: 1 1 180px; min-width: 140px; }
-    .str-toolbar select:focus, .str-toolbar input:focus { outline: none; border-color: var(--ink); }
+    .str-toolbar input:focus { outline: none; border-color: var(--ink); }
+
+    /* Breadcrumb trail: where you are in Category -> Make -> Model */
+    .crumbs { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 8px; padding: 12px 0 2px; font-size: 13.5px; }
+    .crumb { appearance: none; background: none; border: 0; padding: 0; cursor: pointer; font: inherit; font-size: 13.5px; color: var(--muted); text-decoration: underline; text-underline-offset: 2px; }
+    .crumb:hover { color: var(--ink); }
+    .crumb.here { color: var(--ink); font-weight: 600; text-decoration: none; cursor: default; }
+    .crumb-sep { color: var(--faint); }
+
+    /* Criticality levels: three plans, pick one */
+    .lvl-row { display: flex; border: 1px solid var(--line); border-radius: 9px; overflow: hidden; max-width: 480px; margin: 6px 0 10px; }
+    .lvl { flex: 1; appearance: none; background: none; border: 0; border-right: 1px solid var(--line); padding: 10px 8px; cursor: pointer; font: inherit; text-align: center; color: var(--muted); }
+    .lvl:last-child { border-right: 0; }
+    .lvl .ln { display: block; font-size: 13.5px; font-weight: 600; }
+    .lvl .lc { display: block; font-size: 10.5px; color: var(--faint); margin-top: 1px; }
+    .lvl:hover { background: var(--hover); color: var(--ink); }
+    .lvl.on { background: var(--ink); color: #fff; }
+    .lvl.on .lc { color: rgba(255,255,255,0.7); }
+    .lvl-desc { font-size: 13.5px; color: var(--muted); margin: 0 0 4px; max-width: 62ch; }
     .str-session { margin-left: auto; display: flex; align-items: center; gap: 10px; font-size: 12.5px; color: var(--faint); }
     .linklike { appearance: none; background: none; border: 0; cursor: pointer; font: inherit; font-size: 12.5px; color: var(--muted); text-decoration: underline; padding: 0; }
     .linklike:hover { color: var(--ink); }
@@ -183,8 +201,8 @@
     .str-row .r-nm { font-size: 14.5px; font-weight: 500; }
     .str-row .r-k { font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--faint); white-space: nowrap; }
 
-    .str-back { margin: 4px 0 18px; }
     #str-detail h3 { font-size: 26px; margin: 0 0 6px; }
+    .manual-btn { margin: 4px 0 8px; }
     .src-note { font-size: 14px; color: var(--muted); max-width: 62ch; margin: 0 0 6px; }
     .src-link { font-size: 13.5px; }
     .task-list { border-top: 1px solid var(--line); margin-top: 6px; }
@@ -542,10 +560,11 @@
           <!-- Browser (hidden until signed in) -->
           <div id="str-app" hidden>
             <div class="str-toolbar">
-              <select id="str-type" aria-label="Equipment type"></select>
               <input type="search" id="str-search" placeholder="Search make or model&hellip;" aria-label="Search make or model" />
               <span class="str-session"><span id="str-user"></span><button class="linklike" id="str-signout">Sign out</button></span>
             </div>
+
+            <nav class="crumbs" id="str-crumbs" aria-label="Where you are in the library"></nav>
 
             <div id="str-list-view">
               <p class="str-count" id="str-count"></p>
@@ -553,7 +572,6 @@
             </div>
 
             <div id="str-detail-view" hidden>
-              <div class="str-back"><button class="linklike" id="str-back">&larr; All machines</button></div>
               <div id="str-detail"></div>
             </div>
           </div>
@@ -637,19 +655,20 @@
         msg: document.getElementById('str-msg'),
         user: document.getElementById('str-user'),
         signout: document.getElementById('str-signout'),
-        type: document.getElementById('str-type'),
         search: document.getElementById('str-search'),
+        crumbs: document.getElementById('str-crumbs'),
         count: document.getElementById('str-count'),
         list: document.getElementById('str-list'),
         listView: document.getElementById('str-list-view'),
         detailView: document.getElementById('str-detail-view'),
-        detail: document.getElementById('str-detail'),
-        back: document.getElementById('str-back')
+        detail: document.getElementById('str-detail')
       };
 
       var client = null;
-      var DATA = null;      // { tasks: [], strategies: [] }
-      var current = null;   // strategy shown in detail view
+      var DATA = null;              // { tasks: [], strategies: [] }
+      var nav = { cat: null, make: null };
+      var current = null;           // strategy open in the detail view
+      var level = 'medium';         // which of the three plans is showing
 
       function setMsg(text, isErr) {
         el.msg.textContent = text || '';
@@ -665,10 +684,10 @@
       /* ----------------------------- labels and formatting */
       var TYPE_LABELS = {
         'car': 'Cars and trucks',
-        'base-home': 'Home (general)', 'base-car': 'Car (general)', 'base-appliance': 'Appliances (general)',
-        'base-lawn-garden': 'Lawn and garden (general)', 'base-pet-care': 'Pet care (general)',
-        'base-aircraft': 'Aircraft (general)', 'base-watercraft': 'Watercraft (general)',
-        'base-firearm': 'Firearms (general)',
+        'base-home': 'The home', 'base-car': 'Any car', 'base-appliance': 'Appliances',
+        'base-lawn-garden': 'Lawn and garden', 'base-pet-care': 'Pet care',
+        'base-aircraft': 'Aircraft', 'base-watercraft': 'Watercraft',
+        'base-firearm': 'Firearms',
         'pos-terminal': 'POS terminal'
       };
       function typeLabel(t) {
@@ -676,11 +695,29 @@
         var s = t.replace(/-/g, ' ');
         return s.charAt(0).toUpperCase() + s.slice(1);
       }
-      function typeCategory(t) {
-        if (t === 'car') return 'Vehicles';
-        if (t.indexOf('base-') === 0) return 'Around the house';
-        return 'Commercial equipment';
+
+      // Category -> Make -> Model is the shape of the library. Anything commercial
+      // that is not tied to one trade lands in the shared-equipment catch-all.
+      var CATS = [
+        { id: 'vehicles', name: 'Vehicles', types: ['car', 'base-car'] },
+        { id: 'house', name: 'Around the house', types: ['base-home', 'base-appliance', 'base-lawn-garden', 'base-pet-care', 'base-aircraft', 'base-watercraft', 'base-firearm'] },
+        { id: 'coffee', name: 'Coffee & café', types: ['espresso-machine', 'espresso-grinder', 'batch-brewer', 'cold-brew', 'blender', 'knock-box'] },
+        { id: 'brewery', name: 'Brewery', types: ['brew-kettle', 'mash-tun', 'fermenter', 'glycol-chiller', 'heat-exchanger', 'canning-line'] },
+        { id: 'winery', name: 'Winery', types: ['destemmer-crusher', 'must-pump', 'wine-press', 'barrel-washer'] },
+        { id: 'laundry', name: 'Laundry', types: ['washer-extractor', 'tumble-dryer'] },
+        { id: 'shop', name: 'Shared shop equipment', types: [] }
+      ];
+      function categoryOf(s) {
+        for (var i = 0; i < CATS.length; i++) {
+          if (CATS[i].types.indexOf(s.equipmentType) !== -1) return CATS[i].id;
+        }
+        return 'shop';
       }
+      function catName(id) {
+        for (var i = 0; i < CATS.length; i++) if (CATS[i].id === id) return CATS[i].name;
+        return id;
+      }
+
       var KIND_LABELS = {
         'model': 'Make and model',
         'make': 'Whole-make guide',
@@ -688,6 +725,12 @@
         'no-published-schedule': 'No published schedule',
         'condition-based': 'Condition-based'
       };
+      var LEVELS = [
+        { id: 'high', name: 'High', desc: 'This machine can’t be down. The full plan: everything on the maker’s list, plus every routine check.' },
+        { id: 'medium', name: 'Medium', desc: 'Standard care, and what the app assumes if you never pick a level. The plan most owners should run.' },
+        { id: 'low', name: 'Low', desc: 'A spare or lightly used machine. The essentials only — and anything safety-related stays in whatever you pick.' }
+      ];
+
       function yearsText(y) {
         if (!y || !y.length) return '';
         if (y.length === 1) return String(y[0]);
@@ -704,6 +747,18 @@
         if (yrs) nm += ' (' + yrs + ')';
         return nm.trim();
       }
+      // The strategy's name once you are already inside its make.
+      function modelLabel(s) {
+        var yrs = yearsText(s.years);
+        if (s.kind === 'make') return (yrs || 'All models') + ' model-year guide';
+        if (s.kind === 'condition-based') return 'Maintenance codes';
+        if (s.kind === 'no-published-schedule') return (s.models ? s.models.join(' / ') : 'All models');
+        if (s.kind === 'type-default') return typeLabel(s.equipmentType) + ' — general plan';
+        var nm = s.models ? s.models.join(' / ') : (yrs || 'All models');
+        if (s.variant) nm += ' ' + s.variant;
+        if (s.models && yrs) nm += ' (' + yrs + ')';
+        return nm;
+      }
       function fmtNum(n) { return n.toLocaleString('en-US'); }
       function daysText(d) {
         if (d % 365 === 0) return (d === 365 ? '12 months' : (d / 365) + ' years');
@@ -714,15 +769,6 @@
         }
         if (d % 7 === 0 && d < 30) return (d === 7 ? 'week' : (d / 7) + ' weeks');
         return d + ' days';
-      }
-      // The car schedules are read out of manufacturer PDFs, and a few extraction
-      // artifacts ride along (log-page blanks, PDF glyph escapes). Keep them out of
-      // the display; the data itself is left as shipped.
-      function isArtifact(t) {
-        return /_{3,}/.test(t.title) || t.title.indexOf('/uni') !== -1;
-      }
-      function cleanTitle(s) {
-        return String(s).replace(/[❑❏❐☑□☐]/g, '').replace(/\s+/g, ' ').trim();
       }
       function intervalText(t) {
         var parts = [];
@@ -737,9 +783,31 @@
         if (t.onCondition) return 'When indicated';
         return t.once ? 'Once' : 'As needed';
       }
+      // The car schedules are read out of manufacturer PDFs, and a few extraction
+      // artifacts ride along (log-page blanks, PDF glyph escapes). Keep them out of
+      // the display; the data itself is left as shipped.
+      function isArtifact(t) {
+        return /_{3,}/.test(t.title) || t.title.indexOf('/uni') !== -1;
+      }
+      function cleanTitle(s) {
+        return String(s).replace(/[❑❏☐☑□]/g, '').replace(/\s+/g, ' ').trim();
+      }
       function esc(s) {
         return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
       }
+
+      /* ----------------------------- the three plans */
+      function tasksOf(s) {
+        return (s.p || []).map(function (i) { return DATA.tasks[i]; })
+          .filter(function (t) { return t && !isArtifact(t); });
+      }
+      function tasksAt(s, lvl) {
+        return tasksOf(s).filter(function (t) { return !t.tiers || t.tiers.indexOf(lvl) !== -1; });
+      }
+      function roundsAt(s, lvl) {
+        return (s.rounds || []).filter(function (r) { return !r.tiers || r.tiers.indexOf(lvl) !== -1; });
+      }
+      function itemsAt(s, lvl) { return tasksAt(s, lvl).length + roundsAt(s, lvl).length; }
 
       /* ----------------------------- auth */
       function showApp(session) {
@@ -751,6 +819,9 @@
       function showSignin() {
         el.app.hidden = true;
         el.signin.hidden = false;
+        nav = { cat: null, make: null };
+        current = null;
+        el.search.value = '';
         setMsg('');
       }
 
@@ -800,7 +871,6 @@
           return r.data.text();
         }).then(function (txt) {
           DATA = JSON.parse(txt);
-          buildTypeOptions();
           render();
         }).catch(function () {
           el.count.textContent = '';
@@ -808,84 +878,192 @@
         });
       }
 
-      function buildTypeOptions() {
-        var byCat = { 'Vehicles': {}, 'Around the house': {}, 'Commercial equipment': {} };
-        DATA.strategies.forEach(function (s) {
-          byCat[typeCategory(s.equipmentType)][s.equipmentType] = true;
-        });
-        var html = '<option value="">All equipment</option>';
-        Object.keys(byCat).forEach(function (cat) {
-          var types = Object.keys(byCat[cat]).sort(function (a, b) { return typeLabel(a).localeCompare(typeLabel(b)); });
-          if (!types.length) return;
-          html += '<optgroup label="' + esc(cat) + '">';
-          types.forEach(function (t) { html += '<option value="' + esc(t) + '">' + esc(typeLabel(t)) + '</option>'; });
-          html += '</optgroup>';
-        });
-        el.type.innerHTML = html;
+      /* ----------------------------- navigation */
+      function strategiesIn(catId) {
+        return DATA.strategies.filter(function (s) { return categoryOf(s) === catId; });
       }
 
-      /* ----------------------------- list view */
-      function render() {
-        var q = el.search.value.trim().toLowerCase();
-        var typ = el.type.value;
-        var rows = DATA.strategies.filter(function (s) {
-          if (typ && s.equipmentType !== typ) return false;
-          if (q) {
-            var hay = (stratName(s) + ' ' + typeLabel(s.equipmentType)).toLowerCase();
-            if (hay.indexOf(q) === -1) return false;
+      function renderCrumbs(q) {
+        var parts = [];
+        var atRoot = !q && !nav.cat && !current;
+        parts.push({ label: 'All equipment', here: atRoot, fn: function () {
+          nav = { cat: null, make: null }; current = null; el.search.value = ''; render();
+        } });
+        if (q) {
+          parts.push({ label: 'Search', here: true });
+        } else {
+          if (nav.cat) parts.push({ label: catName(nav.cat), here: !nav.make && !current, fn: function () {
+            nav.make = null; current = null; render();
+          } });
+          if (nav.make) parts.push({ label: nav.make, here: !current, fn: function () {
+            current = null; render();
+          } });
+          if (current) parts.push({ label: nav.make ? modelLabel(current) : stratName(current), here: true });
+        }
+        el.crumbs.innerHTML = '';
+        parts.forEach(function (p, i) {
+          if (i) {
+            var sep = document.createElement('span');
+            sep.className = 'crumb-sep'; sep.textContent = '›';
+            el.crumbs.appendChild(sep);
           }
-          return true;
-        });
-
-        // Group by category, then by type
-        var order = ['Vehicles', 'Around the house', 'Commercial equipment'];
-        var groups = {};
-        rows.forEach(function (s) {
-          var key = typeCategory(s.equipmentType);
-          (groups[key] = groups[key] || []).push(s);
-        });
-
-        var html = '';
-        order.forEach(function (cat) {
-          var list = groups[cat];
-          if (!list) return;
-          list.sort(function (a, b) { return stratName(a).localeCompare(stratName(b)); });
-          html += '<p class="str-group">' + esc(cat) + '</p>';
-          list.forEach(function (s) {
-            var idx = DATA.strategies.indexOf(s);
-            var rk = (s.kind === 'model' || s.kind === 'make')
-              ? (s.equipmentType === 'car' ? '' : typeLabel(s.equipmentType))
-              : (KIND_LABELS[s.kind] || '');
-            html += '<button class="str-row" data-i="' + idx + '">' +
-              '<span class="r-nm">' + esc(stratName(s)) + '</span>' +
-              (rk ? '<span class="r-k">' + esc(rk) + '</span>' : '') +
-              '</button>';
-          });
-        });
-
-        el.count.textContent = rows.length + ' of ' + DATA.strategies.length + ' machines';
-        el.list.innerHTML = html || '<p style="color:var(--muted);font-size:14px;padding-top:12px;">Nothing matches that search.</p>';
-
-        Array.prototype.slice.call(el.list.querySelectorAll('.str-row')).forEach(function (r) {
-          r.addEventListener('click', function () { openDetail(DATA.strategies[+r.dataset.i]); });
+          var b = document.createElement(p.here ? 'span' : 'button');
+          b.className = 'crumb' + (p.here ? ' here' : '');
+          b.textContent = p.label;
+          if (!p.here) b.addEventListener('click', p.fn);
+          el.crumbs.appendChild(b);
         });
       }
-      el.search.addEventListener('input', function () { if (DATA) render(); });
-      el.type.addEventListener('change', function () { if (DATA) render(); });
+
+      function rowsHtml(rows) {
+        // rows: [{ label, sub, strat }] rendered as clickable list rows
+        return rows.map(function (r) {
+          return '<button class="str-row" data-a="' + r.a + '">' +
+            '<span class="r-nm">' + esc(r.label) + '</span>' +
+            (r.sub ? '<span class="r-k">' + esc(r.sub) + '</span>' : '') +
+            '</button>';
+        }).join('');
+      }
+
+      function render() {
+        if (!DATA) return;
+        var q = el.search.value.trim().toLowerCase();
+        renderCrumbs(q);
+
+        if (current && !q) {
+          el.listView.hidden = true;
+          el.detailView.hidden = false;
+          renderDetail();
+          return;
+        }
+        el.detailView.hidden = true;
+        el.listView.hidden = false;
+
+        if (q) return renderSearch(q);
+        if (nav.cat) {
+          var inCat = strategiesIn(nav.cat);
+          var makes = {};
+          inCat.forEach(function (s) { if (s.make) makes[s.make] = (makes[s.make] || 0) + 1; });
+          var makeNames = Object.keys(makes).sort();
+          if (nav.make) return renderModels(inCat.filter(function (s) { return s.make === nav.make; }));
+          if (!makeNames.length) return renderPlans(inCat);
+          return renderMakes(inCat, makeNames, makes);
+        }
+        renderCats();
+      }
+
+      function bindRows(handler) {
+        Array.prototype.slice.call(el.list.querySelectorAll('.str-row')).forEach(function (r) {
+          r.addEventListener('click', function () { handler(r.dataset.a); });
+        });
+      }
+
+      function renderCats() {
+        var counts = {};
+        DATA.strategies.forEach(function (s) { var c = categoryOf(s); counts[c] = (counts[c] || 0) + 1; });
+        el.count.textContent = DATA.strategies.length + ' plans, by category';
+        el.list.innerHTML = rowsHtml(CATS.filter(function (c) { return counts[c.id]; }).map(function (c) {
+          return { a: c.id, label: c.name, sub: counts[c.id] + (counts[c.id] === 1 ? ' plan' : ' plans') };
+        }));
+        bindRows(function (a) { nav.cat = a; render(); });
+      }
+
+      function renderMakes(inCat, makeNames, makeCounts) {
+        var generals = inCat.filter(function (s) { return !s.make; });
+        el.count.textContent = makeNames.length + (makeNames.length === 1 ? ' make' : ' makes') +
+          ' · ' + inCat.length + ' plans';
+        var html = rowsHtml(makeNames.map(function (m) {
+          return { a: 'm:' + m, label: m, sub: makeCounts[m] + (makeCounts[m] === 1 ? ' plan' : ' plans') };
+        }));
+        if (generals.length) {
+          html += '<p class="str-group">General plans — when your make isn’t listed</p>';
+          html += rowsHtml(generals.map(function (s) {
+            return { a: 's:' + DATA.strategies.indexOf(s), label: modelLabel(s), sub: '' };
+          }));
+        }
+        el.list.innerHTML = html;
+        bindRows(function (a) {
+          if (a.indexOf('m:') === 0) { nav.make = a.slice(2); render(); }
+          else openDetail(DATA.strategies[+a.slice(2)]);
+        });
+      }
+
+      function renderModels(list) {
+        // Group a make's plans by model so a long run of years stays scannable.
+        var groups = {};
+        var order = [];
+        list.forEach(function (s) {
+          var key = s.kind === 'make' ? 'Model-year guides'
+            : (s.models && s.models.length ? s.models.join(' / ') + (s.variant ? ' ' + s.variant : '') : '—');
+          if (!groups[key]) { groups[key] = []; order.push(key); }
+          groups[key].push(s);
+        });
+        order.sort();
+        el.count.textContent = list.length + (list.length === 1 ? ' plan' : ' plans');
+        var html = '';
+        order.forEach(function (key) {
+          var g = groups[key];
+          g.sort(function (a, b) {
+            var ya = a.years ? a.years[0] : 0, yb = b.years ? b.years[0] : 0;
+            return ya - yb || modelLabel(a).localeCompare(modelLabel(b));
+          });
+          if (g.length > 1 && key !== '—') {
+            html += '<p class="str-group">' + esc(key) + '</p>';
+            html += rowsHtml(g.map(function (s) {
+              var yrs = yearsText(s.years);
+              return { a: 's:' + DATA.strategies.indexOf(s), label: s.kind === 'make' ? modelLabel(s) : (yrs || modelLabel(s)), sub: '' };
+            }));
+          } else {
+            html += rowsHtml(g.map(function (s) {
+              return { a: 's:' + DATA.strategies.indexOf(s), label: modelLabel(s), sub: s.kind === 'no-published-schedule' ? 'No published schedule' : '' };
+            }));
+          }
+        });
+        el.list.innerHTML = html;
+        bindRows(function (a) { openDetail(DATA.strategies[+a.slice(2)]); });
+      }
+
+      function renderPlans(list) {
+        el.count.textContent = list.length + (list.length === 1 ? ' plan' : ' plans');
+        el.list.innerHTML = rowsHtml(list.slice().sort(function (a, b) {
+          return modelLabel(a).localeCompare(modelLabel(b));
+        }).map(function (s) {
+          return { a: 's:' + DATA.strategies.indexOf(s), label: modelLabel(s), sub: '' };
+        }));
+        bindRows(function (a) { openDetail(DATA.strategies[+a.slice(2)]); });
+      }
+
+      function renderSearch(q) {
+        var rows = DATA.strategies.filter(function (s) {
+          var hay = (stratName(s) + ' ' + typeLabel(s.equipmentType) + ' ' + catName(categoryOf(s))).toLowerCase();
+          return hay.indexOf(q) !== -1;
+        }).sort(function (a, b) { return stratName(a).localeCompare(stratName(b)); });
+        el.count.textContent = rows.length + (rows.length === 1 ? ' match' : ' matches');
+        el.list.innerHTML = rows.length ? rowsHtml(rows.map(function (s) {
+          return { a: 's:' + DATA.strategies.indexOf(s), label: stratName(s), sub: catName(categoryOf(s)) };
+        })) : '<p style="color:var(--muted);font-size:14px;padding-top:12px;">Nothing matches that search.</p>';
+        bindRows(function (a) {
+          var s = DATA.strategies[+a.slice(2)];
+          nav.cat = categoryOf(s);
+          nav.make = s.make || null;
+          el.search.value = '';
+          openDetail(s);
+        });
+      }
+
+      el.search.addEventListener('input', function () {
+        if (!DATA) return;
+        current = null;
+        render();
+      });
 
       /* ----------------------------- detail view */
       function openDetail(s) {
         current = s;
-        el.listView.hidden = true;
-        el.detailView.hidden = false;
-        renderDetail();
+        level = 'medium';
+        render();
         el.detailView.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }
-      el.back.addEventListener('click', function () {
-        el.detailView.hidden = true;
-        el.listView.hidden = false;
-        current = null;
-      });
 
       function taskHtml(t) {
         var srcOem = t.source === 'oem';
@@ -911,24 +1089,41 @@
       function renderDetail() {
         var s = current;
         if (!s) return;
-        var tasks = (s.p || []).map(function (i) { return DATA.tasks[i]; })
-          .filter(function (t) { return t && !isArtifact(t); });
-        var rounds = s.rounds || [];
+        var tasks = tasksAt(s, level);
+        var rounds = roundsAt(s, level);
+        var lvlDef = LEVELS.filter(function (l) { return l.id === level; })[0];
 
         var h = '<h3>' + esc(stratName(s)) + '</h3>' +
-          '<div class="chips" style="margin-bottom:16px;">' +
+          '<div class="chips" style="margin-bottom:14px;">' +
           '<span class="chip on">' + esc(typeLabel(s.equipmentType)) + '</span>' +
           '<span class="chip">' + esc(KIND_LABELS[s.kind] || s.kind) + '</span>' +
           '</div>';
 
         if (s.source && s.source.note) h += '<p class="src-note">' + esc(s.source.note) + '</p>';
-        if (s.source && s.source.url) h += '<p class="src-link"><a href="' + esc(s.source.url) + '" target="_blank" rel="noopener">View the source document &nearr;</a></p>';
+        if (s.source && s.source.url) {
+          h += '<p class="manual-btn"><a class="btn secondary" href="' + esc(s.source.url) + '" target="_blank" rel="noopener">Open the manufacturer’s document &nearr;</a></p>';
+        }
+
+        var anyItems = itemsAt(s, 'high') + itemsAt(s, 'medium') + itemsAt(s, 'low');
+        if (anyItems) {
+          h += '<p class="meta-label">How critical is this machine to you?</p>';
+          h += '<div class="lvl-row" role="group" aria-label="Criticality level">';
+          LEVELS.forEach(function (l) {
+            var n = itemsAt(s, l.id);
+            h += '<button class="lvl' + (l.id === level ? ' on' : '') + '" data-l="' + l.id + '">' +
+              '<span class="ln">' + l.name + '</span>' +
+              '<span class="lc">' + n + (n === 1 ? ' item' : ' items') + '</span>' +
+              '</button>';
+          });
+          h += '</div>';
+          h += '<p class="lvl-desc">' + esc(lvlDef.desc) + '</p>';
+        }
 
         if (rounds.length) {
           h += '<p class="meta-label">Routine checks</p><div class="task-list">';
           rounds.forEach(function (r) {
             h += '<div class="task"><div class="t-line">' +
-              '<span class="t-title">' + esc(r.title) + '</span>' +
+              '<span class="t-title">' + esc(cleanTitle(r.title)) + '</span>' +
               '<span class="t-int">Every ' + esc(daysText(r.cadenceDays || 7)) + '</span>' +
               '<span class="t-src' + (r.source === 'oem' ? ' oem' : '') + '">' + (r.source === 'oem' ? 'Manufacturer' : 'Typical') + '</span>' +
               '</div>' + (r.component ? '<p class="t-comp">' + esc(r.component) + '</p>' : '') + '</div>';
@@ -943,10 +1138,13 @@
         }
 
         if (!tasks.length && !rounds.length) {
-          h += '<p style="color:var(--muted);">No schedule to show. ' +
-            (s.kind === 'no-published-schedule'
-              ? 'This manufacturer doesn’t publish interval data, and the library refuses to invent it. In the app, a machine like this falls back on the general plan for its equipment type.'
-              : 'This entry carries reference information rather than a task list.') + '</p>';
+          if (s.kind === 'no-published-schedule') {
+            h += '<p style="color:var(--muted);">No schedule to show. This manufacturer doesn’t publish interval data, and the library refuses to invent it. In the app, a machine like this falls back on the general plan for its equipment type.</p>';
+          } else if (anyItems) {
+            h += '<p style="color:var(--muted);">Nothing at the ' + esc(lvlDef.name.toLowerCase()) + ' level for this machine. Pick a higher level to see the plan.</p>';
+          } else {
+            h += '<p style="color:var(--muted);">This entry carries reference information rather than a task list.</p>';
+          }
         }
 
         if (s.spares && s.spares.length) {
@@ -957,12 +1155,18 @@
           h += '</div>';
         }
 
-        var hasOverlay = tasks.some(function (t) { return t.tiersSource === 'relia-rcm'; });
+        var hasOverlay = tasksOf(s).some(function (t) { return t.tiersSource === 'relia-rcm'; });
         if (hasOverlay) {
-          h += '<p class="tier-note">In the app, how much of this plan a machine gets depends on how critical you say it is. On manufacturer schedules that weighting is ReliaLife’s own overlay, not the manufacturer’s; the intervals themselves are the manufacturer’s and are never changed.</p>';
+          h += '<p class="tier-note">The split between High, Medium and Low on manufacturer schedules is ReliaLife’s own judgement, not the manufacturer’s. The intervals themselves are the manufacturer’s and are never changed.</p>';
         }
 
         el.detail.innerHTML = h;
+        Array.prototype.slice.call(el.detail.querySelectorAll('.lvl')).forEach(function (b) {
+          b.addEventListener('click', function () {
+            level = b.dataset.l;
+            renderDetail();
+          });
+        });
       }
     })();
   </script>
