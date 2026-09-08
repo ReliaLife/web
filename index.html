@@ -692,8 +692,11 @@
         'car': 'Cars and Trucks',
         'base-home': 'The Home', 'base-car': 'Any Car', 'base-appliance': 'Appliances',
         'base-lawn-garden': 'Lawn and Garden', 'base-pet-care': 'Pet Care',
-        'base-aircraft': 'Aircraft', 'base-watercraft': 'Watercraft',
-        'base-firearm': 'Firearms',
+        'base-aircraft': 'Any Aircraft', 'base-watercraft': 'Any Watercraft',
+        'base-firearm': 'Any Firearm',
+        'central-hvac': 'Central Heating and Cooling',
+        'home-water-heater': 'Tank Water Heater',
+        'pool-equipment': 'Pool Pump and Equipment',
         'pos-terminal': 'POS Terminal',
         'walk-in-cooler': 'Walk-In Cooler'
       };
@@ -708,7 +711,11 @@
       // that is not tied to one trade lands in the shared-equipment catch-all.
       var CATS = [
         { id: 'vehicles', name: 'Vehicles', types: ['car', 'base-car'] },
-        { id: 'house', name: 'Around the House', types: ['base-home', 'base-appliance', 'base-lawn-garden', 'base-pet-care', 'base-aircraft', 'base-watercraft', 'base-firearm'] },
+        { id: 'house', name: 'Around the House', types: ['base-home', 'base-appliance', 'base-pet-care', 'standby-generator', 'central-hvac', 'tankless-water-heater', 'home-water-heater', 'pool-equipment', 'garage-door-opener'] },
+        { id: 'garden', name: 'Lawn & Garden', types: ['base-lawn-garden', 'riding-mower', 'walk-behind-mower', 'chainsaw', 'portable-generator', 'snow-blower'] },
+        { id: 'boats', name: 'Boats & Watercraft', types: ['base-watercraft', 'outboard-motor', 'sterndrive', 'personal-watercraft'] },
+        { id: 'aircraft', name: 'Aircraft', types: ['base-aircraft', 'piston-aircraft-engine', 'piston-airplane'] },
+        { id: 'firearms', name: 'Firearms', types: ['base-firearm', 'pistol', 'rifle', 'shotgun'] },
         { id: 'coffee', name: 'Coffee & Café', types: ['espresso-machine', 'espresso-grinder', 'batch-brewer', 'cold-brew', 'blender', 'knock-box'] },
         { id: 'brewery', name: 'Brewery', types: ['brew-kettle', 'mash-tun', 'fermenter', 'glycol-chiller', 'heat-exchanger', 'canning-line'] },
         { id: 'winery', name: 'Winery', types: ['destemmer-crusher', 'must-pump', 'wine-press', 'barrel-washer'] },
