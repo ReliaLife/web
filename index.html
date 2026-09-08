@@ -891,9 +891,18 @@
       function loadData() {
         if (DATA) { render(); return; }
         el.count.textContent = 'Loading the library…';
-        client.storage.from('strategy-library').download('strategies.json').then(function (r) {
-          if (r.error) throw r.error;
-          return r.data.text();
+        // Fetched directly (not via client.storage.download) so a cache-buster can ride the
+        // URL: the storage API sits behind a CDN edge cache that can otherwise keep serving
+        // the previous build of the library after a publish.
+        client.auth.getSession().then(function (s) {
+          var token = s.data.session && s.data.session.access_token;
+          if (!token) throw new Error('no session');
+          return fetch(SUPABASE_URL + '/storage/v1/object/strategy-library/strategies.json?cb=' + Date.now(), {
+            headers: { 'Authorization': 'Bearer ' + token, 'apikey': SUPABASE_KEY }
+          });
+        }).then(function (resp) {
+          if (!resp.ok) throw new Error('HTTP ' + resp.status);
+          return resp.text();
         }).then(function (txt) {
           DATA = JSON.parse(txt);
           render();
