@@ -720,7 +720,10 @@
         { id: 'brewery', name: 'Brewery', types: ['brew-kettle', 'mash-tun', 'fermenter', 'glycol-chiller', 'heat-exchanger', 'canning-line'] },
         { id: 'winery', name: 'Winery', types: ['destemmer-crusher', 'must-pump', 'wine-press', 'barrel-washer'] },
         { id: 'laundry', name: 'Laundry', types: ['washer-extractor', 'tumble-dryer'] },
-        { id: 'shop', name: 'Shared Shop Equipment', types: [] }
+        // Machines that show up across trades. Listed rather than left implicit so the
+        // publisher can tell a genuinely new equipment type from one that belongs here;
+        // anything unlisted still lands in this category at runtime.
+        { id: 'shop', name: 'Shared Shop Equipment', types: ['air-compressor', 'commercial-water-heater', 'dishwasher', 'hot-water-tower', 'ice-machine', 'payment-system', 'pos-terminal', 'process-pump', 'steam-boiler', 'undercounter-fridge', 'walk-in-cooler', 'water-filtration'] }
       ];
       function categoryOf(s) {
         for (var i = 0; i < CATS.length; i++) {
