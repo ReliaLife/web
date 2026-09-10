@@ -213,6 +213,11 @@
     .task .t-int { font-size: 13px; color: var(--muted); white-space: nowrap; }
     .task .t-src { font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.1em; padding: 2px 8px; border-radius: 999px; border: 1px solid var(--line); color: var(--faint); }
     .task .t-src.oem { color: var(--ink); border-color: var(--ink); }
+    /* Safety-critical work. The one place this page spends a colour, because
+       "never dropped, whatever level you pick" has to be visible, not just said. */
+    .task .t-safety { font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.1em; padding: 2px 8px; border-radius: 999px; border: 1px solid #c08a84; color: #9c2b2b; white-space: nowrap; }
+    .task .t-cond { font-size: 12.5px; color: var(--muted); margin-top: 5px; max-width: 62ch; }
+    .task .t-cond b { font-weight: 600; color: var(--body); }
     .task .t-comp { font-size: 12px; color: var(--faint); margin-top: 2px; }
     .task .t-note { font-size: 13px; color: var(--muted); margin-top: 5px; max-width: 62ch; }
     .task details { margin-top: 5px; }
@@ -795,6 +800,7 @@
       }
       function fmtNum(n) { return n.toLocaleString('en-US'); }
       function daysText(d) {
+        if (d === 1) return 'day';
         if (d % 365 === 0) return (d === 365 ? '12 months' : (d / 365) + ' years');
         if (d % 30 === 0) {
           var m = d / 30;
@@ -941,7 +947,11 @@
           if (nav.make) parts.push({ label: nav.make, here: !current, fn: function () {
             current = null; render();
           } });
-          if (current) parts.push({ label: nav.make ? modelLabel(current) : stratName(current), here: true });
+          if (current) {
+            var crumb = nav.make ? modelLabel(current) : stratName(current);
+            if (crumb.length > 42) crumb = crumb.slice(0, 40).replace(/[\s/]+$/, '') + '…';
+            parts.push({ label: crumb, here: true });
+          }
         }
         el.crumbs.innerHTML = '';
         parts.forEach(function (p, i) {
@@ -1108,23 +1118,73 @@
         el.detailView.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }
 
+      // What a maker means by "severe use". The data carries their own prose plus a
+      // tidied list, so this says it in words an owner recognises about their own week.
+      var CONDITIONS = {
+        'towing': 'towing a trailer',
+        'dusty': 'dusty roads',
+        'heavy-load': 'carrying heavy loads',
+        'commercial': 'commercial use',
+        'extended-idling': 'long spells idling',
+        'short-trips-cold': 'short trips in the cold',
+        'road-salt': 'salted winter roads',
+        'rough-roads': 'rough roads',
+        'mountainous': 'mountain driving',
+        'high-soot': 'heavy city soot'
+      };
+      function conditionsText(list) {
+        var named = (list || []).map(function (c) { return CONDITIONS[c]; }).filter(Boolean);
+        if (!named.length) return '';
+        if (named.length === 1) return named[0];
+        return named.slice(0, -1).join(', ') + ' or ' + named[named.length - 1];
+      }
+
+      // Rounds and scheduled work are the same shape apart from how often they come
+      // round, so both render through here and rounds stop losing their sources.
       function taskHtml(t) {
         var srcOem = t.source === 'oem';
+        var interval = t.cadenceDays ? 'Every ' + daysText(t.cadenceDays) : intervalText(t);
         var h = '<div class="task"><div class="t-line">' +
           '<span class="t-title">' + esc(cleanTitle(t.title)) + '</span>' +
-          '<span class="t-int">' + esc(intervalText(t)) + '</span>' +
+          '<span class="t-int">' + esc(interval) + '</span>' +
           '<span class="t-src' + (srcOem ? ' oem' : '') + '">' + (srcOem ? 'Manufacturer' : 'Typical') + '</span>' +
+          (t.safety ? '<span class="t-safety">Safety</span>' : '') +
           '</div>';
         if (t.component) h += '<p class="t-comp">' + esc(t.component) + '</p>';
         if (t.note) h += '<p class="t-note">' + esc(cleanTitle(t.note)) + '</p>';
-        if (t.severeOnly) h += '<p class="t-note">Under severe use: ' + esc(cleanTitle(t.severeOnly)) + '</p>';
+        if (t.severeOnly || t.severeConditions || t.severeUsage) {
+          var words = conditionsText(t.severeConditions);
+          var line = '<p class="t-cond"><b>Only if you work it hard</b> \u2014 ';
+          if (words) {
+            line += 'added for ' + esc(words) + '.';
+          } else {
+            line += 'the maker adds this under severe use' +
+              (t.severeOnly ? ': ' + esc(cleanTitle(t.severeOnly)) : '.');
+          }
+          if (t.severeUsage) {
+            line += ' Then it is due every ' + esc(fmtNum(t.severeUsage) +
+              (t.usageUnit ? ' ' + t.usageUnit : '')) + ' instead.';
+          }
+          h += line + '</p>';
+        }
         if (t.onCondition) h += '<p class="t-note">Due when the machine indicates: ' + esc(cleanTitle(t.onCondition)) + '</p>';
         if (t.parts && t.parts.length) h += '<p class="t-note">Parts: ' + esc(t.parts.join(', ')) + '</p>';
+        if (t.reading && t.reading.unit) {
+          h += '<p class="t-note">Write down a reading in ' + esc(t.reading.unit) +
+            (t.reading.min != null && t.reading.max != null
+              ? ' (aim for ' + esc(fmtNum(t.reading.min)) + '\u2013' + esc(fmtNum(t.reading.max)) + ')'
+              : '') + '.</p>';
+        }
         if (t.evidence && t.evidence.quote) {
           h += '<details><summary>Where this comes from</summary><blockquote>&ldquo;' + esc(t.evidence.quote) + '&rdquo;' +
             '<div class="t-evsrc">' + (t.evidence.page ? 'Page ' + esc(t.evidence.page) + ' · ' : '') +
             (t.evidence.url ? '<a href="' + esc(t.evidence.url) + '" target="_blank" rel="noopener">source document &nearr;</a>' : '') +
             '</div></blockquote></details>';
+        } else if (t.sourceNote || t.sourceUrl) {
+          // No line worth quoting, but the maker still said something worth reading.
+          h += '<p class="t-note">' + (t.sourceNote ? esc(cleanTitle(t.sourceNote)) + ' ' : '') +
+            (t.sourceUrl ? '<a href="' + esc(t.sourceUrl) + '" target="_blank" rel="noopener">Read the source &nearr;</a>' : '') +
+            '</p>';
         }
         return h + '</div>';
       }
@@ -1142,6 +1202,7 @@
           '<span class="chip">' + esc(KIND_LABELS[s.kind] || s.kind) + '</span>' +
           '</div>';
 
+        if (s.note) h += '<p class="src-note">' + esc(s.note) + '</p>';
         if (s.source && s.source.note) h += '<p class="src-note">' + esc(s.source.note) + '</p>';
         if (s.source && s.source.url) {
           h += '<p class="manual-btn"><a class="btn secondary" href="' + esc(s.source.url) + '" target="_blank" rel="noopener">Open the Manufacturer’s Document &nearr;</a></p>';
@@ -1163,13 +1224,9 @@
         }
 
         if (rounds.length) {
-          h += '<p class="meta-label">Routine checks</p><div class="task-list">';
+          h += '<p class="meta-label">Routine Checks</p><div class="task-list">';
           rounds.forEach(function (r) {
-            h += '<div class="task"><div class="t-line">' +
-              '<span class="t-title">' + esc(cleanTitle(r.title)) + '</span>' +
-              '<span class="t-int">Every ' + esc(daysText(r.cadenceDays || 7)) + '</span>' +
-              '<span class="t-src' + (r.source === 'oem' ? ' oem' : '') + '">' + (r.source === 'oem' ? 'Manufacturer' : 'Typical') + '</span>' +
-              '</div>' + (r.component ? '<p class="t-comp">' + esc(r.component) + '</p>' : '') + '</div>';
+            h += taskHtml(r.cadenceDays ? r : Object.assign({}, r, { cadenceDays: 7 }));
           });
           h += '</div>';
         }
