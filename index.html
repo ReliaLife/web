@@ -177,15 +177,61 @@
     .crumb-sep { color: var(--faint); }
 
     /* Criticality levels: three plans, pick one */
-    .lvl-row { display: flex; border: 1px solid var(--line); border-radius: 9px; overflow: hidden; max-width: 480px; margin: 6px 0 10px; }
-    .lvl { flex: 1; appearance: none; background: none; border: 0; border-right: 1px solid var(--line); padding: 10px 8px; cursor: pointer; font: inherit; text-align: center; color: var(--muted); }
+    .lvl-row { display: flex; border: 1px solid var(--line); border-radius: 9px; overflow: hidden; max-width: 420px; margin: 6px 0 8px; }
+    .lvl { flex: 1; appearance: none; background: none; border: 0; border-right: 1px solid var(--line); padding: 9px 8px; cursor: pointer; font: inherit; text-align: center; color: var(--muted); }
     .lvl:last-child { border-right: 0; }
-    .lvl .ln { display: block; font-size: 13.5px; font-weight: 600; }
-    .lvl .lc { display: block; font-size: 10.5px; color: var(--faint); margin-top: 1px; }
+    .lvl .ln { display: block; font-size: 13px; font-weight: 600; }
     .lvl:hover { background: var(--hover); color: var(--ink); }
     .lvl.on { background: var(--ink); color: #fff; }
-    .lvl.on .lc { color: rgba(255,255,255,0.7); }
-    .lvl-desc { font-size: 13.5px; color: var(--muted); margin: 0 0 4px; max-width: 62ch; }
+    .lvl-desc { font-size: 12.5px; color: var(--muted); margin: 0; line-height: 1.5; flex: 1; }
+    .context-block { margin: 4px 0 2px; }
+    .context-foot { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; margin: 6px 0 2px; max-width: 62ch; }
+    .kicker { font-size: 11px; text-transform: uppercase; letter-spacing: 0.14em; color: var(--faint); margin: 0 0 14px; font-weight: 600; }
+
+    /* --- The strategy table. Activity on the left, frequency on the right, a hairline
+           between rows and nothing else competing for the eye. Ported from the app's own
+           Strategy Library so a plan reads the same in both places. */
+    .table-wrap { margin-top: 22px; }
+    .table-caption { display: flex; align-items: baseline; gap: 8px; margin: 0 0 7px; }
+    .table-title { font-size: 12px; font-weight: 700; color: var(--ink); text-transform: uppercase; letter-spacing: 0.09em; }
+    .table-count { font-size: 11px; color: var(--faint); font-variant-numeric: tabular-nums; }
+    .stable { border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+    .table-head { display: flex; align-items: center; gap: 10px; background: var(--hover); padding: 8px 12px; border-bottom: 1px solid var(--line); }
+    .table-head span { font-size: 10px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.07em; }
+    .head-main { flex: 1; }
+    .head-levels { width: 54px; text-align: center; }
+    .head-freq { width: 92px; text-align: right; }
+    .table-hint { font-size: 11px; color: var(--faint); margin: 6px 0 0; line-height: 1.45; max-width: 66ch; }
+    .more-line { margin: 10px 0 0; }
+    .more-line .linklike { font-size: 12px; font-weight: 600; color: var(--muted); }
+
+    .act-row { display: flex; align-items: flex-start; gap: 10px; padding: 11px 12px; width: 100%; text-align: left; background: none; font: inherit; cursor: pointer; }
+    .act-row.static { cursor: default; }
+    .act-row.ruled { border-top: 1px solid var(--line); }
+    .act-row:not(.static):hover { background: var(--hover); }
+    .act-main { flex: 1; display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px; min-width: 0; }
+    .act-title { font-size: 13.5px; color: var(--ink); line-height: 1.4; }
+    .act-tag { font-size: 9px; font-weight: 700; color: var(--faint); text-transform: uppercase; letter-spacing: 0.06em; }
+    .lvl-cell { width: 54px; display: flex; justify-content: center; gap: 4px; padding-top: 2px; }
+    /* Dim means the plan drops it at that level; lit means it stays. Safety work is lit
+       across all three, which is what the footnote under the table explains. */
+    .lvl-dot { font-size: 10px; font-weight: 700; color: var(--faint); opacity: 0.35; }
+    .lvl-dot.on { color: var(--ink); opacity: 1; }
+    .freq-cell { width: 92px; display: flex; flex-direction: column; align-items: flex-end; }
+    .freq { font-size: 12px; font-weight: 600; color: var(--ink); text-align: right; line-height: 1.5; font-variant-numeric: tabular-nums; }
+    .freq-sub { font-size: 10px; color: var(--faint); text-align: right; font-variant-numeric: tabular-nums; }
+    .freq-pn { font-size: 11px; color: var(--muted); text-align: right; line-height: 1.5; font-variant-numeric: tabular-nums; }
+
+    /* --- everything the row was hiding, one click down */
+    .act-detail { background: var(--hover); border-top: 1px solid var(--line); padding: 10px 12px; display: flex; flex-direction: column; gap: 4px; }
+    .d-line { font-size: 11.5px; color: var(--body); line-height: 1.55; margin: 0; max-width: 74ch; }
+    .d-bullet { font-size: 11.5px; color: var(--body); line-height: 1.55; margin: 0; padding-left: 8px; }
+    .ev-box { border-left: 2px solid var(--line); padding-left: 10px; margin-top: 2px; }
+    .ev-quote { font-size: 11.5px; color: var(--muted); font-style: italic; line-height: 1.55; margin: 0; max-width: 74ch; }
+    .ev-meta { font-size: 10px; color: var(--faint); margin: 4px 0 0; }
+    .ev-meta a { color: var(--muted); font-weight: 700; text-decoration: none; }
+    .ev-meta a:hover { text-decoration: underline; }
+    .empty-detail { font-size: 14px; color: var(--muted); line-height: 1.6; margin-top: 12px; }
     .str-session { margin-left: auto; display: flex; align-items: center; gap: 10px; font-size: 12.5px; color: var(--faint); }
     .linklike { appearance: none; background: none; border: 0; cursor: pointer; font: inherit; font-size: 12.5px; color: var(--muted); text-decoration: underline; padding: 0; }
     .linklike:hover { color: var(--ink); }
@@ -206,28 +252,6 @@
     .manual-btn { margin: 4px 0 8px; }
     .src-note { font-size: 14px; color: var(--muted); max-width: 62ch; margin: 0 0 6px; }
     .src-link { font-size: 13.5px; }
-    .task-list { border-top: 1px solid var(--line); margin-top: 6px; }
-    .task { border-bottom: 1px solid var(--line); padding: 12px 2px; max-width: 70ch; }
-    .task .t-line { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
-    .task .t-title { font-size: 14.5px; font-weight: 550; color: var(--ink); }
-    .task .t-int { font-size: 13px; color: var(--muted); white-space: nowrap; }
-    .task .t-src { font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.1em; padding: 2px 8px; border-radius: 999px; border: 1px solid var(--line); color: var(--faint); }
-    .task .t-src.oem { color: var(--ink); border-color: var(--ink); }
-    /* Safety-critical work. The one place this page spends a colour, because
-       "never dropped, whatever level you pick" has to be visible, not just said. */
-    .task .t-safety { font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.1em; padding: 2px 8px; border-radius: 999px; border: 1px solid #c08a84; color: #9c2b2b; white-space: nowrap; }
-    .task .t-cond { font-size: 12.5px; color: var(--muted); margin-top: 5px; max-width: 62ch; }
-    .task .t-cond b { font-weight: 600; color: var(--body); }
-    .task .t-comp { font-size: 12px; color: var(--faint); margin-top: 2px; }
-    .task .t-note { font-size: 13px; color: var(--muted); margin-top: 5px; max-width: 62ch; }
-    .task details { margin-top: 5px; }
-    .task summary { font-size: 12px; color: var(--faint); cursor: pointer; }
-    .task summary:hover { color: var(--muted); }
-    .task blockquote { margin: 6px 0 0 0; padding: 6px 12px; border-left: 2px solid var(--line); font-size: 13px; color: var(--muted); font-style: italic; }
-    .task .t-evsrc { font-size: 12px; color: var(--faint); font-style: normal; }
-    .spares-list { display: flex; flex-direction: column; gap: 0; border-top: 1px solid var(--line); max-width: 62ch; }
-    .spare { display: flex; justify-content: space-between; gap: 16px; border-bottom: 1px solid var(--line); padding: 9px 2px; font-size: 14px; }
-    .spare .pn { font-family: var(--mono); font-size: 12.5px; color: var(--muted); white-space: nowrap; }
     .tier-note { font-size: 12.5px; color: var(--faint); margin-top: 14px; max-width: 62ch; }
 
     footer {
@@ -693,6 +717,9 @@
       var nav = { cat: null, make: null };
       var current = null;           // strategy open in the detail view
       var level = 'medium';         // which of the three plans is showing
+      var allLevels = false;        // compare all three at once, as H M L marks
+      var severe = false;           // is this machine worked hard?
+      var rowOpen = {};             // which activity rows are expanded
 
       function setMsg(text, isErr) {
         el.msg.textContent = text || '';
@@ -758,16 +785,16 @@
       }
 
       var KIND_LABELS = {
-        'model': 'Make and model',
-        'make': 'Whole-make guide',
-        'type-default': 'Typical practice',
-        'no-published-schedule': 'No published schedule',
-        'condition-based': 'Condition-based'
+        'model': 'Make and Model',
+        'make': 'Whole-Make Guide',
+        'type-default': 'Typical Practice',
+        'no-published-schedule': 'No Published Schedule',
+        'condition-based': 'Condition-Based'
       };
       var LEVELS = [
-        { id: 'high', name: 'High', desc: 'This machine can’t be down. The full plan: everything on the maker’s list, plus every routine check.' },
-        { id: 'medium', name: 'Medium', desc: 'Standard care, and what the app assumes if you never pick a level. The plan most owners should run.' },
-        { id: 'low', name: 'Low', desc: 'A spare or lightly used machine. The essentials only — and anything safety-related stays in whatever you pick.' }
+        { id: 'high', name: 'High', desc: 'This machine can’t be down. Everything the maker lists, plus every routine check.' },
+        { id: 'medium', name: 'Medium', desc: 'Standard care. What the app assumes if you never pick a level.' },
+        { id: 'low', name: 'Low', desc: 'A spare or lightly used machine. The essentials — safety work stays whatever you pick.' }
       ];
 
       function yearsText(y) {
@@ -799,55 +826,167 @@
         return nm;
       }
       function fmtNum(n) { return n.toLocaleString('en-US'); }
-      function daysText(d) {
-        if (d === 1) return 'day';
-        if (d % 365 === 0) return (d === 365 ? '12 months' : (d / 365) + ' years');
+
+      // 30,000 -> 30K. Only for the trailing milestones on a car schedule, where the
+      // whole run has to fit one narrow line; the first is always printed in full.
+      function compactNum(n) {
+        if (n >= 1000 && n % 100 === 0) {
+          var k = n / 1000;
+          return (k === Math.floor(k) ? String(k) : k.toFixed(1)) + 'K';
+        }
+        return fmtNum(n);
+      }
+
+      // The frequency column is the width of two words, so the units are the ones people
+      // write on a service sticker rather than the ones the schedule spells out.
+      function shortUnit(u) {
+        if (!u) return '';
+        var k = String(u).toLowerCase();
+        if (k === 'miles' || k === 'mile') return 'mi';
+        if (k === 'kilometers' || k === 'kilometres' || k === 'km') return 'km';
+        if (k === 'hours' || k === 'hour' || k === 'hrs') return 'hr';
+        return u;
+      }
+
+      /** An interval as a period, not a sentence: Daily, Monthly, 6 Months, Yearly. */
+      function shortDays(d) {
+        if (d <= 1) return 'Daily';
+        if (d === 7) return 'Weekly';
+        if (d === 30 || d === 31) return 'Monthly';
+        if (d === 365) return 'Yearly';
+        if (d % 365 === 0) return (d / 365) + ' Years';
         if (d % 30 === 0) {
           var m = d / 30;
-          if (m % 12 === 0 && m >= 24) return (m / 12) + ' years';
-          return (m === 1 ? 'month' : m + ' months');
+          // Twelve months is a year however the document counted the days to get there:
+          // Honda's oil-life backstop is 360, and "1 Years" is nobody's way of saying it.
+          if (m % 12 === 0) return m === 12 ? 'Yearly' : (m / 12) + ' Years';
+          return m === 1 ? 'Monthly' : m + ' Months';
         }
-        if (d % 7 === 0 && d < 30) return (d === 7 ? 'week' : (d / 7) + ' weeks');
-        return d + ' days';
+        if (d % 7 === 0 && d < 60) return (d / 7) + ' Weeks';
+        if (d >= 350) {
+          var y = Math.round(d / 365);
+          return y === 1 ? 'Yearly' : y + ' Years';
+        }
+        if (d >= 28) {
+          var mm = Math.round(d / 30.44);
+          return mm === 1 ? 'Monthly' : mm + ' Months';
+        }
+        return d + ' Days';
       }
-      function intervalText(t) {
-        var parts = [];
-        if (t.intervalUsage) parts.push(fmtNum(t.intervalUsage) + (t.usageUnit ? ' ' + t.usageUnit : ''));
-        if (t.intervalDays) parts.push(daysText(t.intervalDays));
-        if (parts.length) return (t.once ? 'At ' : 'Every ') + parts.join(' or ');
+
+      /**
+       * What goes in the Frequency column. Two short lines at most: the machine's own clock
+       * on the first, the calendar backstop on the second, because "whichever comes first"
+       * is the whole point of an interval printed both ways.
+       */
+      function freqOf(t) {
+        var at = t.once ? 'At ' : '';
+        var usage = t.intervalUsage ? (fmtNum(t.intervalUsage) + ' ' + shortUnit(t.usageUnit)).trim() : '';
+        var time = t.intervalDays ? shortDays(t.intervalDays) : '';
+        if (usage && time) return { main: at + usage, sub: 'or ' + time };
+        if (usage) return { main: at + usage };
+        if (time) return { main: at + time };
         if (t.milestonesUsage && t.milestonesUsage.length) {
-          var ms = t.milestonesUsage.slice(0, 4).map(fmtNum).join(', ');
-          if (t.milestonesUsage.length > 4) ms += ', …';
-          return 'At ' + ms + (t.usageUnit ? ' ' + t.usageUnit : '');
+          var ms = t.milestonesUsage;
+          var rest = ms.slice(1, 4).map(compactNum);
+          return {
+            main: ('At ' + fmtNum(ms[0]) + ' ' + shortUnit(t.usageUnit)).trim(),
+            sub: rest.length ? 'then ' + rest.join(', ') + (ms.length > 4 ? '…' : '') : null
+          };
         }
-        if (t.onCondition) return 'When indicated';
-        return t.once ? 'Once' : 'As needed';
+        if (t.onCondition) return { main: 'When Indicated', sub: t.fallbackDays ? 'or ' + shortDays(t.fallbackDays) : null };
+        return { main: t.once ? 'Once' : 'As Needed' };
       }
-      // The car schedules are read out of manufacturer PDFs, and a few extraction
-      // artifacts ride along (log-page blanks, PDF glyph escapes). Keep them out of
-      // the display; the data itself is left as shipped.
+
+      // The car schedules are read out of manufacturer PDFs, and a few extraction artifacts
+      // ride along. Keep them off the screen; the data itself ships as-is.
       function isArtifact(t) {
-        return /_{3,}/.test(t.title) || t.title.indexOf('/uni') !== -1;
+        // A title ending in a colon is a chart heading the extractor took for a row -
+        // "If Equipped:", "perform these additional items:". None of them name work to do.
+        return /_{3,}/.test(t.title) || t.title.indexOf('/uni') !== -1 || /:\s*$/.test(t.title);
       }
       function cleanTitle(s) {
-        return String(s).replace(/[❑❏☐☑□]/g, '').replace(/\s+/g, ' ').trim();
+        return String(s)
+          .replace(/[❑❏☐☑□]/g, '')
+          // "(.)" is a footnote marker whose symbol didn't survive extraction, and
+          // "(Continued)" marks a chart row that spilled over - both are about the
+          // printed page, not the work.
+          .replace(/\((?:\.|Continued)\)/gi, '')
+          .replace(/\s+/g, ' ').trim();
+      }
+      // An activity is a label in a column, not a sentence, so a trailing full stop goes.
+      // Notes and quotes keep theirs - they are prose.
+      function titleText(s) {
+        var t = cleanTitle(s).replace(/\.$/, '');
+        // Some guides print their chart rows in lower case and extraction keeps them that
+        // way. Only the first letter, so an acronym further in is left as the maker wrote it.
+        return t.charAt(0).toUpperCase() + t.slice(1);
       }
       function esc(s) {
         return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
       }
 
       /* ----------------------------- the three plans */
-      function tasksOf(s) {
-        return (s.p || []).map(function (i) { return DATA.tasks[i]; })
-          .filter(function (t) { return t && !isArtifact(t); });
+
+      /**
+       * Shortest interval first, so a plan reads as a ladder: the daily look, then the
+       * seasonal work, then the thing that happens twice in the machine's life. A maker's
+       * chart is not printed in that order - a car schedule is usually alphabetical - and
+       * the order is where the shape of a strategy actually lives.
+       *
+       * A plan is measured on one axis or the other, so whichever axis it mostly uses
+       * decides the sort, and anything not on it keeps document order at the end. Nothing
+       * is converted between hours, miles and days: there is no honest exchange rate.
+       */
+      function orderTasks(tasks) {
+        var usageCount = tasks.filter(function (t) {
+          return t.intervalUsage || (t.milestonesUsage && t.milestonesUsage.length);
+        }).length;
+        var byUsage = usageCount > tasks.filter(function (t) { return t.intervalDays; }).length;
+        function key(t) {
+          if (byUsage) {
+            if (t.intervalUsage) return t.intervalUsage;
+            return (t.milestonesUsage && t.milestonesUsage.length) ? t.milestonesUsage[0] : null;
+          }
+          return t.intervalDays != null ? t.intervalDays : null;
+        }
+        return tasks.map(function (t, i) { return { t: t, i: i, k: key(t) }; })
+          .sort(function (a, b) {
+            if (a.k === null || b.k === null) {
+              return ((a.k === null ? 1 : 0) - (b.k === null ? 1 : 0)) || (a.i - b.i);
+            }
+            return (a.k - b.k) || (a.i - b.i);
+          })
+          .map(function (r) { return r.t; });
       }
+
+      function tasksOf(s) {
+        return orderTasks((s.p || []).map(function (i) { return DATA.tasks[i]; })
+          .filter(function (t) { return t && !isArtifact(t); }));
+      }
+      // Safety work is never dropped at any level - the same rule the app applies when the
+      // plan is actually deployed. The library has to show what would deploy.
       function tasksAt(s, lvl) {
-        return tasksOf(s).filter(function (t) { return !t.tiers || t.tiers.indexOf(lvl) !== -1; });
+        return tasksOf(s).filter(function (t) {
+          return !t.tiers || t.tiers.indexOf(lvl) !== -1 || t.safety;
+        });
       }
       function roundsAt(s, lvl) {
         return (s.rounds || []).filter(function (r) { return !r.tiers || r.tiers.indexOf(lvl) !== -1; });
       }
       function itemsAt(s, lvl) { return tasksAt(s, lvl).length + roundsAt(s, lvl).length; }
+
+      /**
+       * Which of three fates a task meets when the plan is deployed. 'unscheduled' is
+       * structural: condition-based and milestone work has no repeating interval to hang a
+       * task on. 'severe' is a policy choice: the interval is the maker's, but it applies
+       * only to an owner who works the machine the way the maker names.
+       */
+      function bucketOf(t) {
+        if (t.onCondition || (t.milestonesUsage && t.milestonesUsage.length)) return 'unscheduled';
+        if (t.severeOnly) return 'severe';
+        return 'scheduled';
+      }
 
       /* ----------------------------- auth */
       function showApp(session) {
@@ -1114,6 +1253,9 @@
       function openDetail(s) {
         current = s;
         level = 'medium';
+        allLevels = false;
+        severe = false;
+        rowOpen = {};
         render();
         el.detailView.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }
@@ -1139,135 +1281,303 @@
         return named.slice(0, -1).join(', ') + ' or ' + named[named.length - 1];
       }
 
-      // Rounds and scheduled work are the same shape apart from how often they come
-      // round, so both render through here and rounds stop losing their sources.
-      function taskHtml(t) {
-        var srcOem = t.source === 'oem';
-        var interval = t.cadenceDays ? 'Every ' + daysText(t.cadenceDays) : intervalText(t);
-        var h = '<div class="task"><div class="t-line">' +
-          '<span class="t-title">' + esc(cleanTitle(t.title)) + '</span>' +
-          '<span class="t-int">' + esc(interval) + '</span>' +
-          '<span class="t-src' + (srcOem ? ' oem' : '') + '">' + (srcOem ? 'Manufacturer' : 'Typical') + '</span>' +
-          (t.safety ? '<span class="t-safety">Safety</span>' : '') +
-          '</div>';
-        if (t.component) h += '<p class="t-comp">' + esc(t.component) + '</p>';
-        if (t.note) h += '<p class="t-note">' + esc(cleanTitle(t.note)) + '</p>';
-        if (t.severeOnly || t.severeConditions || t.severeUsage) {
-          var words = conditionsText(t.severeConditions);
-          var line = '<p class="t-cond"><b>Only if you work it hard</b> \u2014 ';
-          if (words) {
-            line += 'added for ' + esc(words) + '.';
-          } else {
-            line += 'the maker adds this under severe use' +
-              (t.severeOnly ? ': ' + esc(cleanTitle(t.severeOnly)) : '.');
+      /* ----------------------------- one row of the strategy table */
+
+      // Rounds and scheduled maintenance are different records with the same job on this
+      // screen: a thing to do, and how often. One shape lets one table render both.
+      function taskActivity(t, key) {
+        var f = freqOf(t);
+        return {
+          key: key, title: titleText(t.title), freq: f.main, freqSub: f.sub,
+          // Copied, not referenced: mergeSameWork unions tiers in place, and this array
+          // belongs to the shared strategy table every other screen reads.
+          tiers: (t.tiers || []).slice(), safety: !!t.safety, source: t.source,
+          component: t.component, note: t.note, severeOnly: t.severeOnly,
+          severeConditions: t.severeConditions, severeUsage: t.severeUsage,
+          usageUnit: t.usageUnit, onCondition: t.onCondition, parts: t.parts,
+          reading: t.reading, evidence: t.evidence,
+          sourceNote: t.sourceNote, sourceUrl: t.sourceUrl
+        };
+      }
+      function roundActivity(r, key) {
+        return {
+          key: key, title: titleText(r.title), freq: shortDays(r.cadenceDays || 7), freqSub: null,
+          tiers: (r.tiers || []).slice(), safety: false, source: r.source,
+          component: r.component, note: r.note, parts: r.parts, reading: r.reading,
+          evidence: r.evidence, sourceNote: r.sourceNote, sourceUrl: r.sourceUrl
+        };
+      }
+
+      /**
+       * The same job, listed once.
+       *
+       * A guide names its severe-service work per condition, so a Tacoma's oil change is
+       * printed under towing, under dusty roads and under extended idling - three chart rows
+       * for one job on one interval. Read straight out they become three identical lines,
+       * which reads as a bug. They are one activity several conditions ask for, and that is
+       * how it is shown: merged on title and interval, every condition named inside.
+       */
+      function mergeSameWork(acts) {
+        var out = [], at = {};
+        acts.forEach(function (a) {
+          var k = a.title + '|' + a.freq + '|' + (a.freqSub || '');
+          var seen = at[k];
+          if (!seen) { at[k] = a; out.push(a); return; }
+          if (a.severeOnly && seen.severeOnly && seen.severeOnly.indexOf(a.severeOnly) === -1) {
+            seen.severeOnly = seen.severeOnly + '\n' + a.severeOnly;
           }
-          if (t.severeUsage) {
-            line += ' Then it is due every ' + esc(fmtNum(t.severeUsage) +
-              (t.usageUnit ? ' ' + t.usageUnit : '')) + ' instead.';
-          }
-          h += line + '</p>';
+          (a.severeConditions || []).forEach(function (c) {
+            if (!seen.severeConditions) seen.severeConditions = [];
+            if (seen.severeConditions.indexOf(c) === -1) seen.severeConditions.push(c);
+          });
+          a.tiers.forEach(function (t) { if (seen.tiers.indexOf(t) === -1) seen.tiers.push(t); });
+          seen.safety = seen.safety || a.safety;
+        });
+        return out;
+      }
+
+      function activityHtml(a, first, showLevels, mixed) {
+        // The two markers the table carries. Safety is the other thing a row could announce,
+        // but most of a car schedule is safety work, so a tag on nearly every line would say
+        // nothing - it shows instead as the level it holds, and the row explains when opened.
+        var tags = [];
+        if (a.severeOnly) tags.push('Severe');
+        if (mixed && a.source === 'typical') tags.push('Typical');
+
+        var h = '<div class="act-row' + (first ? '' : ' ruled') + '" data-row="' + esc(a.key) + '"' +
+          ' role="button" tabindex="0" aria-expanded="' + (rowOpen[a.key] ? 'true' : 'false') + '">' +
+          '<span class="act-main"><span class="act-title">' + esc(a.title) + '</span>' +
+          tags.map(function (t) { return '<span class="act-tag">' + t + '</span>'; }).join('') +
+          '</span>';
+        if (showLevels) {
+          h += '<span class="lvl-cell">' + LEVELS.map(function (l) {
+            var on = a.tiers.indexOf(l.id) !== -1 || a.safety;
+            return '<span class="lvl-dot' + (on ? ' on' : '') + '">' + l.name.charAt(0) + '</span>';
+          }).join('') + '</span>';
         }
-        if (t.onCondition) h += '<p class="t-note">Due when the machine indicates: ' + esc(cleanTitle(t.onCondition)) + '</p>';
-        if (t.parts && t.parts.length) h += '<p class="t-note">Parts: ' + esc(t.parts.join(', ')) + '</p>';
-        if (t.reading && t.reading.unit) {
-          h += '<p class="t-note">Write down a reading in ' + esc(t.reading.unit) +
-            (t.reading.min != null && t.reading.max != null
-              ? ' (aim for ' + esc(fmtNum(t.reading.min)) + '\u2013' + esc(fmtNum(t.reading.max)) + ')'
+        h += '<span class="freq-cell"><span class="freq">' + esc(a.freq) + '</span>' +
+          (a.freqSub ? '<span class="freq-sub">' + esc(a.freqSub) + '</span>' : '') +
+          '</span></div>';
+
+        if (!rowOpen[a.key]) return h;
+
+        var d = '<div class="act-detail">';
+        if (a.component) d += '<p class="d-line">' + esc(a.component) + '</p>';
+        if (a.note) d += '<p class="d-line">' + esc(cleanTitle(a.note)) + '</p>';
+        if (a.severeConditions && conditionsText(a.severeConditions)) {
+          d += '<p class="d-line">Added only if you work it hard — ' +
+            esc(conditionsText(a.severeConditions)) + '.</p>';
+        }
+        if (a.severeOnly) {
+          // mergeSameWork joins the conditions with a newline, and cleanTitle would collapse
+          // it - four conditions would read as one run-on sentence. They are a list.
+          var conds = a.severeOnly.split('\n').map(cleanTitle).filter(Boolean);
+          if (conds.length === 1) {
+            d += '<p class="d-line">Under severe use: ' + esc(conds[0]) + '</p>';
+          } else {
+            d += '<p class="d-line">Under severe use, any of:</p>' +
+              conds.map(function (c) { return '<p class="d-bullet">•&nbsp; ' + esc(c) + '</p>'; }).join('');
+          }
+        }
+        if (a.severeUsage) {
+          d += '<p class="d-line">Under those conditions it is due every ' +
+            esc(fmtNum(a.severeUsage) + (a.usageUnit ? ' ' + shortUnit(a.usageUnit) : '')) + ' instead.</p>';
+        }
+        if (a.onCondition) d += '<p class="d-line">Due when the machine indicates: ' + esc(cleanTitle(a.onCondition)) + '</p>';
+        if (a.parts && a.parts.length) d += '<p class="d-line">Parts: ' + esc(a.parts.join(', ')) + '</p>';
+        if (a.reading && a.reading.unit) {
+          d += '<p class="d-line">Write down a reading in ' + esc(a.reading.unit) +
+            (a.reading.min != null && a.reading.max != null
+              ? ' (aim for ' + esc(fmtNum(a.reading.min)) + '\u2013' + esc(fmtNum(a.reading.max)) + ')'
               : '') + '.</p>';
         }
-        if (t.evidence && t.evidence.quote) {
-          h += '<details><summary>Where this comes from</summary><blockquote>&ldquo;' + esc(t.evidence.quote) + '&rdquo;' +
-            '<div class="t-evsrc">' + (t.evidence.page ? 'Page ' + esc(t.evidence.page) + ' · ' : '') +
-            (t.evidence.url ? '<a href="' + esc(t.evidence.url) + '" target="_blank" rel="noopener">source document &nearr;</a>' : '') +
-            '</div></blockquote></details>';
-        } else if (t.sourceNote || t.sourceUrl) {
-          // No line worth quoting, but the maker still said something worth reading.
-          h += '<p class="t-note">' + (t.sourceNote ? esc(cleanTitle(t.sourceNote)) + ' ' : '') +
-            (t.sourceUrl ? '<a href="' + esc(t.sourceUrl) + '" target="_blank" rel="noopener">Read the source &nearr;</a>' : '') +
-            '</p>';
+        if (a.safety) d += '<p class="d-line">Safety-related, so it stays in the plan at every level.</p>';
+        if (a.evidence && a.evidence.quote) {
+          d += '<div class="ev-box"><p class="ev-quote">&ldquo;' + esc(a.evidence.quote) + '&rdquo;</p>' +
+            '<p class="ev-meta">' + (a.evidence.page ? 'Page ' + esc(a.evidence.page) : '') +
+            (a.evidence.url ? (a.evidence.page ? '&nbsp;&nbsp;·&nbsp;&nbsp;' : '') +
+              '<a href="' + esc(a.evidence.url) + '" target="_blank" rel="noopener">Source Document &nearr;</a>' : '') +
+            '</p></div>';
+        } else if (a.sourceNote || a.sourceUrl) {
+          d += '<p class="d-line">' + (a.sourceNote ? esc(cleanTitle(a.sourceNote)) + ' ' : '') +
+            (a.sourceUrl ? '<a href="' + esc(a.sourceUrl) + '" target="_blank" rel="noopener">Read the source &nearr;</a>' : '') + '</p>';
+        } else {
+          d += '<p class="d-line">' + (a.source === 'oem'
+            ? 'From the manufacturer’s document.'
+            : 'Typical practice, not a manufacturer figure.') + '</p>';
         }
+        return h + d + '</div>';
+      }
+
+      function tableHtml(title, acts, showLevels, mixed, hint) {
+        if (!acts.length) return '';
+        var h = '<div class="table-wrap"><p class="table-caption">' +
+          '<span class="table-title">' + esc(title) + '</span>' +
+          '<span class="table-count">' + acts.length + '</span></p>' +
+          '<div class="stable"><div class="table-head">' +
+          '<span class="head-main">Activity</span>' +
+          (showLevels ? '<span class="head-levels">Levels</span>' : '') +
+          '<span class="head-freq">Frequency</span></div>';
+        acts.forEach(function (a, i) { h += activityHtml(a, i === 0, showLevels, mixed); });
+        h += '</div>';
+        if (hint) h += '<p class="table-hint">' + esc(hint) + '</p>';
         return h + '</div>';
       }
 
       function renderDetail() {
-        var s = current;
-        if (!s) return;
-        var tasks = tasksAt(s, level);
-        var rounds = roundsAt(s, level);
+        var x = current;
+        if (!x) return;
+        var every = tasksOf(x);
+        var atLevel = allLevels ? every : tasksAt(x, level);
+        var rounds = allLevels ? (x.rounds || []) : roundsAt(x, level);
         var lvlDef = LEVELS.filter(function (l) { return l.id === level; })[0];
+        var anyItems = itemsAt(x, 'high') + itemsAt(x, 'medium') + itemsAt(x, 'low');
+        var hasOverlay = every.some(function (t) { return t.tiersSource === 'relia-rcm'; });
+        // A tag on every row says nothing. The provenance marker earns its place only where
+        // a plan mixes the manufacturer's own figures with standard practice.
+        var mixed = every.some(function (t) { return t.source === 'oem'; }) &&
+                    every.some(function (t) { return t.source === 'typical'; });
 
-        var h = '<h3>' + esc(stratName(s)) + '</h3>' +
-          '<div class="chips" style="margin-bottom:14px;">' +
-          '<span class="chip on">' + esc(typeLabel(s.equipmentType)) + '</span>' +
-          '<span class="chip">' + esc(KIND_LABELS[s.kind] || s.kind) + '</span>' +
-          '</div>';
+        // Filtered out of the one ordered list rather than concatenated from two, so the
+        // ladder holds: a severe item due at 15,000 miles sits between the 7,500 and the
+        // 30,000 mile work, which is the whole reason the rows were sorted.
+        function activities(list, prefix) {
+          return mergeSameWork(list.map(function (t, i) { return taskActivity(t, prefix + i); }));
+        }
+        var ordinary = activities(atLevel.filter(function (t) { return bucketOf(t) === 'scheduled'; }), 's');
+        var withSevere = activities(atLevel.filter(function (t) {
+          var b = bucketOf(t); return b === 'scheduled' || b === 'severe';
+        }), 's');
+        var tasks = severe ? withSevere : ordinary;
+        var unscheduled = activities(atLevel.filter(function (t) { return bucketOf(t) === 'unscheduled'; }), 'u');
+        var severeCount = withSevere.length - ordinary.length;
+        var hasSevere = every.some(function (t) { return bucketOf(t) === 'severe'; });
 
-        if (s.note) h += '<p class="src-note">' + esc(s.note) + '</p>';
-        if (s.source && s.source.note) h += '<p class="src-note">' + esc(s.source.note) + '</p>';
-        if (s.source && s.source.url) {
-          h += '<p class="manual-btn"><a class="btn secondary" href="' + esc(s.source.url) + '" target="_blank" rel="noopener">Open the Manufacturer’s Document &nearr;</a></p>';
+        var h = '<h3>' + esc(stratName(x)) + '</h3>';
+        // A general plan already says its equipment type in the title; don't say it twice.
+        h += '<p class="kicker">' + [
+          (x.equipmentType && x.kind !== 'type-default') ? esc(typeLabel(x.equipmentType)) : null,
+          esc(KIND_LABELS[x.kind] || x.kind)
+        ].filter(Boolean).join('&nbsp;&nbsp;·&nbsp;&nbsp;') + '</p>';
+
+        if (x.note) h += '<p class="src-note">' + esc(x.note) + '</p>';
+        if (x.source && x.source.note) h += '<p class="src-note">' + esc(x.source.note) + '</p>';
+        if (x.source && x.source.url) {
+          h += '<p class="manual-btn"><a class="btn secondary" href="' + esc(x.source.url) +
+            '" target="_blank" rel="noopener">Open the Manufacturer’s Document &nearr;</a></p>';
         }
 
-        var anyItems = itemsAt(s, 'high') + itemsAt(s, 'medium') + itemsAt(s, 'low');
-        if (anyItems) {
-          h += '<p class="meta-label">How critical is this machine to you?</p>';
+        if (anyItems > 0) {
+          h += '<div class="context-block">';
+          h += '<p class="meta-label">How Critical Is This Machine?</p>';
           h += '<div class="lvl-row" role="group" aria-label="Criticality level">';
           LEVELS.forEach(function (l) {
-            var n = itemsAt(s, l.id);
-            h += '<button class="lvl' + (l.id === level ? ' on' : '') + '" data-l="' + l.id + '">' +
-              '<span class="ln">' + l.name + '</span>' +
-              '<span class="lc">' + n + (n === 1 ? ' item' : ' items') + '</span>' +
-              '</button>';
+            var on = !allLevels && l.id === level;
+            h += '<button class="lvl' + (on ? ' on' : '') + '" data-l="' + l.id + '">' +
+              '<span class="ln">' + l.name + '</span></button>';
           });
           h += '</div>';
-          h += '<p class="lvl-desc">' + esc(lvlDef.desc) + '</p>';
-        }
+          h += '<div class="context-foot"><p class="lvl-desc">' +
+            (allLevels ? 'Every activity in the plan, with the levels each one belongs to.' : esc(lvlDef.desc)) +
+            '</p><button class="linklike" id="cmp-all">' +
+            (allLevels ? 'Back to One Level' : 'Compare All Three') + '</button></div>';
 
-        if (rounds.length) {
-          h += '<p class="meta-label">Routine Checks</p><div class="task-list">';
-          rounds.forEach(function (r) {
-            h += taskHtml(r.cadenceDays ? r : Object.assign({}, r, { cadenceDays: 7 }));
-          });
-          h += '</div>';
-        }
-
-        if (tasks.length) {
-          h += '<p class="meta-label">Scheduled maintenance</p><div class="task-list">';
-          tasks.forEach(function (t) { h += taskHtml(t); });
-          h += '</div>';
-        }
-
-        if (!tasks.length && !rounds.length) {
-          if (s.kind === 'no-published-schedule') {
-            h += '<p style="color:var(--muted);">No schedule to show. This manufacturer doesn’t publish interval data, and the library refuses to invent it. In the app, a machine like this falls back on the general plan for its equipment type.</p>';
-          } else if (anyItems) {
-            h += '<p style="color:var(--muted);">Nothing at the ' + esc(lvlDef.name.toLowerCase()) + ' level for this machine. Pick a higher level to see the plan.</p>';
-          } else {
-            h += '<p style="color:var(--muted);">This entry carries reference information rather than a task list.</p>';
+          // Only where the maker actually printed a severe-service condition. A control that
+          // does nothing on two thirds of the plans is furniture, not a choice.
+          if (hasSevere) {
+            h += '<p class="meta-label">How Hard Is Its Life?</p>';
+            h += '<div class="lvl-row" role="group" aria-label="Service severity">';
+            [{ id: '', name: 'Normal' }, { id: '1', name: 'Severe' }].forEach(function (o) {
+              var on = (!!o.id) === severe;
+              h += '<button class="lvl' + (on ? ' on' : '') + '" data-sev="' + o.id + '">' +
+                '<span class="ln">' + o.name + '</span></button>';
+            });
+            h += '</div><p class="lvl-desc">' + (severe
+              ? 'The extra work the maker asks for under the conditions it names — towing, dust, short trips, salt. Open a row to read the condition in the maker’s own words.'
+              : 'The plan for ordinary use. The maker also names extra work for hard service.') + '</p>';
           }
-        }
-
-        if (s.spares && s.spares.length) {
-          h += '<p class="meta-label">Spares worth keeping</p><div class="spares-list">';
-          s.spares.forEach(function (sp) {
-            h += '<div class="spare"><span>' + esc(sp.name) + '</span>' + (sp.partNumber ? '<span class="pn">' + esc(sp.partNumber) + '</span>' : '') + '</div>';
-          });
           h += '</div>';
         }
 
-        var hasOverlay = tasksOf(s).some(function (t) { return t.tiersSource === 'relia-rcm'; });
+        h += tableHtml('Routine Checks', rounds.map(function (r, i) { return roundActivity(r, 'r' + i); }), allLevels, mixed);
+        h += tableHtml('Scheduled Maintenance', tasks, allLevels, mixed,
+          allLevels
+            ? 'Safety work is kept at every level whatever the plan says, so its three marks are always lit.'
+            : every.some(function (t) { return t.source === 'oem'; })
+              ? 'Open any activity for the manufacturer’s own wording.'
+              : 'Open any activity for what sits behind it.');
+
+        // Under Normal the severe work is genuinely not in this owner's plan, but it is in
+        // the document, and a plan that silently drops seven activities is the kind of quiet
+        // lie this library exists not to tell. One line, which is also the way back to them.
+        if (!severe && severeCount > 0) {
+          h += '<p class="more-line"><button class="linklike" id="show-severe">' + severeCount +
+            ' more ' + (severeCount === 1 ? 'activity applies' : 'activities apply') +
+            ' only under hard service. Show them &rsaquo;</button></p>';
+        }
+
+        h += tableHtml('Not on a Schedule', unscheduled, allLevels, mixed,
+          'The maker asks for this work, but not at a repeating interval — it falls due when the '
+          + 'machine says so, or at odometer readings that don’t repeat. The app won’t put these on '
+          + 'your calendar, so they are yours to watch for.');
+
+        if (!tasks.length && !rounds.length && !unscheduled.length) {
+          h += '<p class="empty-detail">' + (x.kind === 'no-published-schedule'
+            ? 'No schedule to show. This manufacturer doesn’t publish interval data, and the library refuses to invent it. A machine like this falls back on the general plan for its equipment type.'
+            : anyItems > 0
+              ? 'Nothing at the ' + esc(lvlDef.name.toLowerCase()) + ' level for this machine. Pick a higher level to see the plan.'
+              : 'This entry carries reference information rather than a task list.') + '</p>';
+        }
+
+        if (x.spares && x.spares.length) {
+          var anyPn = x.spares.some(function (sp) { return sp.partNumber; });
+          h += '<div class="table-wrap"><p class="table-caption">' +
+            '<span class="table-title">Spares Worth Keeping</span>' +
+            '<span class="table-count">' + x.spares.length + '</span></p>' +
+            '<div class="stable"><div class="table-head"><span class="head-main">Part</span>' +
+            // Most spares are named, not numbered. An empty column is worse than no column.
+            (anyPn ? '<span class="head-freq">Number</span>' : '') + '</div>';
+          x.spares.forEach(function (sp, i) {
+            h += '<div class="act-row' + (i ? ' ruled' : '') + ' static">' +
+              '<span class="act-main"><span class="act-title">' + esc(sp.name) + '</span></span>' +
+              (sp.partNumber ? '<span class="freq-cell"><span class="freq-pn">' + esc(sp.partNumber) + '</span></span>' : '') +
+              '</div>';
+          });
+          h += '</div></div>';
+        }
+
         if (hasOverlay) {
           h += '<p class="tier-note">The split between High, Medium and Low on manufacturer schedules is ReliaLife’s own judgement, not the manufacturer’s. The intervals themselves are the manufacturer’s and are never changed.</p>';
         }
 
         el.detail.innerHTML = h;
-        Array.prototype.slice.call(el.detail.querySelectorAll('.lvl')).forEach(function (b) {
-          b.addEventListener('click', function () {
-            level = b.dataset.l;
+
+        Array.prototype.slice.call(el.detail.querySelectorAll('.lvl[data-l]')).forEach(function (b) {
+          b.addEventListener('click', function () { level = b.dataset.l; allLevels = false; renderDetail(); });
+        });
+        Array.prototype.slice.call(el.detail.querySelectorAll('.lvl[data-sev]')).forEach(function (b) {
+          b.addEventListener('click', function () { severe = !!b.dataset.sev; renderDetail(); });
+        });
+        var cmp = el.detail.querySelector('#cmp-all');
+        if (cmp) cmp.addEventListener('click', function () { allLevels = !allLevels; renderDetail(); });
+        var sev = el.detail.querySelector('#show-severe');
+        if (sev) sev.addEventListener('click', function () { severe = true; renderDetail(); });
+        // Every row opens. The table says to open any activity, so a row that ignored the
+        // click would read as broken - and the one thing every row can always answer is
+        // where it came from.
+        Array.prototype.slice.call(el.detail.querySelectorAll('.act-row[data-row]')).forEach(function (r) {
+          function toggle() {
+            var k = r.dataset.row;
+            if (rowOpen[k]) delete rowOpen[k]; else rowOpen[k] = true;
             renderDetail();
+          }
+          r.addEventListener('click', toggle);
+          r.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); }
           });
         });
       }
+
     })();
   </script>
 </body>
