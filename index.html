@@ -742,7 +742,14 @@
     </footer>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <!-- Pinned to one exact file with its hash: this script handles the sign-in password, so a changed
+       copy on the CDN must fail to load rather than run. The plain supabase.js, not .min.js, because
+       jsDelivr generates .min.js itself and it can change under a fixed hash. To upgrade: pick the
+       version, fetch dist/umd/supabase.js, and replace both the URL and
+       `openssl dgst -sha384 -binary supabase.js | openssl base64 -A`. -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.116.0/dist/umd/supabase.js"
+          integrity="sha384-iLddHTLokph6Omwoyid4XKxHaWa6w41BnoEj0q5oOrzmYPpHIKt1wyjReA7s//pP"
+          crossorigin="anonymous"></script>
   <script>
     /* ---------------------------------------------------------- section nav */
     (function () {
@@ -1064,6 +1071,13 @@
       function esc(s) {
         return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
       }
+      // Escaping does not make a link safe: `javascript:` survives it intact. Library links are
+      // scraped from manufacturers' sites, so only web addresses become links; anything else is
+      // treated as no link at all.
+      function webUrl(u) {
+        var s = String(u == null ? '' : u).trim();
+        return /^https?:\/\//i.test(s) ? s : '';
+      }
 
       /* ----------------------------- the three plans */
 
@@ -1251,7 +1265,7 @@
       function rowsHtml(rows) {
         if (!rows.length) return '';
         return '<div class="stable">' + rows.map(function (r) {
-          return '<button class="str-row" data-a="' + r.a + '">' +
+          return '<button class="str-row" data-a="' + esc(r.a) + '">' +
             '<span class="r-nm">' + esc(r.label) + '</span>' +
             (r.sub ? '<span class="r-k">' + esc(r.sub) + '</span>' : '') +
             '</button>';
@@ -1536,12 +1550,12 @@
         if (a.evidence && a.evidence.quote) {
           d += '<div class="ev-box"><p class="ev-quote">&ldquo;' + esc(a.evidence.quote) + '&rdquo;</p>' +
             '<p class="ev-meta">' + (a.evidence.page ? 'Page ' + esc(a.evidence.page) : '') +
-            (a.evidence.url ? (a.evidence.page ? '&nbsp;&nbsp;·&nbsp;&nbsp;' : '') +
-              '<a href="' + esc(a.evidence.url) + '" target="_blank" rel="noopener">Source Document &nearr;</a>' : '') +
+            (webUrl(a.evidence.url) ? (a.evidence.page ? '&nbsp;&nbsp;·&nbsp;&nbsp;' : '') +
+              '<a href="' + esc(webUrl(a.evidence.url)) + '" target="_blank" rel="noopener">Source Document &nearr;</a>' : '') +
             '</p></div>';
-        } else if (a.sourceNote || a.sourceUrl) {
+        } else if (a.sourceNote || webUrl(a.sourceUrl)) {
           d += '<p class="d-line">' + (a.sourceNote ? esc(cleanTitle(a.sourceNote)) + ' ' : '') +
-            (a.sourceUrl ? '<a href="' + esc(a.sourceUrl) + '" target="_blank" rel="noopener">Read the source &nearr;</a>' : '') + '</p>';
+            (webUrl(a.sourceUrl) ? '<a href="' + esc(webUrl(a.sourceUrl)) + '" target="_blank" rel="noopener">Read the source &nearr;</a>' : '') + '</p>';
         } else {
           d += '<p class="d-line">' + (a.source === 'oem'
             ? 'From the manufacturer’s document.'
@@ -1603,8 +1617,8 @@
 
         if (x.note) h += '<p class="src-note">' + esc(x.note) + '</p>';
         if (x.source && x.source.note) h += '<p class="src-note">' + esc(x.source.note) + '</p>';
-        if (x.source && x.source.url) {
-          h += '<p class="manual-btn"><a class="btn secondary" href="' + esc(x.source.url) +
+        if (x.source && webUrl(x.source.url)) {
+          h += '<p class="manual-btn"><a class="btn secondary" href="' + esc(webUrl(x.source.url)) +
             '" target="_blank" rel="noopener">Open the Manufacturer’s Document &nearr;</a></p>';
         }
 
