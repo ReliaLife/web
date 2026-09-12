@@ -64,12 +64,47 @@
     /* Above this width the hero copy and the two doors sit side by side; below it they
        stack, which is the original single-column hero. */
     @media (min-width: 1080px) {
-      .hero { display: grid; grid-template-columns: minmax(0, 1.02fr) minmax(0, 0.98fr); gap: 60px; align-items: center; }
+      .hero { display: grid; grid-template-columns: minmax(0, 0.84fr) minmax(0, 1.16fr); gap: 56px; align-items: center; }
       .hero .lead { margin-bottom: 0; }
-      .doors { max-width: none; }
+      .doors { max-width: none; grid-template-columns: 1fr 1fr 1.08fr; }
+      .doors.no-stats { grid-template-columns: 1fr 1fr; }
+    }
+
+    /* --- The library in four numbers. Read live from a small public file the publisher
+           rewrites on every library build, so they move when the library does. It sits in
+           the doors row, but it is not a door: no hover, no link, a filled ground instead
+           of an outline, and the numbers set in the headline face so they read at a glance. */
+    .lib-stats {
+      grid-column: 1 / -1; border-radius: 10px; padding: 18px 20px 14px;
+      background: var(--hover); border: 1px solid var(--line);
+      display: flex; flex-direction: column; justify-content: space-between; gap: 12px;
+    }
+    .lib-stats .k { font-size: 11px; text-transform: uppercase; letter-spacing: 0.16em; color: var(--faint); font-weight: 600; }
+    .ls-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px 18px; }
+    .ls-cell { min-width: 0; }
+    .ls-n {
+      display: block; font-family: Georgia, 'Times New Roman', serif; font-size: 28px; line-height: 1.05;
+      color: var(--ink); font-variant-numeric: tabular-nums lining-nums; letter-spacing: -0.01em;
+      transition: opacity .3s ease;
+    }
+    .ls-l { display: block; font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); font-weight: 600; margin-top: 4px; line-height: 1.3; }
+    .lib-stats.loading .ls-n { opacity: 0.25; }
+    /* display:flex above would otherwise beat the browser's own [hidden] rule. */
+    .lib-stats[hidden] { display: none; }
+    .ls-when { font-size: 11px; color: var(--faint); margin: 0; }
+    @media (prefers-reduced-motion: reduce) { .ls-n { transition: none; } }
+    @media (max-width: 560px) {
+      .ls-grid { grid-template-columns: 1fr 1fr; row-gap: 14px; }
+    }
+    /* Declared after the base rules on purpose: at equal specificity the later rule wins,
+       and inside the early hero block this lost to grid-column: 1 / -1 below it. */
+    @media (min-width: 1080px) {
+      .lib-stats { grid-column: auto; }
+      .lib-stats .ls-grid { grid-template-columns: 1fr 1fr; row-gap: 14px; }
     }
     .door {
       appearance: none; font: inherit; text-align: left; cursor: pointer; background: none;
+      display: flex; flex-direction: column; justify-content: flex-start;
       border: 1px solid var(--line); border-radius: 10px; padding: 20px 22px;
       transition: background .12s ease, border-color .12s ease;
     }
@@ -348,6 +383,16 @@
           <span class="nm">ReliaPro</span>
           <span class="d-p">For coffee shops, breweries, wineries, laundromats. Anywhere a broken machine costs you a day of business.</span>
         </button>
+        <div class="lib-stats loading" id="lib-stats" aria-live="polite">
+          <span class="k">In the Library</span>
+          <div class="ls-grid">
+            <div class="ls-cell"><span class="ls-n" data-stat="equipmentTypes">&mdash;</span><span class="ls-l">Equipment Types</span></div>
+            <div class="ls-cell"><span class="ls-n" data-stat="makes">&mdash;</span><span class="ls-l">Makes</span></div>
+            <div class="ls-cell"><span class="ls-n" data-stat="models">&mdash;</span><span class="ls-l">Models</span></div>
+            <div class="ls-cell"><span class="ls-n" data-stat="strategies">&mdash;</span><span class="ls-l">Maintenance Strategies</span></div>
+          </div>
+          <p class="ls-when" id="lib-stats-when">&nbsp;</p>
+        </div>
       </div>
     </section>
 
@@ -751,6 +796,42 @@
           integrity="sha384-iLddHTLokph6Omwoyid4XKxHaWa6w41BnoEj0q5oOrzmYPpHIKt1wyjReA7s//pP"
           crossorigin="anonymous"></script>
   <script>
+    /* ---------------------------------------------------------- the library in numbers */
+    // Public on purpose: four aggregate counts say nothing about what is in a plan, so any
+    // visitor can see them while the strategies themselves stay behind sign-in. The
+    // publisher recomputes this file from the very bytes it uploads, so these numbers and
+    // the Strategy Library's own count can never disagree. If the file cannot be reached
+    // the card leaves the page rather than show a number it cannot vouch for.
+    (function () {
+      var card = document.getElementById('lib-stats');
+      if (!card) return;
+      var url = 'https://nudusciaguyhpqosousr.supabase.co/storage/v1/object/public/strategy-stats/stats.json?cb=' + Date.now();
+      fetch(url).then(function (r) {
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        return r.json();
+      }).then(function (st) {
+        var ok = ['equipmentTypes', 'makes', 'models', 'strategies'].every(function (k) {
+          return typeof st[k] === 'number' && st[k] > 0;
+        });
+        if (!ok) throw new Error('incomplete counts');
+        Array.prototype.slice.call(card.querySelectorAll('[data-stat]')).forEach(function (el) {
+          el.textContent = st[el.getAttribute('data-stat')].toLocaleString('en-US');
+        });
+        var when = document.getElementById('lib-stats-when');
+        if (when && st.generatedAt) {
+          // A calendar date in the reader's own time zone, never the UTC instant.
+          var d = new Date(st.generatedAt);
+          if (!isNaN(d)) {
+            when.textContent = 'Updated ' + d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+          }
+        }
+        card.classList.remove('loading');
+      }).catch(function () {
+        card.hidden = true;
+        if (card.parentNode) card.parentNode.classList.add('no-stats');
+      });
+    })();
+
     /* ---------------------------------------------------------- section nav */
     (function () {
       var buttons = Array.prototype.slice.call(document.querySelectorAll('.sec-btn'));
