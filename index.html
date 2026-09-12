@@ -848,7 +848,17 @@
         'pool-equipment': 'Pool Pump and Equipment',
         'atv-utv': 'ATV or Side-by-Side',
         'pos-terminal': 'POS Terminal',
-        'walk-in-cooler': 'Walk-In Cooler'
+        'walk-in-cooler': 'Walk-In Cooler',
+        'blending-tank': 'Blending and Proofing Tank', 'barrel-rack': 'Barrel Rack and Rickhouse',
+        'barrel-filler': 'Barrel Filler and Emptier',
+        'in-bay-automatic': 'In-Bay Automatic', 'self-serve-bay': 'Self-Serve Wash Bay',
+        'high-pressure-pump-station': 'High-Pressure Pump Station', 'blower-dryer': 'Blower and Dryer',
+        'glass-front-cooler': 'Glass-Front Cooler', 'reach-in-freezer': 'Reach-In Freezer',
+        'market-kiosk': 'Self-Checkout Kiosk', 'market-shelving': 'Shelving and Fixtures',
+        'griddle-charbroiler': 'Griddle or Charbroiler',
+        'steam-table-holding': 'Steam Table and Holding Cabinet',
+        'food-disposer': 'Food Waste Disposer', 'exhaust-hood': 'Exhaust Hood and Make-Up Air',
+        'soda-fountain': 'Soda Fountain and Dispenser'
       };
       function typeLabel(t) {
         if (TYPE_LABELS[t]) return TYPE_LABELS[t];
@@ -857,25 +867,30 @@
         }).join(' ');
       }
 
-      // Category -> Make -> Model is the shape of the library. Anything commercial
-      // that is not tied to one trade lands in the shared-equipment catch-all.
+      // Category -> Make -> Model is the shape of the library. This map is copied from
+      // app/strategy-library.tsx, which owns it; anything not listed falls through to the
+      // shared-shop catch-all at the end, so a new equipment type still appears.
       var CATS = [
         { id: 'vehicles', name: 'Vehicles', types: ['car', 'base-car'] },
-        { id: 'house', name: 'Around the House', types: ['base-home', 'base-pet-care', 'standby-generator', 'central-hvac', 'tankless-water-heater', 'home-water-heater', 'home-boiler', 'whole-house-humidifier', 'water-softener', 'sump-pump', 'pool-equipment', 'garage-door-opener'] },
-        { id: 'appliances', name: 'Appliances', types: ['base-appliance', 'home-refrigerator', 'home-dishwasher', 'home-washer', 'home-dryer', 'home-range', 'garbage-disposal'] },
-        { id: 'garden', name: 'Lawn & Garden', types: ['base-lawn-garden', 'riding-mower', 'walk-behind-mower', 'chainsaw', 'portable-generator', 'snow-blower'] },
-        { id: 'boats', name: 'Boats & Watercraft', types: ['base-watercraft', 'outboard-motor', 'sterndrive', 'personal-watercraft'] },
-        { id: 'powersports', name: 'Powersports', types: ['motorcycle', 'atv-utv'] },
-        { id: 'aircraft', name: 'Aircraft', types: ['base-aircraft', 'piston-aircraft-engine', 'piston-airplane'] },
-        { id: 'firearms', name: 'Firearms', types: ['base-firearm', 'pistol', 'rifle', 'shotgun'] },
+        { id: 'house', name: 'Around the House', types: ['base-home', 'base-pet-care', 'standby-generator', 'central-hvac', 'tankless-water-heater', 'home-water-heater', 'home-boiler', 'whole-house-humidifier', 'water-softener', 'sump-pump', 'pool-equipment', 'garage-door-opener', 'well-pump', 'home-water-filter', 'dehumidifier', 'window-ac', 'wood-stove', 'smoke-co-alarm', 'fire-extinguisher', 'ev-charger', 'irrigation-system', 'septic-system', 'hot-tub', 'hrv-erv', 'radon-fan', 'solar-pv', 'roof', 'gutters', 'siding', 'windows-doors', 'deck', 'driveway', 'fence', 'foundation-drainage'] },
+        { id: 'appliances', name: 'Appliances', types: ['base-appliance', 'home-refrigerator', 'home-dishwasher', 'home-washer', 'home-dryer', 'home-range', 'garbage-disposal', 'range-hood', 'over-range-microwave', 'home-freezer', 'air-purifier', 'wall-oven', 'countertop-microwave', 'wine-cooler', 'home-ice-maker', 'coffee-maker', 'vacuum-cleaner', 'robot-vacuum'] },
+        { id: 'garden', name: 'Lawn & Garden', types: ['base-lawn-garden', 'riding-mower', 'walk-behind-mower', 'chainsaw', 'portable-generator', 'snow-blower', 'pressure-washer', 'string-trimmer', 'leaf-blower'] },
+        { id: 'boats', name: 'Boats & Watercraft', types: ['base-watercraft', 'outboard-motor', 'sterndrive', 'personal-watercraft', 'boat-hull', 'marine-diesel', 'marine-generator', 'trolling-motor', 'boat-trailer', 'sailboat-rig'] },
+        { id: 'garageshop', name: 'Garage & Home Shop', types: ['garage-air-compressor', 'cordless-tool-kit', 'home-welder', 'shop-vacuum', 'bench-grinder', 'floor-jack', 'battery-charger', 'home-table-saw', 'home-miter-saw', 'home-drill-press'] },
+        { id: 'powersports', name: 'Powersports', types: ['base-powersports', 'motorcycle', 'atv-utv', 'snowmobile', 'dirt-bike', 'scooter', 'golf-cart', 'e-bike'] },
+        { id: 'aircraft', name: 'Aircraft', types: ['base-aircraft', 'piston-aircraft-engine', 'piston-airplane', 'aircraft-propeller', 'experimental-aircraft', 'helicopter'] },
+        { id: 'firearms', name: 'Firearms', types: ['base-firearm', 'pistol', 'revolver', 'rifle', 'shotgun', 'muzzleloader', 'air-rifle', 'gun-safe', 'reloading-press', 'riflescope'] },
         { id: 'coffee', name: 'Coffee & Café', types: ['espresso-machine', 'espresso-grinder', 'batch-brewer', 'cold-brew', 'blender', 'knock-box'] },
         { id: 'brewery', name: 'Brewery', types: ['brew-kettle', 'mash-tun', 'fermenter', 'glycol-chiller', 'heat-exchanger', 'canning-line'] },
         { id: 'winery', name: 'Winery', types: ['destemmer-crusher', 'must-pump', 'wine-press', 'barrel-washer'] },
         { id: 'laundry', name: 'Laundry', types: ['washer-extractor', 'tumble-dryer'] },
-        // Machines that show up across trades. Listed rather than left implicit so the
-        // publisher can tell a genuinely new equipment type from one that belongs here;
-        // anything unlisted still lands in this category at runtime.
-        { id: 'shop', name: 'Shared Shop Equipment', types: ['air-compressor', 'commercial-water-heater', 'dishwasher', 'hot-water-tower', 'ice-machine', 'payment-system', 'pos-terminal', 'process-pump', 'steam-boiler', 'undercounter-fridge', 'walk-in-cooler', 'water-filtration'] }
+        { id: 'distillery', name: 'Distillery', types: ['pot-still', 'column-still', 'blending-tank', 'barrel-rack', 'barrel-filler'] },
+        { id: 'carwash', name: 'Car Wash', types: ['tunnel-wash-system', 'in-bay-automatic', 'self-serve-bay', 'high-pressure-pump-station', 'wash-conveyor', 'chemical-dosing-system', 'water-reclaim-system', 'blower-dryer', 'vacuum-station'] },
+        { id: 'vending', name: 'Vending and Micro Market', types: ['snack-vending-machine', 'beverage-vending-machine', 'coffee-vending-machine', 'glass-front-cooler', 'reach-in-freezer', 'market-kiosk', 'market-shelving', 'security-camera-system'] },
+        { id: 'kitchen', name: 'Kitchen and Restaurant', types: ['commercial-range', 'deep-fryer', 'griddle-charbroiler', 'convection-oven', 'combi-oven', 'steam-table-holding', 'food-disposer', 'exhaust-hood', 'hood-fire-suppression', 'soda-fountain'] },
+        { id: 'machineshop', name: 'Machine Shop', types: ['cnc-mill', 'cnc-lathe', 'wire-edm', 'knee-mill', 'engine-lathe', 'metal-band-saw', 'surface-grinder', 'welder', 'plasma-cutter', 'press-brake', 'blast-cabinet', 'parts-washer', 'cmm', 'mist-collector', 'coolant-system'] },
+        { id: 'woodshop', name: 'Woodshop', types: ['table-saw', 'panel-saw', 'wood-band-saw', 'miter-saw', 'jointer', 'planer', 'cnc-router', 'shaper', 'wood-lathe', 'wide-belt-sander', 'edge-sander', 'mortiser', 'edgebander', 'dust-collector', 'air-cleaner'] },
+        { id: 'shop', name: 'Shared Shop Equipment', types: ['air-compressor', 'commercial-water-heater', 'dishwasher', 'hot-water-tower', 'ice-machine', 'payment-system', 'pos-terminal', 'process-pump', 'steam-boiler', 'undercounter-fridge', 'walk-in-cooler', 'water-filtration', 'drill-press', 'pedestal-grinder', 'spray-booth', 'shop-crane', 'forklift', 'air-dryer'] }
       ];
       function categoryOf(s) {
         for (var i = 0; i < CATS.length; i++) {
