@@ -24,7 +24,7 @@
       margin: 0; color: var(--ink); background: var(--bg); line-height: 1.6;
       -webkit-font-smoothing: antialiased;
     }
-    .wrap { max-width: 1080px; margin: 0 auto; padding: 44px 32px 96px; }
+    .wrap { max-width: 1400px; margin: 0 auto; padding: 44px 40px 96px; }
     a { color: var(--ink); }
     :focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
 
@@ -53,13 +53,21 @@
 
     /* Hero */
     .hero { padding: 56px 0 48px; border-bottom: 1px solid var(--line); }
+    .hero-copy { min-width: 0; }
     .hero h2 {
       font-family: Georgia, 'Times New Roman', serif; font-weight: 400;
-      font-size: clamp(30px, 5vw, 46px); letter-spacing: -0.01em; line-height: 1.15;
-      margin: 0 0 16px; max-width: 22ch; text-wrap: balance;
+      font-size: clamp(30px, 4.4vw, 52px); letter-spacing: -0.015em; line-height: 1.12;
+      margin: 0 0 16px; max-width: 20ch; text-wrap: balance;
     }
-    .hero .lead { font-size: 17px; color: var(--muted); max-width: 58ch; margin: 0 0 32px; }
+    .hero .lead { font-size: 17px; color: var(--muted); max-width: 56ch; margin: 0 0 32px; }
     .doors { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; max-width: 720px; }
+    /* Above this width the hero copy and the two doors sit side by side; below it they
+       stack, which is the original single-column hero. */
+    @media (min-width: 1080px) {
+      .hero { display: grid; grid-template-columns: minmax(0, 1.02fr) minmax(0, 0.98fr); gap: 60px; align-items: center; }
+      .hero .lead { margin-bottom: 0; }
+      .doors { max-width: none; }
+    }
     .door {
       appearance: none; font: inherit; text-align: left; cursor: pointer; background: none;
       border: 1px solid var(--line); border-radius: 10px; padding: 20px 22px;
@@ -71,7 +79,7 @@
     .door .d-p { display: block; margin: 0; font-size: 14px; color: var(--muted); line-height: 1.55; }
 
     /* Two-pane layout */
-    .layout { display: grid; grid-template-columns: 240px 1fr; gap: 56px; align-items: start; padding-top: 48px; }
+    .layout { display: grid; grid-template-columns: 250px minmax(0, 1fr); gap: 72px; align-items: start; padding-top: 48px; }
 
     nav.sections { display: flex; flex-direction: column; border-top: 1px solid var(--line); position: sticky; top: 24px; }
     .sec-btn {
@@ -103,13 +111,13 @@
       font-size: clamp(26px, 4vw, 36px); letter-spacing: -0.01em;
       margin: 0 0 8px; line-height: 1.12;
     }
-    .panel .lead { font-size: 16.5px; color: var(--muted); margin: 0 0 26px; max-width: 60ch; }
+    .panel .lead { font-size: 16.5px; color: var(--muted); margin: 0 0 26px; max-width: 66ch; }
     /* Prose only. A classed paragraph carries its own type - labels, captions, counts,
        table hints - and `.panel p` used to outrank every one of them on specificity,
        so a 10px uppercase label rendered at 15px with a 16px margin. That is what made
        the list headings shout. :not([class]) keeps this rule to the paragraphs it means. */
-    .panel p:not([class]) { font-size: 15px; line-height: 1.78; color: var(--body); margin: 0 0 16px; max-width: 64ch; }
-    .panel ul { margin: 0 0 16px; padding-left: 20px; max-width: 64ch; }
+    .panel p:not([class]) { font-size: 15px; line-height: 1.78; color: var(--body); margin: 0 0 16px; max-width: 72ch; }
+    .panel ul { margin: 0 0 16px; padding-left: 20px; max-width: 72ch; }
     .panel li { font-size: 15px; line-height: 1.7; color: var(--body); margin-bottom: 7px; }
     .panel h3 {
       font-family: Georgia, 'Times New Roman', serif; font-weight: 400; font-size: 22px;
@@ -135,7 +143,9 @@
            not wide enough to put three stages across without cramping every card. */
     .flow { margin: 14px 0 4px; }
     .flow-cap { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.14em; color: var(--faint); margin: 0 0 8px; }
-    .flow-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 8px; }
+    /* 260px is what keeps the five middle cards on a 3+2 break at every width the
+       content column takes, instead of stranding one card on a row of its own. */
+    .flow-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 8px; }
     .fcard { border: 1px solid var(--line); border-radius: 10px; padding: 10px 13px; background: var(--bg); }
     /* The middle stage is what ReliaLife actually produces for you, so it carries the
        weight: filled ground, firmer edge. The page keeps its one colour for safety work. */
@@ -147,26 +157,32 @@
     .fa-mark::before { content: "\2193"; }
     .fa-t { font-size: 11px; font-weight: 650; color: var(--muted); }
     .fa-s { font-size: 10.5px; color: var(--faint); }
-    .flow figcaption { font-size: 12.5px; color: var(--faint); line-height: 1.55; margin: 14px 0 4px; max-width: 66ch; }
+    .flow figcaption { font-size: 12.5px; color: var(--faint); line-height: 1.55; margin: 14px 0 4px; max-width: 78ch; }
     @media (max-width: 560px) {
       .flow-link { flex-wrap: wrap; gap: 4px 8px; }
     }
 
     /* Module lists (ReliaBase / ReliaPro panels) */
-    .modules { border-top: 1px solid var(--line); margin: 8px 0 4px; max-width: 64ch; }
+    .modules { border-top: 1px solid var(--line); margin: 8px 0 4px; max-width: 76ch; }
+    /* Twelve modules down one column is a lot of scrolling past width that is sitting
+       there unused. Grid rows keep the hairlines aligned across both columns. */
+    @media (min-width: 1180px) {
+      .modules { display: grid; grid-template-columns: 1fr 1fr; column-gap: 48px; max-width: none; }
+    }
     .module { padding: 16px 0 14px; border-bottom: 1px solid var(--line); }
     .module .m-name { font-weight: 650; font-size: 15px; margin: 0 0 3px; display: flex; align-items: baseline; gap: 10px; }
     .module .m-soon { font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--faint); font-weight: 600; }
     .module p { margin: 0; font-size: 14.5px; color: var(--body); }
 
     /* Guide */
-    .toc { columns: 2; column-gap: 40px; margin: 0 0 8px; padding: 18px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); max-width: 64ch; }
+    .toc { columns: 2; column-gap: 40px; margin: 0 0 8px; padding: 18px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); max-width: 72ch; }
+    @media (min-width: 1180px) { .toc { columns: 3; max-width: none; } }
     .toc a { display: block; font-size: 14px; color: var(--muted); text-decoration: none; padding: 3px 0; break-inside: avoid; }
     .toc a:hover { color: var(--ink); text-decoration: underline; }
     .guide-sec { scroll-margin-top: 24px; }
 
     /* Releases */
-    .release { border-top: 1px solid var(--line); padding: 24px 0 10px; max-width: 64ch; }
+    .release { border-top: 1px solid var(--line); padding: 24px 0 10px; max-width: 78ch; }
     .release:last-child { border-bottom: 1px solid var(--line); margin-bottom: 24px; }
     .rel-head { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; margin-bottom: 4px; }
     .rel-v { font-family: var(--mono); font-size: 15px; font-weight: 700; }
@@ -212,7 +228,7 @@
     .lvl.on { background: var(--ink); color: #fff; }
     .lvl-desc { font-size: 12.5px; color: var(--muted); margin: 0; line-height: 1.5; flex: 1; }
     .context-block { margin: 4px 0 2px; }
-    .context-foot { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; margin: 6px 0 2px; max-width: 62ch; }
+    .context-foot { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; margin: 6px 0 2px; max-width: 74ch; }
     .kicker { font-size: 11px; text-transform: uppercase; letter-spacing: 0.14em; color: var(--faint); margin: 0 0 14px; font-weight: 600; }
 
     /* --- The strategy table. Activity on the left, frequency on the right, a hairline
@@ -228,7 +244,7 @@
     .head-main { flex: 1; }
     .head-levels { width: 54px; text-align: center; }
     .head-freq { width: 92px; text-align: right; }
-    .table-hint { font-size: 11px; color: var(--faint); margin: 6px 0 0; line-height: 1.45; max-width: 66ch; }
+    .table-hint { font-size: 11px; color: var(--faint); margin: 6px 0 0; line-height: 1.45; max-width: 80ch; }
     .more-line { margin: 10px 0 0; }
     .more-line .linklike { font-size: 12px; font-weight: 600; color: var(--muted); }
 
@@ -284,9 +300,9 @@
 
     #str-detail h3 { font-size: 26px; margin: 0 0 6px; }
     .manual-btn { margin: 4px 0 8px; }
-    .src-note { font-size: 14px; color: var(--muted); max-width: 62ch; margin: 0 0 6px; }
+    .src-note { font-size: 14px; color: var(--muted); max-width: 74ch; margin: 0 0 6px; }
     .src-link { font-size: 13.5px; }
-    .tier-note { font-size: 12.5px; color: var(--faint); margin-top: 14px; max-width: 62ch; }
+    .tier-note { font-size: 12.5px; color: var(--faint); margin-top: 14px; max-width: 80ch; }
 
     footer {
       margin-top: 80px; padding-top: 22px; border-top: 1px solid var(--line);
@@ -317,8 +333,10 @@
     </header>
 
     <section class="hero">
+      <div class="hero-copy">
       <h2>Stay ahead of the maintenance on everything you own.</h2>
       <p class="lead">ReliaLife is a maintenance tracker for your house, your cars, and your equipment, and for the machines a small business runs on. Tell it what you have, and it tells you what needs doing and when. It runs on iPhone and in any web browser, on the same account.</p>
+      </div>
       <div class="doors">
         <button class="door" data-goto="reliabase">
           <span class="k">Personal</span>
@@ -390,7 +408,7 @@
             </div>
             <div class="module">
               <p class="m-name">My Assets</p>
-              <p>Everything you own, each with its components and its own task list. This is where you add things, edit them, and drill into one machine's world.</p>
+              <p>Everything you own, each with its components and its own task list. This is where you add things, edit them, and drill into one item's world.</p>
             </div>
             <div class="module">
               <p class="m-name">All Tasks</p>
@@ -429,13 +447,13 @@
 
           <p>ReliaPro is built for small businesses with production-critical equipment: coffee shops, breweries, wineries, laundromats, and shops like them. The kind of place where the espresso machine, the fermenter, or the washer-extractor isn't background equipment; it's the reason the doors are open. If it goes down, so does the day.</p>
 
-          <p>Your equipment gets real structure: a business, its locations, and the systems inside each one, with short tags so the fourth washer has a name everyone on staff uses. From there, ReliaPro builds a maintenance plan from real manufacturer service schedules where we have them, sized to how critical each machine is to you, and splits the quick daily checks into rounds your staff can walk with a phone.</p>
+          <p>Your equipment gets real structure: a business, its locations, and the systems inside each one, with short tags so the fourth washer has a name everyone on staff uses. From there, ReliaPro builds a maintenance plan from real manufacturer service schedules where we have them, sized to how critical each one is to you, and splits the quick daily checks into rounds your staff can walk with a phone.</p>
 
           <p>It is not only for businesses. If criticality, PM intervals, and rounds are words you already use, ReliaPro is the same rigour pointed at your own things &mdash; and your house, car, and mower stay personal while you use it, filed apart from any company's equipment.</p>
 
           <p class="meta-label">How a Buildout Goes</p>
 
-          <figure class="flow" role="group" aria-label="A buildout in three stages. You enter the asset type and how critical the machine is. Deploying the strategy turns that into rounds, preventative maintenance, spare parts, one time tasks and a replacement plan. Those land in the Schedule and in Completion History.">
+          <figure class="flow" role="group" aria-label="A buildout in three stages. You enter the asset type and how critical it is. Deploying the strategy turns that into rounds, preventative maintenance, spare parts, one time tasks and a replacement plan. Those land in the Schedule and in Completion History.">
 
             <p class="flow-cap">You Enter</p>
             <div class="flow-cards">
@@ -443,7 +461,7 @@
               <div class="fcard"><b>Criticality</b><span>high, medium or low</span></div>
             </div>
 
-            <p class="flow-link"><span class="fa-mark" aria-hidden="true"></span><span class="fa-t">Deploy Strategy</span><span class="fa-s">one pass per machine</span></p>
+            <p class="flow-link"><span class="fa-mark" aria-hidden="true"></span><span class="fa-t">Deploy Strategy</span><span class="fa-s">one pass per item</span></p>
 
             <p class="flow-cap">The Library Builds</p>
             <div class="flow-cards">
@@ -462,22 +480,42 @@
               <div class="fcard"><b>Completion History</b><span>what was done, by whom, at what cost</span></div>
             </div>
 
-            <figcaption>Two answers about a machine are enough to start. Everything in the middle is generated for you — from the manufacturer’s own schedule wherever one exists — and you can cut or change any of it before it goes live.</figcaption>
+            <figcaption>Two answers about a thing you own are enough to start. Everything in the middle is generated for you — from the manufacturer’s own schedule wherever one exists — and you can cut or change any of it before it goes live.</figcaption>
           </figure>
 
           <p class="meta-label">The modules</p>
           <div class="modules">
             <div class="module">
               <p class="m-name">Assets</p>
-              <p>The equipment registry: every machine with its make, model, tag, location, and how critical it is. The single honest list of what you own.</p>
+              <p>The equipment registry: everything you run, with its make, model, tag, location, and how critical it is. The single honest list of what you own.</p>
+            </div>
+            <div class="module">
+              <p class="m-name">Rounds</p>
+              <p>The daily walk. Quick routine checks, like draining the compressor tank or eyeballing the oil sight glass, collected into a checklist. Each check gets an OK, a flag with a note, or a skip, and every walk is saved so you can see it was actually done.</p>
             </div>
             <div class="module">
               <p class="m-name">Preventative Maintenance</p>
               <p>The scheduled work, grouped by location and system so a service day has an order to it. Plans come from manufacturer documents where they exist, with the source cited, and manufacturer intervals are never stretched to fit.</p>
             </div>
             <div class="module">
-              <p class="m-name">Rounds</p>
-              <p>The daily walk. Quick routine checks, like draining the compressor tank or eyeballing the oil sight glass, collected into a checklist. Each check gets an OK, a flag with a note, or a skip, and every walk is saved so you can see it was actually done.</p>
+              <p class="m-name">One Time Tasks</p>
+              <p>The jobs that don’t repeat: jot them down, pin them to something, tick them off. It also watches the government recall databases and tells you when one matches what you own.</p>
+            </div>
+            <div class="module">
+              <p class="m-name">Schedule</p>
+              <p>The calendar view: what is coming, and what already happened. It forecasts ahead and reads as a diary behind.</p>
+            </div>
+            <div class="module">
+              <p class="m-name">Print Labels</p>
+              <p>QR stickers for the whole register, a sheet at a time, in sizes that match the label sheets you can buy. A scan opens that thing’s own page on whoever’s phone is standing in front of it.</p>
+            </div>
+            <div class="module">
+              <p class="m-name">Spare Parts</p>
+              <p>The gaskets, filters, and belts each one needs on the shelf, tied to the tasks that consume them.</p>
+            </div>
+            <div class="module">
+              <p class="m-name">Replacement Plan</p>
+              <p>Roughly when each thing will want replacing, gathered by year, so three grinders bought together don’t surprise you together. Estimates, and the screen says so on every row.</p>
             </div>
             <div class="module">
               <p class="m-name">People</p>
@@ -488,12 +526,12 @@
               <p>How the work is actually going: what's getting done, what keeps slipping, and where the effort is landing.</p>
             </div>
             <div class="module">
-              <p class="m-name">Corrective Maintenance <span class="m-soon">Coming soon</span></p>
-              <p>Breakdowns and repairs, tracked next to the planned work they interrupted.</p>
+              <p class="m-name">Strategy Library</p>
+              <p>The same library this page lets you browse, built into the app: every plan it can deploy, and where each task came from.</p>
             </div>
             <div class="module">
-              <p class="m-name">Spare Parts <span class="m-soon">Coming soon</span></p>
-              <p>The gaskets, filters, and belts each machine needs on the shelf, tied to the tasks that consume them.</p>
+              <p class="m-name">Corrective Maintenance <span class="m-soon">Coming soon</span></p>
+              <p>Breakdowns and repairs, tracked next to the planned work they interrupted.</p>
             </div>
           </div>
 
@@ -558,16 +596,16 @@
 
           <h3 class="guide-sec" id="g-pro-setup">ReliaPro: First Setup</h3>
           <p>Buildout is most comfortable on the web, and reading and doing work fine on the phone. Start with the structure: create your business, then its location or locations. The type of site you pick shapes which systems the app suggests, so a brewery gets brewing suggestions and not laundry ones. Add the systems that match how you think about the place: brewing, cold side, front of house.</p>
-          <p>Then register the equipment, and the fastest way is <strong>Build Out</strong>. It lists everything the library knows for each of your systems on one screen: tick what you have, set a count where you have two or three of something, and press the button once. Names and tags are worked out for you, and every machine arrives with its maintenance schedule already deployed.</p>
-          <p>You can also add machines one at a time. Pick the type, and optionally the make and model, say how critical the machine is to you (high, medium, or low), and the app suggests a short tag, like MAIN-BREW-PUMP-01, so every machine has a name people can say out loud. If a machine isn't in the list, add it by hand; nothing requires the catalog. Make and model are worth filling in when you have them, whether now or later, because they upgrade a machine from a general schedule to the manufacturer's own.</p>
+          <p>Then register the equipment, and the fastest way is <strong>Build Out</strong>. It lists everything the library knows for each of your systems on one screen: tick what you have, set a count where you have two or three of something, and press the button once. Names and tags are worked out for you, and everything arrives with its maintenance schedule already deployed.</p>
+          <p>You can also add things one at a time. Pick the type, and optionally the make and model, say how critical it is to you (high, medium, or low), and the app suggests a short tag, like MAIN-BREW-PUMP-01, so everything has a name people can say out loud. If something isn't in the list, add it by hand; nothing requires the catalog. Make and model are worth filling in when you have them, whether now or later, because they upgrade it from a general schedule to the manufacturer's own.</p>
 
           <h3 class="guide-sec" id="g-pro-pm">ReliaPro: The PM Plan</h3>
-          <p>The maintenance plan arrives with the asset — you don't have to go and ask for it. The plan knows how often each job repeats but not where your machine is in the cycle, so the PM screen offers a quick <strong>Set Due Dates</strong> pass: one answer per machine — the last service date, "it's new", or "not sure" (which assumes each job is halfway through its cycle) — puts the whole plan on the calendar. Where we have the manufacturer's service schedule for your make and model, tasks come from it with the source document cited, and those intervals are never stretched or shrunk. Where there's no published schedule, tasks come from general practice for that kind of machine, and they're labeled that way so you always know which is which.</p>
-          <p>Criticality decides how much of the plan you get: a high-critical machine gets the full treatment, a low-critical one gets the essentials. It never drops anything safety-related. The generated plan is a proposal, so review it and cut what your shop genuinely doesn't do. The Preventative Maintenance module then shows the work grouped by site and system, most critical first.</p>
+          <p>The maintenance plan arrives with the asset — you don't have to go and ask for it. The plan knows how often each job repeats but not where yours is in the cycle, so the PM screen offers a quick <strong>Set Due Dates</strong> pass: one answer per item — the last service date, "it's new", or "not sure" (which assumes each job is halfway through its cycle) — puts the whole plan on the calendar. Where we have the manufacturer's service schedule for your make and model, tasks come from it with the source document cited, and those intervals are never stretched or shrunk. Where there's no published schedule, tasks come from general practice for that kind of thing, and they're labeled that way so you always know which is which.</p>
+          <p>Criticality decides how much of the plan you get: a high-critical item gets the full treatment, a low-critical one gets the essentials. It never drops anything safety-related. The generated plan is a proposal, so review it and cut what your shop genuinely doesn't do. The Preventative Maintenance module then shows the work grouped by site and system, most critical first.</p>
 
           <h3 class="guide-sec" id="g-pro-rounds">ReliaPro: Rounds</h3>
           <p>Anything due weekly or faster isn't really scheduled maintenance; it's a walk. Rounds collects those quick checks into checklists so they don't clutter the PM schedule. Build a site's rounds from a pick list where everything starts ticked, and untick what your shop doesn't do. A check you leave out isn't remembered against you; it's simply offered again next time you build.</p>
-          <p>Running a round is tapping through it: each check gets an OK, a flag with a note for anything that looks wrong, or a skip. Skipping asks whether to drop the check for this round or keep it open to finish later, and a walk in progress can be put down and picked back up on the same device. One activity that spans several machines, like washing four blind filters, shows up once with a checkbox per machine. Every completed walk is saved with who ran it and when, flags first when you read it back.</p>
+          <p>Running a round is tapping through it: each check gets an OK, a flag with a note for anything that looks wrong, or a skip. Skipping asks whether to drop the check for this round or keep it open to finish later, and a walk in progress can be put down and picked back up on the same device. One activity that spans several machines, like washing four blind filters, shows up once with a checkbox per asset. Every completed walk is saved with who ran it and when, flags first when you read it back.</p>
 
           <h3 class="guide-sec" id="g-pro-people">ReliaPro: Staff and Roles</h3>
           <p>Invite staff from the People screen with the role that fits: <strong>admin</strong> runs the account, <strong>editor</strong> can change the plan, <strong>doer</strong> can execute work and run rounds, and <strong>viewer</strong> can look. Whether someone can invite others is a separate switch from what they can touch. When someone leaves, revoke their membership and the records stay put, because they were always the shop's.</p>
@@ -583,16 +621,16 @@
             <p class="rel-name">ReliaPro Becomes Real, and the Schedules Get Sources</p>
             <ul>
               <li>ReliaPro is now a working product, not a placeholder: switch modes in Settings, no separate app to buy or install.</li>
-              <li>Business structure: businesses, sites, and systems, with an equipment registry, criticality, and short tags for every machine.</li>
+              <li>Business structure: businesses, sites, and systems, with an equipment registry, criticality, and short tags for everything in it.</li>
               <li>Build Out: tick your way through a whole site's equipment on one screen, with a count for the machines you have more than one of. Everything you add arrives with its maintenance schedule already deployed, so a fifteen-machine shop goes from an empty register to a scheduled one in a few minutes rather than an afternoon.</li>
               <li>Service records that hold up: marking work done now takes the condition found, parts and labor cost, who did the work, and a photo of the receipt or the technician's paperwork, attached right to the record &mdash; and a manager can add the photo later when catching up on paperwork.</li>
-              <li>Defer and endorse: a PM can be deferred to a chosen date with a recorded reason (an inspection often shows a machine can run a bit longer than the manual asks), and every generated schedule can be endorsed by the owner or manager &mdash; one tap per machine &mdash; so each frequency becomes your decision on record, not just the library's suggestion.</li>
-              <li>Every machine gets its own page and its own QR sticker. The page gathers what was scattered across the modules &mdash; which strategy matched and what it holds, the maintenance and what&rsquo;s overdue, the walk-round checks, the spares on the shelf, any outstanding recalls, roughly when it will want replacing, and how much of its scheduled work actually got done &mdash; and every line taps through to where that thing lives. Print QR labels for the whole register a sheet at a time, in three sizes matched to the sticker sheets you can buy, and a scan opens that page on whoever&rsquo;s phone is standing in front of the machine.</li>
+              <li>Defer and endorse: a PM can be deferred to a chosen date with a recorded reason (an inspection often shows something can run a bit longer than the manual asks), and every generated schedule can be endorsed by the owner or manager &mdash; one tap per item &mdash; so each frequency becomes your decision on record, not just the library's suggestion.</li>
+              <li>Everything you own gets its own page and its own QR sticker. The page gathers what was scattered across the modules &mdash; which strategy matched and what it holds, the maintenance and what&rsquo;s overdue, the walk-round checks, the spares on the shelf, any outstanding recalls, roughly when it will want replacing, and how much of its scheduled work actually got done &mdash; and every line taps through to where that thing lives. Print QR labels for the whole register a sheet at a time, in three sizes matched to the sticker sheets you can buy, and a scan opens that page on whoever&rsquo;s phone is standing in front of it.</li>
               <li>Deploy Strategy: one button turns a room full of equipment into a working maintenance programme. Tick your machines, check how much each one matters &mdash; the library starts every type where it usually belongs, so the espresso machine that closes the shop isn't treated like the knock box &mdash; and press once. Scheduled maintenance, daily walk-round checks, the spare parts worth holding and any manufacturer recalls all arrive together, from the same strategy. Safe to run again whenever you add equipment: it adds what is missing and disturbs nothing already on the books.</li>
-              <li>The Replacement Plan: roughly when each machine will want replacing, gathered by year so three grinders bought together stop being a surprise in the same month. Every line says plainly whose estimate it is, because no manufacturer publishes a service life.</li>
+              <li>The Replacement Plan: roughly when each item will want replacing, gathered by year so three grinders bought together stop being a surprise in the same month. Every line says plainly whose estimate it is, because no manufacturer publishes a service life.</li>
               <li>Compliance: how much of the scheduled work actually happened, by week, month, quarter or year &mdash; and never a bare percentage. Every rate comes with the exact jobs that were missed listed underneath it, because a number on its own teaches people to tick boxes fast. Only finished days are counted; a round due this morning hasn't been missed yet.</li>
-              <li>The Schedule: your walk-rounds, planned maintenance and dated one-off jobs on one calendar, by day, week, month, quarter or year, with a name against every job. Hand a person or a crew a site, a system, a machine or a round and everything inside it is theirs &mdash; including equipment you add later &mdash; so a shop with hundreds of maintenance tasks is organised in a few minutes rather than one job at a time. Staff don't need a ReliaLife account to be scheduled: type a name and they can be given work. Ahead of today the calendar shows the plan; behind it, what was actually done and who did it.</li>
-              <li>One Time Tasks: a notes-style list for the jobs that don't repeat &mdash; jot them as you think of them, pin them to a machine, tick them off. The register also watches the U.S. government's recall databases (NHTSA for vehicles, CPSC for everything else) and recommends safety recalls that match your registered equipment, each with the official notice attached.</li>
+              <li>The Schedule: your walk-rounds, planned maintenance and dated one-off jobs on one calendar, by day, week, month, quarter or year, with a name against every job. Hand a person or a crew a site, a system, an asset or a round and everything inside it is theirs &mdash; including equipment you add later &mdash; so a shop with hundreds of maintenance tasks is organised in a few minutes rather than one job at a time. Staff don't need a ReliaLife account to be scheduled: type a name and they can be given work. Ahead of today the calendar shows the plan; behind it, what was actually done and who did it.</li>
+              <li>One Time Tasks: a notes-style list for the jobs that don't repeat &mdash; jot them as you think of them, pin them to something, tick them off. The register also watches the U.S. government's recall databases (NHTSA for vehicles, CPSC for everything else) and recommends safety recalls that match your registered equipment, each with the official notice attached.</li>
               <li>A library of maintenance schedules read from manufacturers' own service documents, covering espresso and coffee equipment, brewery, winery, and laundromat machines, with the source cited on every task. Where a maker publishes nothing, the entry says so plainly.</li>
               <li>The Strategy Library is browsable inside the app: every plan by category, make, and model, with the three criticality levels, the source of each task, and a button straight to the manufacturer's own document &mdash; the same browser as on this page, one tap from the dashboard.</li>
               <li>Car schedules from the manufacturers' maintenance guides for Toyota, Lexus, Scion, Subaru, Mazda, and Nissan, by year and model. Honda doesn't publish mileage intervals, so Honda vehicles get the dashboard-code table instead, which is what Honda actually uses.</li>
@@ -654,9 +692,9 @@
         <!-- ============================================================ Strategy library -->
         <article class="panel" id="strategies">
           <h2>Strategy Library</h2>
-          <p class="lead">The maintenance schedules behind ReliaLife, one machine at a time, with the manufacturer's document cited on every task that came from one.</p>
+          <p class="lead">The maintenance schedules behind ReliaLife, one item at a time, with the manufacturer's document cited on every task that came from one.</p>
 
-          <p>When the app suggests maintenance for your car or your espresso machine, the suggestions come from here. For many machines that means the schedule from the maker's own service documents, with a link to the document and the exact line quoted. Where a maker publishes nothing, the entry says so instead of inventing numbers, and general-practice entries are labeled as exactly that.</p>
+          <p>When the app suggests maintenance for your car or your espresso machine, the suggestions come from here. For many of them that means the schedule from the maker's own service documents, with a link to the document and the exact line quoted. Where a maker publishes nothing, the entry says so instead of inventing numbers, and general-practice entries are labeled as exactly that.</p>
           <p>The library is also built into the app itself: look for Strategy Library on the ReliaPro dashboard, or in Settings at home. There it opens instantly, with no separate sign-in.</p>
           <p>Browsing the library here requires a ReliaLife account. Sign in below with the same email and password you use in the app. If you don't have an account yet, create one in the iPhone app or the <a href="https://relialife.vercel.app/" target="_blank" rel="noopener">web app</a> first.</p>
 
@@ -858,9 +896,9 @@
         'condition-based': 'Condition-Based'
       };
       var LEVELS = [
-        { id: 'high', name: 'High', desc: 'This machine can’t be down. Everything the maker lists, plus every routine check.' },
+        { id: 'high', name: 'High', desc: 'It can’t be down. Everything the maker lists, plus every routine check.' },
         { id: 'medium', name: 'Medium', desc: 'Standard care. What the app assumes if you never pick a level.' },
-        { id: 'low', name: 'Low', desc: 'A spare or lightly used machine. The essentials — safety work stays whatever you pick.' }
+        { id: 'low', name: 'Low', desc: 'A spare, or something you barely use. The essentials — safety work stays whatever you pick.' }
       ];
 
       function yearsText(y) {
@@ -1451,7 +1489,7 @@
           d += '<p class="d-line">Under those conditions it is due every ' +
             esc(fmtNum(a.severeUsage) + (a.usageUnit ? ' ' + shortUnit(a.usageUnit) : '')) + ' instead.</p>';
         }
-        if (a.onCondition) d += '<p class="d-line">Due when the machine indicates: ' + esc(cleanTitle(a.onCondition)) + '</p>';
+        if (a.onCondition) d += '<p class="d-line">Due when it tells you: ' + esc(cleanTitle(a.onCondition)) + '</p>';
         if (a.parts && a.parts.length) d += '<p class="d-line">Parts: ' + esc(a.parts.join(', ')) + '</p>';
         if (a.reading && a.reading.unit) {
           d += '<p class="d-line">Write down a reading in ' + esc(a.reading.unit) +
@@ -1537,7 +1575,7 @@
 
         if (anyItems > 0) {
           h += '<div class="context-block">';
-          h += '<p class="meta-label">How Critical Is This Machine?</p>';
+          h += '<p class="meta-label">How Critical Is It?</p>';
           h += '<div class="lvl-row" role="group" aria-label="Criticality level">';
           LEVELS.forEach(function (l) {
             var on = !allLevels && l.id === level;
@@ -1586,14 +1624,14 @@
 
         h += tableHtml('Not on a Schedule', unscheduled, allLevels, mixed,
           'The maker asks for this work, but not at a repeating interval — it falls due when the '
-          + 'machine says so, or at odometer readings that don’t repeat. The app won’t put these on '
+          + 'it says so, or at odometer readings that don’t repeat. The app won’t put these on '
           + 'your calendar, so they are yours to watch for.');
 
         if (!tasks.length && !rounds.length && !unscheduled.length) {
           h += '<p class="empty-detail">' + (x.kind === 'no-published-schedule'
-            ? 'No schedule to show. This manufacturer doesn’t publish interval data, and the library refuses to invent it. A machine like this falls back on the general plan for its equipment type.'
+            ? 'No schedule to show. This manufacturer doesn’t publish interval data, and the library refuses to invent it. Something like this falls back on the general plan for its equipment type.'
             : anyItems > 0
-              ? 'Nothing at the ' + esc(lvlDef.name.toLowerCase()) + ' level for this machine. Pick a higher level to see the plan.'
+              ? 'Nothing at the ' + esc(lvlDef.name.toLowerCase()) + ' level for this one. Pick a higher level to see the plan.'
               : 'This entry carries reference information rather than a task list.') + '</p>';
         }
 
