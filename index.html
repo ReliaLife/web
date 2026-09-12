@@ -104,7 +104,11 @@
       margin: 0 0 8px; line-height: 1.12;
     }
     .panel .lead { font-size: 16.5px; color: var(--muted); margin: 0 0 26px; max-width: 60ch; }
-    .panel p { font-size: 15px; line-height: 1.78; color: var(--body); margin: 0 0 16px; max-width: 64ch; }
+    /* Prose only. A classed paragraph carries its own type - labels, captions, counts,
+       table hints - and `.panel p` used to outrank every one of them on specificity,
+       so a 10px uppercase label rendered at 15px with a 16px margin. That is what made
+       the list headings shout. :not([class]) keeps this rule to the paragraphs it means. */
+    .panel p:not([class]) { font-size: 15px; line-height: 1.78; color: var(--body); margin: 0 0 16px; max-width: 64ch; }
     .panel ul { margin: 0 0 16px; padding-left: 20px; max-width: 64ch; }
     .panel li { font-size: 15px; line-height: 1.7; color: var(--body); margin-bottom: 7px; }
     .panel h3 {
@@ -124,6 +128,29 @@
     }
     .chip.on { color: var(--ink); border-color: var(--ink); }
     .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 26px; }
+
+    /* --- The buildout figure. Two answers go in, five kinds of work come out, and they
+           land in two places. Drawn in boxes rather than one wide SVG so it reflows instead
+           of shrinking its own labels, and read top-to-bottom because the prose column is
+           not wide enough to put three stages across without cramping every card. */
+    .flow { margin: 14px 0 4px; }
+    .flow-cap { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.14em; color: var(--faint); margin: 0 0 8px; }
+    .flow-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 8px; }
+    .fcard { border: 1px solid var(--line); border-radius: 10px; padding: 10px 13px; background: var(--bg); }
+    /* The middle stage is what ReliaLife actually produces for you, so it carries the
+       weight: filled ground, firmer edge. The page keeps its one colour for safety work. */
+    .fcard.key { background: var(--hover); border-color: var(--faint); }
+    .fcard b { display: block; font-size: 13px; font-weight: 650; color: var(--ink); line-height: 1.32; }
+    .fcard span { display: block; font-size: 10.5px; color: var(--faint); margin-top: 3px; line-height: 1.4; }
+    .flow-link { display: flex; align-items: baseline; justify-content: center; gap: 9px; padding: 11px 0 12px; }
+    .fa-mark { font-size: 15px; color: var(--muted); line-height: 1; }
+    .fa-mark::before { content: "\2193"; }
+    .fa-t { font-size: 11px; font-weight: 650; color: var(--muted); }
+    .fa-s { font-size: 10.5px; color: var(--faint); }
+    .flow figcaption { font-size: 12.5px; color: var(--faint); line-height: 1.55; margin: 14px 0 4px; max-width: 66ch; }
+    @media (max-width: 560px) {
+      .flow-link { flex-wrap: wrap; gap: 4px 8px; }
+    }
 
     /* Module lists (ReliaBase / ReliaPro panels) */
     .modules { border-top: 1px solid var(--line); margin: 8px 0 4px; max-width: 64ch; }
@@ -236,17 +263,24 @@
     .linklike { appearance: none; background: none; border: 0; cursor: pointer; font: inherit; font-size: 12.5px; color: var(--muted); text-decoration: underline; padding: 0; }
     .linklike:hover { color: var(--ink); }
 
-    .str-count { font-size: 12px; color: var(--faint); margin: 10px 0 2px; text-transform: uppercase; letter-spacing: 0.1em; }
-    .str-group { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.16em; color: var(--faint); margin: 22px 0 4px; }
+    /* The walk in - a category, a make, a model - is a list of one-line choices, which is
+       the same shape as the plan it leads to. One card with hairlines between the rows,
+       not a stack of loose rows under a shouting label. Matches the app's own list. */
+    .str-count { font-size: 11.5px; color: var(--muted); margin: 10px 0 8px; font-variant-numeric: tabular-nums; }
+    .str-group { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin: 20px 0 7px; }
+    /* Long headings set in caps shout across the whole column, so the label stays two
+       words and the part that explains it drops to a quiet line underneath. */
+    .str-note { font-size: 11.5px; color: var(--faint); margin: -4px 0 8px; }
     .str-row {
       appearance: none; background: none; font: inherit; cursor: pointer; text-align: left;
-      display: flex; align-items: baseline; justify-content: space-between; gap: 14px; width: 100%;
-      border: 0; border-bottom: 1px solid var(--line); padding: 11px 4px;
+      display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%;
+      border: 0; border-top: 1px solid var(--line); padding: 12px 13px;
       color: var(--body); transition: background .1s ease;
     }
-    .str-row:hover { background: var(--hover); color: var(--ink); }
-    .str-row .r-nm { font-size: 14.5px; font-weight: 500; }
-    .str-row .r-k { font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--faint); white-space: nowrap; }
+    .str-row:first-child { border-top: 0; }
+    .str-row:hover { background: var(--hover); }
+    .str-row .r-nm { font-size: 14px; font-weight: 600; color: var(--ink); flex: 1 1 auto; min-width: 0; }
+    .str-row .r-k { font-size: 11px; color: var(--faint); white-space: nowrap; font-variant-numeric: tabular-nums; }
 
     #str-detail h3 { font-size: 26px; margin: 0 0 6px; }
     .manual-btn { margin: 4px 0 8px; }
@@ -398,6 +432,38 @@
           <p>Your equipment gets real structure: a business, its locations, and the systems inside each one, with short tags so the fourth washer has a name everyone on staff uses. From there, ReliaPro builds a maintenance plan from real manufacturer service schedules where we have them, sized to how critical each machine is to you, and splits the quick daily checks into rounds your staff can walk with a phone.</p>
 
           <p>It is not only for businesses. If criticality, PM intervals, and rounds are words you already use, ReliaPro is the same rigour pointed at your own things &mdash; and your house, car, and mower stay personal while you use it, filed apart from any company's equipment.</p>
+
+          <p class="meta-label">How a Buildout Goes</p>
+
+          <figure class="flow" role="group" aria-label="A buildout in three stages. You enter the asset type and how critical the machine is. Deploying the strategy turns that into rounds, preventative maintenance, spare parts, one time tasks and a replacement plan. Those land in the Schedule and in Completion History.">
+
+            <p class="flow-cap">You Enter</p>
+            <div class="flow-cards">
+              <div class="fcard"><b>Asset Type</b><span>make and model</span></div>
+              <div class="fcard"><b>Criticality</b><span>high, medium or low</span></div>
+            </div>
+
+            <p class="flow-link"><span class="fa-mark" aria-hidden="true"></span><span class="fa-t">Deploy Strategy</span><span class="fa-s">one pass per machine</span></p>
+
+            <p class="flow-cap">The Library Builds</p>
+            <div class="flow-cards">
+              <div class="fcard key"><b>Rounds</b><span>the quick daily walk</span></div>
+              <div class="fcard key"><b>Preventative Maintenance</b><span>the scheduled work</span></div>
+              <div class="fcard key"><b>Spare Parts</b><span>what to keep on the shelf</span></div>
+              <div class="fcard key"><b>One Time Tasks</b><span>jobs that don’t repeat</span></div>
+              <div class="fcard key"><b>Replacement Plan</b><span>what will need buying, and roughly when</span></div>
+            </div>
+
+            <p class="flow-link"><span class="fa-mark" aria-hidden="true"></span><span class="fa-t">Falls Due, Gets Done</span><span class="fa-s">and stays on record</span></p>
+
+            <p class="flow-cap">It Lands In</p>
+            <div class="flow-cards">
+              <div class="fcard"><b>Schedule</b><span>what’s due, and when</span></div>
+              <div class="fcard"><b>Completion History</b><span>what was done, by whom, at what cost</span></div>
+            </div>
+
+            <figcaption>Two answers about a machine are enough to start. Everything in the middle is generated for you — from the manufacturer’s own schedule wherever one exists — and you can cut or change any of it before it goes live.</figcaption>
+          </figure>
 
           <p class="meta-label">The modules</p>
           <div class="modules">
@@ -1107,14 +1173,16 @@
         });
       }
 
+      // One card per group, hairlines between its rows - the same container the plan
+      // tables use, so the walk in and the plan it leads to are built the same way.
       function rowsHtml(rows) {
-        // rows: [{ label, sub, strat }] rendered as clickable list rows
-        return rows.map(function (r) {
+        if (!rows.length) return '';
+        return '<div class="stable">' + rows.map(function (r) {
           return '<button class="str-row" data-a="' + r.a + '">' +
             '<span class="r-nm">' + esc(r.label) + '</span>' +
             (r.sub ? '<span class="r-k">' + esc(r.sub) + '</span>' : '') +
             '</button>';
-        }).join('');
+        }).join('') + '</div>';
       }
 
       function render() {
@@ -1168,7 +1236,7 @@
           return { a: 'm:' + m, label: m, sub: makeCounts[m] + (makeCounts[m] === 1 ? ' plan' : ' plans') };
         }));
         if (generals.length) {
-          html += '<p class="str-group">General plans — when your make isn’t listed</p>';
+          html += '<p class="str-group">General Plans</p><p class="str-note">For when your make isn’t listed.</p>';
           html += rowsHtml(generals.map(function (s) {
             return { a: 's:' + DATA.strategies.indexOf(s), label: modelLabel(s), sub: '' };
           }));
