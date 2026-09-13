@@ -224,6 +224,10 @@
     .rel-date { font-size: 12px; color: var(--faint); text-transform: uppercase; letter-spacing: 0.1em; }
     .rel-name { font-family: Georgia, serif; font-size: 19px; margin: 2px 0 10px; }
     .rel-note { font-size: 13px; color: var(--faint); font-style: italic; margin: 10px 0 0; }
+    /* A long release reads in sections: a small label over each list, the same voice as
+       .meta-label but tighter, so the version heading stays the loudest thing. */
+    .rel-group { font-size: 11px; text-transform: uppercase; letter-spacing: 0.14em; color: var(--faint); font-weight: 600; margin: 20px 0 6px; }
+    .rel-name + .rel-group { margin-top: 8px; }
 
     /* Strategy library */
     .signin-card { border: 1px solid var(--line); border-radius: 10px; padding: 26px 28px; max-width: 420px; margin-top: 8px; }
@@ -381,7 +385,7 @@
         <button class="door" data-goto="reliapro">
           <span class="k">Business</span>
           <span class="nm">ReliaPro</span>
-          <span class="d-p">For coffee shops, breweries, wineries, laundromats. Anywhere a broken machine costs you a day of business.</span>
+          <span class="d-p">For coffee shops, breweries, car washes, machine shops. Anywhere a breakdown costs you a day of business.</span>
         </button>
         <div class="lib-stats loading" id="lib-stats" aria-live="polite">
           <span class="k">In the Library</span>
@@ -417,7 +421,7 @@
 
           <p>The dashboard sorts it all into three piles: overdue, due soon, and further out. When you do the work, you mark it done, add a note if you want, and the app builds a service history you can actually look things up in later. Notifications keep the quiet stuff from sneaking past you.</p>
 
-          <p>You don't have to invent the schedules yourself. For many cars, ReliaLife carries the maintenance schedule from the manufacturer's own guide for your exact year and model. The same goes for a growing list of commercial machines, espresso machines and brewery gear among them. Where a manufacturer publishes nothing, the app falls back on sensible general practice and says so, instead of dressing a guess up as fact.</p>
+          <p>You don't have to invent the schedules yourself. ReliaLife carries the maintenance schedule from the manufacturer's own guide for cars from more than forty makers, by year and model, and for a growing list of other equipment: espresso machines, commercial kitchens, car washes, appliances, mowers, boats, aircraft and firearms among them. Where a manufacturer publishes nothing, the app falls back on sensible general practice and says so, instead of dressing a guess up as fact. And where a regulation requires an inspection, the plan says that too, and links to the regulation.</p>
 
           <p class="meta-label">One app, two modes</p>
           <p><strong>ReliaBase</strong> is the personal side and what you start in: your household, laid out simply. <strong>ReliaPro</strong> is the business side: the same tracking, plus the structure a shop needs, like locations, equipment tags, staff roles, and daily checklists.</p>
@@ -443,7 +447,7 @@
             <span class="chip on">iPhone + Web</span>
           </div>
 
-          <p>ReliaBase covers the things a household owns: Home, Car, Appliance, Lawn &amp; Garden, Pet Care, Aircraft, Watercraft, Firearm, and a catch-all Other. Each category comes with suggested maintenance to start from, so a new asset isn't a blank page. Add your car by year, make, and model and, for many vehicles, the schedule comes straight from the manufacturer's maintenance guide.</p>
+          <p>ReliaBase covers the things a household owns: Home, Car, Appliance, Lawn &amp; Garden, Pet Care, Aircraft, Watercraft, Powersports, Firearm, and a catch-all Other. Each category comes with suggested maintenance to start from, so a new asset isn't a blank page. Add your car by year, make, and model and, for many vehicles, the schedule comes straight from the manufacturer's maintenance guide.</p>
 
           <p class="meta-label">The modules</p>
           <div class="modules">
@@ -490,9 +494,11 @@
             <span class="chip on">iPhone + Web</span>
           </div>
 
-          <p>ReliaPro is built for small businesses with production-critical equipment: coffee shops, breweries, wineries, laundromats, and shops like them. The kind of place where the espresso machine, the fermenter, or the washer-extractor isn't background equipment; it's the reason the doors are open. If it goes down, so does the day.</p>
+          <p>ReliaPro is built for small businesses with production-critical equipment: coffee shops and cafés, restaurant kitchens, breweries, wineries, distilleries, laundromats, car washes, vending routes and micro markets, machine shops and woodshops. The kind of place where the espresso machine, the fermenter, or the washer-extractor isn't background equipment; it's the reason the doors are open. If it goes down, so does the day.</p>
 
           <p>Your equipment gets real structure: a business, its locations, and the systems inside each one, with short tags so the fourth washer has a name everyone on staff uses. From there, ReliaPro builds a maintenance plan from real manufacturer service schedules where we have them, sized to how critical each one is to you, and splits the quick daily checks into rounds your staff can walk with a phone.</p>
+
+          <p>Some of that work isn't optional. Tell ReliaPro which state each site is in, and the plan carries the inspections the law requires: a boiler's certificate inspection at that state's own interval, an elevator's periodic inspection, a heavy truck's annual DOT inspection, the fire extinguisher checks OSHA asks of every workplace, and the sprinkler, alarm and emergency lighting tests the fire code sets. Each one is marked <strong>Required by Law</strong>, names the regulation, says where it applies, and links to the text. No manufacturer's plan can drop one, and no criticality level trims one. Where we haven't read a state's rules yet, the plan says so rather than guessing.</p>
 
           <p>It is not only for businesses. If criticality, PM intervals, and rounds are words you already use, ReliaPro is the same rigour pointed at your own things &mdash; and your house, car, and mower stay personal while you use it, filed apart from any company's equipment.</p>
 
@@ -532,15 +538,15 @@
           <div class="modules">
             <div class="module">
               <p class="m-name">Assets</p>
-              <p>The equipment registry: everything you run, with its make, model, tag, location, and how critical it is. The single honest list of what you own.</p>
+              <p>The equipment registry: everything you run, with its make, model, tag, location, and how critical it is. Each item has its own page, and any module you open from there lands on that item and its site.</p>
             </div>
             <div class="module">
               <p class="m-name">Rounds</p>
-              <p>The daily walk. Quick routine checks, like draining the compressor tank or eyeballing the oil sight glass, collected into a checklist. Each check gets an OK, a flag with a note, or a skip, and every walk is saved so you can see it was actually done.</p>
+              <p>The walk. Quick routine checks, like draining the compressor tank or eyeballing the oil sight glass, collected into a checklist for opening, closing, every shift, or daily through monthly and beyond. A check can cover one item or the whole site, and <strong>+ Custom Round</strong> writes one from scratch. Each check gets an OK, a flag with a note, or a skip, and every walk is saved so you can see it was actually done.</p>
             </div>
             <div class="module">
               <p class="m-name">Preventative Maintenance</p>
-              <p>The scheduled work, grouped by location and system so a service day has an order to it. Plans come from manufacturer documents where they exist, with the source cited, and manufacturer intervals are never stretched to fit.</p>
+              <p>The scheduled work, grouped by location and system so a service day has an order to it. <strong>Deploy Strategy</strong> puts the library's plan on the calendar and <strong>+ Custom PM</strong> adds a job of your own. Plans come from manufacturer documents where they exist, with the source cited, manufacturer intervals are never stretched to fit, and inspections the law requires are marked as such.</p>
             </div>
             <div class="module">
               <p class="m-name">One Time Tasks</p>
@@ -556,7 +562,7 @@
             </div>
             <div class="module">
               <p class="m-name">Spare Parts</p>
-              <p>The gaskets, filters, and belts each one needs on the shelf, tied to the tasks that consume them.</p>
+              <p>The gaskets, filters, and belts worth keeping on the shelf, tied to the tasks that consume them, and weighed on whether a second unit at the same site could cover for a breakdown.</p>
             </div>
             <div class="module">
               <p class="m-name">Replacement Plan</p>
@@ -568,7 +574,7 @@
             </div>
             <div class="module">
               <p class="m-name">Metrics</p>
-              <p>How the work is actually going: what's getting done, what keeps slipping, and where the effort is landing.</p>
+              <p>How the work is actually going: what's getting done and what keeps slipping. A Reliability view looks at the equipment itself: planned work against breakdowns, hours lost, what's costing you the most, and whether an interval looks too long or too short.</p>
             </div>
             <div class="module">
               <p class="m-name">Strategy Library</p>
@@ -603,6 +609,7 @@
             <a href="#guide" data-scroll="g-modes">Switching Modes</a>
             <a href="#guide" data-scroll="g-pro-setup">ReliaPro: First Setup</a>
             <a href="#guide" data-scroll="g-pro-pm">ReliaPro: The PM Plan</a>
+            <a href="#guide" data-scroll="g-pro-law">ReliaPro: Required by Law</a>
             <a href="#guide" data-scroll="g-pro-rounds">ReliaPro: Rounds</a>
             <a href="#guide" data-scroll="g-pro-people">ReliaPro: Staff and Roles</a>
           </nav>
@@ -634,22 +641,31 @@
 
           <h3 class="guide-sec" id="g-web">Phone and Web</h3>
           <p>The same account works in the iPhone app and at the web app, and they share their data through the cloud. On the phone, changes save to the device first, so the app works fine with no signal, then sync up. On the web, you're working with the cloud copy directly.</p>
-          <p>In practice the phone is the tool you carry and the web is where the bigger setup jobs are comfortable: building out a business's equipment, reviewing plans on a real keyboard, and managing deactivated assets, which lives on the web only.</p>
+          <p>In practice the phone is the tool you carry and the web is where the bigger setup jobs are comfortable: building out a business's equipment, reviewing plans on a real keyboard, and managing deactivated assets, which lives on the web only. The phone looks for changes every time you come back to the app, so equipment you built out on the web is there the next time you pick the phone up.</p>
 
           <h3 class="guide-sec" id="g-modes">Switching Modes</h3>
           <p>Open <strong>Settings</strong> and pick ReliaBase or ReliaPro. That's the whole procedure. The switch changes what the app shows, not what it stores, so you can move between your household and your business freely, and nothing is lost when you do.</p>
 
           <h3 class="guide-sec" id="g-pro-setup">ReliaPro: First Setup</h3>
           <p>Buildout is most comfortable on the web, and reading and doing work fine on the phone. Start with the structure: create your business, then its location or locations. The type of site you pick shapes which systems the app suggests, so a brewery gets brewing suggestions and not laundry ones. Add the systems that match how you think about the place: brewing, cold side, front of house.</p>
+          <p>While you're setting up the business, pick the state it operates in. A site somewhere else can say so on its own; the rest follow the business. The state decides which inspection laws apply to the equipment inside, which is covered in <strong>Required by Law</strong> below.</p>
           <p>Then register the equipment, and the fastest way is <strong>Build Out</strong>. It lists everything the library knows for each of your systems on one screen: tick what you have, set a count where you have two or three of something, and press the button once. Names and tags are worked out for you, and everything arrives with its maintenance schedule already deployed.</p>
           <p>You can also add things one at a time. Pick the type, and optionally the make and model, say how critical it is to you (high, medium, or low), and the app suggests a short tag, like MAIN-BREW-PUMP-01, so everything has a name people can say out loud. If something isn't in the list, add it by hand; nothing requires the catalog. Make and model are worth filling in when you have them, whether now or later, because they upgrade it from a general schedule to the manufacturer's own.</p>
 
           <h3 class="guide-sec" id="g-pro-pm">ReliaPro: The PM Plan</h3>
           <p>The maintenance plan arrives with the asset — you don't have to go and ask for it. The plan knows how often each job repeats but not where yours is in the cycle, so the PM screen offers a quick <strong>Set Due Dates</strong> pass: one answer per item — the last service date, "it's new", or "not sure" (which assumes each job is halfway through its cycle) — puts the whole plan on the calendar. Where we have the manufacturer's service schedule for your make and model, tasks come from it with the source document cited, and those intervals are never stretched or shrunk. Where there's no published schedule, tasks come from general practice for that kind of thing, and they're labeled that way so you always know which is which.</p>
           <p>Criticality decides how much of the plan you get: a high-critical item gets the full treatment, a low-critical one gets the essentials. It never drops anything safety-related. The generated plan is a proposal, so review it and cut what your shop genuinely doesn't do. The Preventative Maintenance module then shows the work grouped by site and system, most critical first.</p>
+          <p>Two buttons sit at the top of that module. <strong>Deploy Strategy</strong> puts the library's plan on anything at the site that doesn't have one yet, and it's safe to run again after you add equipment. <strong>+ Custom PM</strong> is for a job of your own, or for an item the library has no plan for: pick the item, name the job, say how often (in days, weeks, months or years, in hours, miles or cycles, or both) and when it was last done. A job due weekly or more often belongs on a round, and the form says so.</p>
+          <p>Sometimes a manufacturer's plan lists fewer jobs than the general plan for that kind of equipment, like three jobs for an espresso machine where general practice has fourteen. When that happens, the item's Strategy Library card says so in plain numbers and lets you choose: blend the two, the manufacturer's alone, or the general plan. Anything nobody answers gets the blend, which can never leave an item with less than either plan on its own.</p>
+
+          <h3 class="guide-sec" id="g-pro-law">ReliaPro: Required by Law</h3>
+          <p>Some inspections aren't a matter of good practice, because a regulation sets them. The library marks those <strong>Required by Law</strong>, names the section, and links to the text: an aircraft's annual and its transponder test under the FAA's rules, OSHA's monthly fire extinguisher check and daily forklift examination, a boiler's certificate inspection under the state's boiler law, a heavy truck's annual DOT inspection. Rules that reach you through a state or local fire code say where they apply, because not every town has adopted the same code.</p>
+          <p>They stay on every plan at every level. A manufacturer's schedule that leaves one out doesn't remove it, and a low criticality doesn't trim it. Their intervals aren't tightened or stretched either: they are what the regulation says.</p>
+          <p>The state comes from the site. Set it on the business, change it on any site that's somewhere else, and the plan follows: move a shop from Texas to Ohio and its commercial water heater inspection goes from every three years to every year. Where we haven't read a state's rules yet, the job stays on the plan as typical practice and says it hasn't been checked. A household property is never asked for a state: it's a business setting, and boiler laws exempt private homes almost everywhere.</p>
 
           <h3 class="guide-sec" id="g-pro-rounds">ReliaPro: Rounds</h3>
-          <p>Anything due weekly or faster isn't really scheduled maintenance; it's a walk. Rounds collects those quick checks into checklists so they don't clutter the PM schedule. Build a site's rounds from a pick list where everything starts ticked, and untick what your shop doesn't do. A check you leave out isn't remembered against you; it's simply offered again next time you build.</p>
+          <p>Quick, frequent checks aren't really scheduled maintenance; they're a walk. Rounds collects them into checklists so they don't clutter the PM schedule, on whatever rhythm fits: opening, closing, every shift, daily, weekly, monthly or longer. Build a site's rounds from a pick list where everything starts ticked, and untick what your shop doesn't do. A check you leave out isn't remembered against you; it's simply offered again next time you build.</p>
+          <p>For anything the library doesn't know, <strong>+ Custom Round</strong> starts a round from scratch and opens straight onto adding its checks. A check can cover one item or the <strong>Whole Site</strong>, for things like "fire exits clear" or "back door locked", so even a site with no equipment registered can have a round.</p>
           <p>Running a round is tapping through it: each check gets an OK, a flag with a note for anything that looks wrong, or a skip. Skipping asks whether to drop the check for this round or keep it open to finish later, and a walk in progress can be put down and picked back up on the same device. One activity that spans several machines, like washing four blind filters, shows up once with a checkbox per asset. Every completed walk is saved with who ran it and when, flags first when you read it back.</p>
 
           <h3 class="guide-sec" id="g-pro-people">ReliaPro: Staff and Roles</h3>
@@ -664,28 +680,48 @@
           <div class="release">
             <div class="rel-head"><span class="rel-v">2.0.0</span><span class="rel-date">September 2026 &middot; On the web now</span></div>
             <p class="rel-name">ReliaPro Becomes Real, and the Schedules Get Sources</p>
+            <p class="rel-group">Setting Up</p>
             <ul>
               <li>ReliaPro is now a working product, not a placeholder: switch modes in Settings, no separate app to buy or install.</li>
-              <li>Business structure: businesses, sites, and systems, with an equipment registry, criticality, and short tags for everything in it.</li>
+              <li>Business structure: businesses, sites, and systems, with an equipment registry, criticality, and short tags for everything in it. A business and each of its sites can say which US state they operate in, so the laws for the equipment follow the building.</li>
               <li>Build Out: tick your way through a whole site's equipment on one screen, with a count for the machines you have more than one of. Everything you add arrives with its maintenance schedule already deployed, so a fifteen-machine shop goes from an empty register to a scheduled one in a few minutes rather than an afternoon.</li>
-              <li>Service records that hold up: marking work done now takes the condition found, parts and labor cost, who did the work, and a photo of the receipt or the technician's paperwork, attached right to the record &mdash; and a manager can add the photo later when catching up on paperwork.</li>
-              <li>Defer and endorse: a PM can be deferred to a chosen date with a recorded reason (an inspection often shows something can run a bit longer than the manual asks), and every generated schedule can be endorsed by the owner or manager &mdash; one tap per item &mdash; so each frequency becomes your decision on record, not just the library's suggestion.</li>
-              <li>Everything you own gets its own page and its own QR sticker. The page gathers what was scattered across the modules &mdash; which strategy matched and what it holds, the maintenance and what&rsquo;s overdue, the walk-round checks, the spares on the shelf, any outstanding recalls, roughly when it will want replacing, and how much of its scheduled work actually got done &mdash; and every line taps through to where that thing lives. Print QR labels for the whole register a sheet at a time, in three sizes matched to the sticker sheets you can buy, and a scan opens that page on whoever&rsquo;s phone is standing in front of it.</li>
               <li>Deploy Strategy: one button turns a room full of equipment into a working maintenance programme. Tick your machines, check how much each one matters &mdash; the library starts every type where it usually belongs, so the espresso machine that closes the shop isn't treated like the knock box &mdash; and press once. Scheduled maintenance, daily walk-round checks, the spare parts worth holding and any manufacturer recalls all arrive together, from the same strategy. Safe to run again whenever you add equipment: it adds what is missing and disturbs nothing already on the books.</li>
-              <li>The Replacement Plan: roughly when each item will want replacing, gathered by year so three grinders bought together stop being a surprise in the same month. Every line says plainly whose estimate it is, because no manufacturer publishes a service life.</li>
-              <li>Compliance: how much of the scheduled work actually happened, by week, month, quarter or year &mdash; and never a bare percentage. Every rate comes with the exact jobs that were missed listed underneath it, because a number on its own teaches people to tick boxes fast. Only finished days are counted; a round due this morning hasn't been missed yet.</li>
-              <li>The Schedule: your walk-rounds, planned maintenance and dated one-off jobs on one calendar, by day, week, month, quarter or year, with a name against every job. Hand a person or a crew a site, a system, an asset or a round and everything inside it is theirs &mdash; including equipment you add later &mdash; so a shop with hundreds of maintenance tasks is organised in a few minutes rather than one job at a time. Staff don't need a ReliaLife account to be scheduled: type a name and they can be given work. Ahead of today the calendar shows the plan; behind it, what was actually done and who did it.</li>
-              <li>One Time Tasks: a notes-style list for the jobs that don't repeat &mdash; jot them as you think of them, pin them to something, tick them off. The register also watches the U.S. government's recall databases (NHTSA for vehicles, CPSC for everything else) and recommends safety recalls that match your registered equipment, each with the official notice attached.</li>
-              <li>A library of maintenance schedules read from manufacturers' own service documents, covering espresso and coffee equipment, brewery, winery, and laundromat machines, with the source cited on every task. Where a maker publishes nothing, the entry says so plainly.</li>
-              <li>The Strategy Library is browsable inside the app: every plan by category, make, and model, with the three criticality levels, the source of each task, and a button straight to the manufacturer's own document &mdash; the same browser as on this page, one tap from the dashboard.</li>
-              <li>Car schedules from the manufacturers' maintenance guides for Toyota, Lexus, Scion, Subaru, Mazda, and Nissan, by year and model. Honda doesn't publish mileage intervals, so Honda vehicles get the dashboard-code table instead, which is what Honda actually uses.</li>
-              <li>General maintenance plans for every household category, labeled as general practice rather than dressed up as manufacturer data.</li>
-              <li>Rounds: quick daily and weekly checks split out of the PM schedule into walkable checklists, with OK / flag / skip, saved records, and multi-machine activities handled sensibly.</li>
-              <li>Your records, in a spreadsheet, whenever you want them: one button in Settings writes an Excel workbook holding everything the app knows &mdash; equipment and where it sits, every schedule, the full service history with costs, deferrals and condition found, walk-round results, odometer readings, one time tasks and work orders. Inactive equipment and deferred work are in there too, marked for what they are. Nothing about your maintenance record is locked inside this app.</li>
-              <li>Sync repairs: several kinds of data could quietly fail to reach the cloud or reappear after deletion; both are fixed, and sync failures now say so instead of staying silent.</li>
-              <li>Confirmation dialogs on the web actually confirm now (they previously did nothing at all).</li>
+              <li>When a manufacturer&rsquo;s plan lists fewer jobs than the general plan for that kind of equipment, you choose: blend the two, the manufacturer&rsquo;s alone, or the general plan. Anything nobody answers gets the blend, so no item ends up with less than either plan on its own.</li>
+              <li>Everything you own gets its own page and its own QR sticker. The page gathers what was scattered across the modules &mdash; which strategy matched and what it holds, the maintenance and what&rsquo;s overdue, the walk-round checks, the spares on the shelf, any outstanding recalls, roughly when it will want replacing, and how much of its scheduled work actually got done &mdash; and every line taps through to where that thing lives. Print QR labels for the whole register a sheet at a time, in three sizes matched to the sticker sheets you can buy, and a scan opens that page on whoever&rsquo;s phone is standing in front of it. Open any module from that page and it lands on that item and its site.</li>
               <li>Personal things and business equipment sit properly side by side: your house, car, and mower stay yours, keep their category, and can be moved in and out of a business without losing anything.</li>
               <li>Businesses can be edited and deleted, not just created.</li>
+            </ul>
+            <p class="rel-group">Doing the Work</p>
+            <ul>
+              <li>Rounds: quick checks split out of the PM schedule into walkable checklists, from opening and closing through daily, weekly and monthly, with OK / flag / skip, saved records, and multi-machine activities handled sensibly.</li>
+              <li>+ Custom Round and + Custom PM: write your own round or maintenance job for anything the library doesn&rsquo;t know. A round check can cover one item or the whole site (&ldquo;fire exits clear&rdquo;), and a custom job sits on the schedule exactly like one the library generated.</li>
+              <li>Service records that hold up: marking work done now takes the condition found, parts and labor cost, who did the work, and a photo of the receipt or the technician's paperwork, attached right to the record &mdash; and a manager can add the photo later when catching up on paperwork.</li>
+              <li>Defer and endorse: a PM can be deferred to a chosen date with a recorded reason (an inspection often shows something can run a bit longer than the manual asks), and every generated schedule can be endorsed by the owner or manager &mdash; one tap per item &mdash; so each frequency becomes your decision on record, not just the library's suggestion.</li>
+              <li>The Schedule: your walk-rounds, planned maintenance and dated one-off jobs on one calendar, by day, week, month, quarter or year, with a name against every job. Hand a person or a crew a site, a system, an asset or a round and everything inside it is theirs &mdash; including equipment you add later &mdash; so a shop with hundreds of maintenance tasks is organised in a few minutes rather than one job at a time. Staff don't need a ReliaLife account to be scheduled: type a name and they can be given work. Ahead of today the calendar shows the plan; behind it, what was actually done and who did it.</li>
+              <li>One Time Tasks: a notes-style list for the jobs that don't repeat &mdash; jot them as you think of them, pin them to something, tick them off. The register also watches the U.S. government's recall databases (NHTSA for vehicles, CPSC for everything else) and recommends safety recalls that match your registered equipment, each with the official notice attached.</li>
+              <li>Spare Parts: the parts worth keeping on the shelf at each site, weighed on how critical the equipment is and whether a second unit at the same site could cover for a breakdown. Marking a PM done asks whether a spare was used, and deleting an item takes the spare lines only it needed.</li>
+              <li>The Replacement Plan: roughly when each item will want replacing, gathered by year so three grinders bought together stop being a surprise in the same month. Every line says plainly whose estimate it is, because no manufacturer publishes a service life.</li>
+            </ul>
+            <p class="rel-group">The Library</p>
+            <ul>
+              <li>Required by Law: inspections a regulation sets are their own class, named, quoted and linked to the regulation&rsquo;s text. That covers the FAA&rsquo;s aircraft inspections, OSHA&rsquo;s fire extinguisher and forklift checks, the fire code&rsquo;s sprinkler, alarm, emergency lighting and hood suppression tests, each state&rsquo;s boiler law and, where we&rsquo;ve read it, elevator law, state vehicle safety inspections, and the federal DOT inspection for heavy trucks. No manufacturer&rsquo;s plan can drop one and no criticality level trims one.</li>
+              <li>Life safety and elevators join the library: fire extinguishers, fire alarm systems, sprinkler systems, emergency and exit lighting, and elevators, offered to every kind of business.</li>
+              <li>A library of maintenance schedules read from manufacturers' own service documents, covering coffee and caf&eacute;, restaurant kitchen, brewery, winery, distillery, laundromat, car wash, vending and micro market, machine shop and woodshop equipment, along with boats, aircraft, powersports, firearms, appliances, lawn and garden, and the house itself, with the source cited on every task. Where a maker publishes nothing, the entry says so plainly.</li>
+              <li>The Strategy Library is browsable inside the app: every plan by category, make, and model, with the three criticality levels, the source of each task, and a button straight to the manufacturer's own document &mdash; the same browser as on this page, one tap from the dashboard.</li>
+              <li>Car schedules from the manufacturers' maintenance guides for more than forty makers, from Acura to Volvo, by year and model. Honda doesn't publish mileage intervals, so Honda vehicles get the dashboard-code table instead, which is what Honda actually uses.</li>
+              <li>General maintenance plans for every household category, labeled as general practice rather than dressed up as manufacturer data.</li>
+            </ul>
+            <p class="rel-group">Records and Reports</p>
+            <ul>
+              <li>Compliance: how much of the scheduled work actually happened, by week, month, quarter or year &mdash; and never a bare percentage. Every rate comes with the exact jobs that were missed listed underneath it, because a number on its own teaches people to tick boxes fast. Only finished days are counted; a round due this morning hasn't been missed yet.</li>
+              <li>Reliability: a second view in Metrics that looks at the equipment rather than the walk. Planned work against breakdowns, hours lost, what&rsquo;s costing you the most, whether a failure was seen coming, and whether an interval looks too long or too short. All of it comes from records the app already keeps, and a missing figure says it&rsquo;s missing rather than showing zero.</li>
+              <li>Your records, in a spreadsheet, whenever you want them: one button in Settings writes an Excel workbook holding everything the app knows &mdash; equipment and where it sits, every schedule, the full service history with costs, deferrals and condition found, walk-round results, odometer readings, one time tasks and work orders. Inactive equipment and deferred work are in there too, marked for what they are. Nothing about your maintenance record is locked inside this app.</li>
+            </ul>
+            <p class="rel-group">Fixes</p>
+            <ul>
+              <li>The phone and the web stop disagreeing: equipment built out on the web now reaches the phone, deletions stick on both, and the phone checks for changes every time you come back to the app.</li>
+              <li>Sync repairs: several kinds of data could quietly fail to reach the cloud or reappear after deletion; both are fixed, and sync failures now say so instead of staying silent.</li>
+              <li>Confirmation dialogs on the web actually confirm now (they previously did nothing at all).</li>
               <li>Fixes can now reach the iPhone app over the air between App Store releases.</li>
             </ul>
             <p class="rel-note">Live on the web app today. The iPhone release is still to come; until it lands, iPhones stay on 1.2.0.</p>
@@ -739,7 +775,7 @@
           <h2>Strategy Library</h2>
           <p class="lead">The maintenance schedules behind ReliaLife, one item at a time, with the manufacturer's document cited on every task that came from one.</p>
 
-          <p>When the app suggests maintenance for your car or your espresso machine, the suggestions come from here. For many of them that means the schedule from the maker's own service documents, with a link to the document and the exact line quoted. Where a maker publishes nothing, the entry says so instead of inventing numbers, and general-practice entries are labeled as exactly that.</p>
+          <p>When the app suggests maintenance for your car or your espresso machine, the suggestions come from here. For many of them that means the schedule from the maker's own service documents, with a link to the document and the exact line quoted. Where a maker publishes nothing, the entry says so instead of inventing numbers, and general-practice entries are labeled as exactly that. Inspections a regulation requires are marked Required by Law, with the section named and a link to its text.</p>
           <p>The library is also built into the app itself: look for Strategy Library on the ReliaPro dashboard, or in Settings at home. There it opens instantly, with no separate sign-in.</p>
           <p>Browsing the library here requires a ReliaLife account. Sign in below with the same email and password you use in the app. If you don't have an account yet, create one in the iPhone app or the <a href="https://relialife.vercel.app/" target="_blank" rel="noopener">web app</a> first.</p>
 
@@ -998,6 +1034,7 @@
         { id: 'kitchen', name: 'Kitchen and Restaurant', types: ['commercial-range', 'deep-fryer', 'griddle-charbroiler', 'convection-oven', 'combi-oven', 'steam-table-holding', 'food-disposer', 'exhaust-hood', 'hood-fire-suppression', 'soda-fountain'] },
         { id: 'machineshop', name: 'Machine Shop', types: ['cnc-mill', 'cnc-lathe', 'wire-edm', 'knee-mill', 'engine-lathe', 'metal-band-saw', 'surface-grinder', 'welder', 'plasma-cutter', 'press-brake', 'blast-cabinet', 'parts-washer', 'cmm', 'mist-collector', 'coolant-system'] },
         { id: 'woodshop', name: 'Woodshop', types: ['table-saw', 'panel-saw', 'wood-band-saw', 'miter-saw', 'jointer', 'planer', 'cnc-router', 'shaper', 'wood-lathe', 'wide-belt-sander', 'edge-sander', 'mortiser', 'edgebander', 'dust-collector', 'air-cleaner'] },
+        { id: 'lifesafety', name: 'Building & Life Safety', types: ['fire-extinguishers', 'fire-alarm-system', 'fire-sprinkler-system', 'emergency-exit-lighting', 'elevator'] },
         { id: 'shop', name: 'Shared Shop Equipment', types: ['air-compressor', 'commercial-water-heater', 'dishwasher', 'hot-water-tower', 'ice-machine', 'payment-system', 'pos-terminal', 'process-pump', 'steam-boiler', 'undercounter-fridge', 'walk-in-cooler', 'water-filtration', 'drill-press', 'pedestal-grinder', 'spray-booth', 'shop-crane', 'forklift', 'air-dryer'] }
       ];
       function categoryOf(s) {
@@ -1158,6 +1195,14 @@
       function webUrl(u) {
         var s = String(u == null ? '' : u).trim();
         return /^https?:\/\//i.test(s) ? s : '';
+      }
+
+      // The page a reader should land on for a regulation. The library cites the eCFR's
+      // renderer API, because that is the text the quote gate can fetch and read; a person
+      // following the link wants the eCFR's own section page. Anything else is unchanged.
+      function readableRegulationUrl(u) {
+        var m = String(u == null ? '' : u).match(/^https:\/\/www\.ecfr\.gov\/api\/renderer\/v1\/content\/enhanced\/current\/title-(\d+)\?part=[\w.]+&section=([\w.]+)$/);
+        return m ? 'https://www.ecfr.gov/current/title-' + m[1] + '/section-' + m[2] : u;
       }
 
       /* ----------------------------- the three plans */
@@ -1528,6 +1573,7 @@
           // Copied, not referenced: mergeSameWork unions tiers in place, and this array
           // belongs to the shared strategy table every other screen reads.
           tiers: (t.tiers || []).slice(), safety: !!t.safety, source: t.source,
+          regulation: t.regulation, appliesWhere: t.appliesWhere,
           component: t.component, note: t.note, severeOnly: t.severeOnly,
           severeConditions: t.severeConditions, severeUsage: t.severeUsage,
           usageUnit: t.usageUnit, onCondition: t.onCondition, parts: t.parts,
@@ -1539,6 +1585,7 @@
         return {
           key: key, title: titleText(r.title), freq: shortDays(r.cadenceDays || 7), freqSub: null,
           tiers: (r.tiers || []).slice(), safety: false, source: r.source,
+          regulation: r.regulation, appliesWhere: r.appliesWhere,
           component: r.component, note: r.note, parts: r.parts, reading: r.reading,
           evidence: r.evidence, sourceNote: r.sourceNote, sourceUrl: r.sourceUrl
         };
@@ -1573,12 +1620,15 @@
       }
 
       function activityHtml(a, first, showLevels, mixed) {
-        // The two markers the table carries. Safety is the other thing a row could announce,
+        // The markers the table carries. Safety is the other thing a row could announce,
         // but most of a car schedule is safety work, so a tag on nearly every line would say
         // nothing - it shows instead as the level it holds, and the row explains when opened.
         var tags = [];
         if (a.severeOnly) tags.push('Severe');
         if (mixed && a.source === 'typical') tags.push('Typical');
+        // A legally required line always says so, mixed plan or not: it is the one row an
+        // owner may not delete on the strength of the manufacturer leaving it out.
+        if (a.source === 'regulatory') tags.push('Required by Law');
 
         var h = '<div class="act-row' + (first ? '' : ' ruled') + '" data-row="' + esc(a.key) + '"' +
           ' role="button" tabindex="0" aria-expanded="' + (rowOpen[a.key] ? 'true' : 'false') + '">' +
@@ -1628,11 +1678,18 @@
               : '') + '.</p>';
         }
         if (a.safety) d += '<p class="d-line">Safety-related, so it stays in the plan at every level.</p>';
+        if (a.source === 'regulatory') {
+          d += '<p class="d-line">Required by ' + esc(a.regulation || 'regulation') + '. Kept on every plan and at ' +
+            'every level, whatever the manufacturer’s document says.</p>';
+          if (a.appliesWhere) d += '<p class="d-line">Applies: ' + esc(a.appliesWhere) + '</p>';
+        }
         if (a.evidence && a.evidence.quote) {
+          var evUrl = webUrl(a.source === 'regulatory' ? readableRegulationUrl(a.evidence.url) : a.evidence.url);
           d += '<div class="ev-box"><p class="ev-quote">&ldquo;' + esc(a.evidence.quote) + '&rdquo;</p>' +
             '<p class="ev-meta">' + (a.evidence.page ? 'Page ' + esc(a.evidence.page) : '') +
-            (webUrl(a.evidence.url) ? (a.evidence.page ? '&nbsp;&nbsp;·&nbsp;&nbsp;' : '') +
-              '<a href="' + esc(webUrl(a.evidence.url)) + '" target="_blank" rel="noopener">Source Document &nearr;</a>' : '') +
+            (evUrl ? (a.evidence.page ? '&nbsp;&nbsp;·&nbsp;&nbsp;' : '') +
+              '<a href="' + esc(evUrl) + '" target="_blank" rel="noopener">' +
+              (a.source === 'regulatory' ? 'Regulation Text' : 'Source Document') + ' &nearr;</a>' : '') +
             '</p></div>';
         } else if (a.sourceNote || webUrl(a.sourceUrl)) {
           d += '<p class="d-line">' + (a.sourceNote ? esc(cleanTitle(a.sourceNote)) + ' ' : '') +
@@ -1640,7 +1697,9 @@
         } else {
           d += '<p class="d-line">' + (a.source === 'oem'
             ? 'From the manufacturer’s document.'
-            : 'Typical practice, not a manufacturer figure.') + '</p>';
+            : a.source === 'regulatory'
+              ? 'From the regulation itself.'
+              : 'Typical practice, not a manufacturer figure.') + '</p>';
         }
         return h + d + '</div>';
       }
@@ -1753,8 +1812,8 @@
         }
 
         h += tableHtml('Not on a Schedule', unscheduled, allLevels, mixed,
-          'The maker asks for this work, but not at a repeating interval — it falls due when the '
-          + 'it says so, or at odometer readings that don’t repeat. The app won’t put these on '
+          'The maker asks for this work, but not at a repeating interval — it falls due when it '
+          + 'tells you, or at odometer readings that don’t repeat. The app won’t put these on '
           + 'your calendar, so they are yours to watch for.');
 
         if (!tasks.length && !rounds.length && !unscheduled.length) {
