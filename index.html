@@ -961,18 +961,40 @@
       }
 
       /* ----------------------------- labels and formatting */
+      // The names and the categories below are what the app's Strategy Library uses. The
+      // publisher lifts both from app/strategy-library.tsx on main and uploads them beside the
+      // table (strategy-library/categories.json), and useCategories() swaps them in when the
+      // library loads - so a type added in the app is named and filed the same way here with
+      // nobody copying anything. These built-in copies are only the fallback for a page that
+      // cannot read that file.
       var TYPE_LABELS = {
         'car': 'Cars and Trucks',
         'base-home': 'The Home', 'base-car': 'Any Car', 'base-appliance': 'Appliances',
         'base-lawn-garden': 'Lawn and Garden', 'base-pet-care': 'Pet Care',
         'base-aircraft': 'Any Aircraft', 'base-watercraft': 'Any Watercraft',
-        'base-firearm': 'Any Firearm',
+        'base-powersports': 'Any Powersports Machine', 'base-firearm': 'Any Firearm',
+        'air-rifle': 'Air Rifle and Air Pistol', 'gun-safe': 'Gun Safe and Storage',
+        'reloading-press': 'Reloading Press and Bench', 'riflescope': 'Riflescope and Optic',
+        'boat-hull': 'Boat, Hull and Systems', 'marine-diesel': 'Marine Diesel Inboard',
+        'sailboat-rig': 'Sailboat Rig and Sails', 'e-bike': 'Electric Bike',
+        'dirt-bike': 'Dirt Bike and Off-Road Motorcycle', 'golf-cart': 'Golf Cart and LSV',
+        'scooter': 'Scooter and Moped', 'experimental-aircraft': 'Experimental or Light Sport Aircraft',
+        'aircraft-propeller': 'Aircraft Propeller', 'helicopter': 'Light Helicopter',
+        'glider-sailplane': 'Glider and Sailplane', 'ultralight-aircraft': 'Ultralight, Trike and Paramotor',
+        'aircraft-avionics': 'Avionics, Transponder and ELT', 'hot-air-balloon': 'Hot Air Balloon',
+        'garage-air-compressor': 'Air Compressor',
+        'cordless-tool-kit': 'Cordless Drill and Power Tools', 'home-welder': 'Welder',
+        'home-table-saw': 'Table Saw', 'home-miter-saw': 'Miter Saw',
+        'home-drill-press': 'Drill Press', 'floor-jack': 'Floor Jack and Jack Stands',
+        'battery-charger': 'Battery Charger and Jump Starter',
         'central-hvac': 'Central Heating and Cooling',
         'home-water-heater': 'Tank Water Heater',
         'pool-equipment': 'Pool Pump and Equipment',
         'atv-utv': 'ATV or Side-by-Side',
         'pos-terminal': 'POS Terminal',
         'walk-in-cooler': 'Walk-In Cooler',
+        // The five trades added 2026-09-11. Without these the title-caser prints "In Bay Automatic"
+        // and "Reach In Freezer", and the rest lose the second half of their library name.
         'blending-tank': 'Blending and Proofing Tank', 'barrel-rack': 'Barrel Rack and Rickhouse',
         'barrel-filler': 'Barrel Filler and Emptier',
         'in-bay-automatic': 'In-Bay Automatic', 'self-serve-bay': 'Self-Serve Wash Bay',
@@ -983,26 +1005,28 @@
         'steam-table-holding': 'Steam Table and Holding Cabinet',
         'food-disposer': 'Food Waste Disposer', 'exhaust-hood': 'Exhaust Hood and Make-Up Air',
         'soda-fountain': 'Soda Fountain and Dispenser',
-        // Ported from the app browser 2026-09-12. Without these the title-caser prints
-        // "Cnc Mill", "Wire Edm" and "Cmm", and the rest lose half their name.
-        'base-powersports': 'Any Powersports Machine', 'air-rifle': 'Air Rifle and Air Pistol',
-        'gun-safe': 'Gun Safe and Storage', 'reloading-press': 'Reloading Press and Bench',
-        'riflescope': 'Riflescope and Optic', 'boat-hull': 'Boat, Hull and Systems',
-        'marine-diesel': 'Marine Diesel Inboard', 'sailboat-rig': 'Sailboat Rig and Sails',
-        'e-bike': 'Electric Bike', 'dirt-bike': 'Dirt Bike and Off-Road Motorcycle',
-        'golf-cart': 'Golf Cart and LSV', 'scooter': 'Scooter and Moped',
-        'experimental-aircraft': 'Experimental or Light Sport Aircraft', 'aircraft-propeller': 'Aircraft Propeller',
-        'helicopter': 'Light Helicopter', 'garage-air-compressor': 'Air Compressor',
-        'cordless-tool-kit': 'Cordless Drill and Power Tools', 'home-welder': 'Welder',
-        'home-table-saw': 'Table Saw', 'home-miter-saw': 'Miter Saw',
-        'home-drill-press': 'Drill Press', 'floor-jack': 'Floor Jack and Jack Stands',
-        'battery-charger': 'Battery Charger and Jump Starter', 'cnc-mill': 'CNC Machining Center',
-        'cnc-lathe': 'CNC Lathe', 'cnc-router': 'CNC Router',
+        // The shop trades. Without these, typeLabel's title-caser turns 'cnc-mill' into "Cnc Mill".
+        'cnc-mill': 'CNC Machining Center', 'cnc-lathe': 'CNC Lathe', 'cnc-router': 'CNC Router',
         'wire-edm': 'Wire EDM', 'cmm': 'Coordinate Measuring Machine',
         'shop-crane': 'Overhead or Jib Crane', 'air-dryer': 'Compressed Air Dryer',
         'air-cleaner': 'Ambient Air Cleaner', 'planer': 'Thickness Planer',
         'panel-saw': 'Sliding Panel Saw', 'wide-belt-sander': 'Wide Belt or Drum Sander',
-        'pedestal-grinder': 'Bench or Pedestal Grinder', 'spray-booth': 'Spray Booth and Finishing'
+        'pedestal-grinder': 'Bench or Pedestal Grinder', 'spray-booth': 'Spray Booth and Finishing',
+        // The trucking, heavy equipment and placer mine trades.
+        'semi-tractor': 'Semi Tractor', 'straight-truck': 'Straight Truck', 'dump-truck': 'Dump Truck',
+        'yard-truck': 'Yard Truck', 'reefer-trailer': 'Refrigerated Trailer',
+        'reefer-unit': 'Transport Refrigeration Unit', 'flatbed-trailer': 'Flatbed and Step Deck Trailer',
+        'tanker-trailer': 'Tank Trailer', 'lowboy-trailer': 'Lowboy and Equipment Trailer',
+        'end-dump-trailer': 'Dump and Side-Dump Trailer', 'apu': 'Auxiliary Power Unit and Bunk Heater',
+        'truck-lift': 'Truck Lift', 'fuel-storage-tank': 'Fuel Tank and DEF Storage',
+        'hot-water-pressure-washer': 'Pressure Washer (Commercial)', 'service-truck': 'Service and Lube Truck',
+        'mini-excavator': 'Mini and Compact Excavator', 'dozer': 'Crawler Dozer',
+        'skid-steer': 'Skid Steer and Compact Track Loader', 'compactor-roller': 'Compactor and Roller',
+        'trencher-boring': 'Trencher and Directional Drill', 'hydraulic-breaker': 'Hydraulic Breaker and Attachments',
+        'mobile-crane': 'Mobile Crane', 'towable-generator': 'Mobile Generator',
+        'dewatering-pump': 'Dewatering and Trash Pump', 'utility-vehicle': 'UTV and Side-by-Side',
+        'wash-plant': 'Trommel and Wash Plant', 'sluice-highbanker': 'Sluice Box and Highbanker',
+        'gold-concentrator': 'Concentrator and Shaker Table', 'mining-conveyor': 'Stacking and Transfer Conveyor',
       };
       function typeLabel(t) {
         if (TYPE_LABELS[t]) return TYPE_LABELS[t];
@@ -1011,9 +1035,9 @@
         }).join(' ');
       }
 
-      // Category -> Make -> Model is the shape of the library. This map is copied from
-      // app/strategy-library.tsx, which owns it; anything not listed falls through to the
-      // shared-shop catch-all at the end, so a new equipment type still appears.
+      // Category -> Make -> Model is the shape of the library. app/strategy-library.tsx owns this
+      // map and the published copy replaces it on load (see above); anything not listed falls
+      // through to the shared-shop catch-all at the end, so a new equipment type still appears.
       var CATS = [
         { id: 'vehicles', name: 'Vehicles', types: ['car', 'base-car'] },
         { id: 'house', name: 'Around the House', types: ['base-home', 'base-pet-care', 'standby-generator', 'central-hvac', 'tankless-water-heater', 'home-water-heater', 'home-boiler', 'whole-house-humidifier', 'water-softener', 'sump-pump', 'pool-equipment', 'garage-door-opener', 'well-pump', 'home-water-filter', 'dehumidifier', 'window-ac', 'wood-stove', 'smoke-co-alarm', 'fire-extinguisher', 'ev-charger', 'irrigation-system', 'septic-system', 'hot-tub', 'hrv-erv', 'radon-fan', 'solar-pv', 'roof', 'gutters', 'siding', 'windows-doors', 'deck', 'driveway', 'fence', 'foundation-drainage', 'aquarium', 'attic-fan', 'electric-fence', 'exercise-machine', 'gas-fireplace', 'grill-smoker', 'home-security-camera', 'home-ups', 'oil-tank', 'piano', 'playset-trampoline', 'propane-tank', 'ro-system', 'sauna-steam', 'sewing-machine', 'stair-lift', 'water-shutoff'] },
@@ -1022,8 +1046,8 @@
         { id: 'boats', name: 'Boats & Watercraft', types: ['base-watercraft', 'outboard-motor', 'sterndrive', 'personal-watercraft', 'boat-hull', 'marine-diesel', 'marine-generator', 'trolling-motor', 'boat-trailer', 'sailboat-rig', 'boat-lift', 'dinghy-tender', 'kayak-canoe'] },
         { id: 'garageshop', name: 'Garage & Home Shop', types: ['garage-air-compressor', 'cordless-tool-kit', 'home-welder', 'shop-vacuum', 'bench-grinder', 'floor-jack', 'battery-charger', 'home-table-saw', 'home-miter-saw', 'home-drill-press', 'garage-heater', 'home-dust-collector', 'vehicle-lift'] },
         { id: 'powersports', name: 'Powersports', types: ['base-powersports', 'motorcycle', 'atv-utv', 'snowmobile', 'dirt-bike', 'scooter', 'golf-cart', 'e-bike', 'bicycle', 'electric-scooter', 'go-kart', 'rv-motorhome', 'travel-trailer', 'utility-trailer'] },
-        { id: 'aircraft', name: 'Aircraft', types: ['base-aircraft', 'piston-aircraft-engine', 'piston-airplane', 'aircraft-propeller', 'experimental-aircraft', 'helicopter'] },
-        { id: 'firearms', name: 'Firearms', types: ['base-firearm', 'pistol', 'revolver', 'rifle', 'shotgun', 'muzzleloader', 'air-rifle', 'gun-safe', 'reloading-press', 'riflescope'] },
+        { id: 'aircraft', name: 'Aircraft', types: ['base-aircraft', 'piston-aircraft-engine', 'piston-airplane', 'aircraft-propeller', 'experimental-aircraft', 'helicopter', 'turboprop-airplane', 'glider-sailplane', 'hot-air-balloon', 'gyroplane', 'ultralight-aircraft', 'aircraft-avionics'] },
+        { id: 'firearms', name: 'Firearms', types: ['base-firearm', 'pistol', 'revolver', 'rifle', 'shotgun', 'muzzleloader', 'air-rifle', 'gun-safe', 'reloading-press', 'riflescope', 'suppressor', 'crossbow', 'compound-bow', 'clay-target-thrower'] },
         { id: 'coffee', name: 'Coffee & Café', types: ['espresso-machine', 'espresso-grinder', 'batch-brewer', 'cold-brew', 'blender', 'knock-box'] },
         { id: 'brewery', name: 'Brewery', types: ['brew-kettle', 'mash-tun', 'fermenter', 'glycol-chiller', 'heat-exchanger', 'canning-line', 'bottling-line', 'brite-tank', 'centrifuge', 'cip-skid', 'grain-mill', 'hlt-clt', 'keg-washer', 'labeler'] },
         { id: 'winery', name: 'Winery', types: ['destemmer-crusher', 'must-pump', 'wine-press', 'barrel-washer'] },
@@ -1035,8 +1059,27 @@
         { id: 'machineshop', name: 'Machine Shop', types: ['cnc-mill', 'cnc-lathe', 'wire-edm', 'knee-mill', 'engine-lathe', 'metal-band-saw', 'surface-grinder', 'welder', 'plasma-cutter', 'press-brake', 'blast-cabinet', 'parts-washer', 'cmm', 'mist-collector', 'coolant-system'] },
         { id: 'woodshop', name: 'Woodshop', types: ['table-saw', 'panel-saw', 'wood-band-saw', 'miter-saw', 'jointer', 'planer', 'cnc-router', 'shaper', 'wood-lathe', 'wide-belt-sander', 'edge-sander', 'mortiser', 'edgebander', 'dust-collector', 'air-cleaner'] },
         { id: 'lifesafety', name: 'Building & Life Safety', types: ['fire-extinguishers', 'fire-alarm-system', 'fire-sprinkler-system', 'emergency-exit-lighting', 'elevator'] },
-        { id: 'shop', name: 'Shared Shop Equipment', types: ['air-compressor', 'commercial-water-heater', 'dishwasher', 'hot-water-tower', 'ice-machine', 'payment-system', 'pos-terminal', 'process-pump', 'steam-boiler', 'undercounter-fridge', 'walk-in-cooler', 'water-filtration', 'drill-press', 'pedestal-grinder', 'spray-booth', 'shop-crane', 'forklift', 'air-dryer'] }
+        { id: 'trucking', name: 'Trucking', types: ['semi-tractor', 'straight-truck', 'dump-truck', 'yard-truck', 'dry-van-trailer', 'reefer-trailer', 'reefer-unit', 'flatbed-trailer', 'tanker-trailer', 'lowboy-trailer', 'end-dump-trailer', 'liftgate', 'apu', 'truck-lift', 'fuel-storage-tank', 'hot-water-pressure-washer', 'service-truck'] },
+        { id: 'heavyequipment', name: 'Heavy Equipment', types: ['excavator', 'mini-excavator', 'wheel-loader', 'dozer', 'backhoe-loader', 'skid-steer', 'motor-grader', 'articulated-dump-truck', 'compactor-roller', 'trencher-boring', 'hydraulic-breaker', 'telehandler', 'mobile-crane', 'boom-lift', 'scissor-lift', 'towable-generator', 'light-tower', 'towable-air-compressor', 'dewatering-pump', 'water-truck', 'utility-vehicle'] },
+        { id: 'placermine', name: 'Small Placer Mine', types: ['wash-plant', 'sluice-highbanker', 'suction-dredge', 'gold-concentrator', 'mining-conveyor', 'metal-detector'] },
+        { id: 'shop', name: 'Shared Shop Equipment', types: ['air-compressor', 'commercial-water-heater', 'dishwasher', 'hot-water-tower', 'ice-machine', 'payment-system', 'pos-terminal', 'process-pump', 'steam-boiler', 'undercounter-fridge', 'walk-in-cooler', 'water-filtration', 'drill-press', 'pedestal-grinder', 'spray-booth', 'shop-crane', 'forklift', 'air-dryer'] },
       ];
+      // Take the app's categories and names as published, if they are whole. A half-written or
+      // unexpected file is ignored rather than trusted: the built-in map is stale at worst.
+      function useCategories(c) {
+        if (!c || !Array.isArray(c.categories) || !c.categories.length) return;
+        var whole = c.categories.every(function (x) {
+          return x && typeof x.id === 'string' && typeof x.name === 'string' && Array.isArray(x.types);
+        });
+        // categoryOf() files anything unlisted under 'shop', so the map must still have it.
+        if (!whole || !c.categories.some(function (x) { return x.id === 'shop'; })) return;
+        CATS = c.categories;
+        if (c.typeLabels && typeof c.typeLabels === 'object') {
+          Object.keys(c.typeLabels).forEach(function (k) {
+            if (typeof c.typeLabels[k] === 'string') TYPE_LABELS[k] = c.typeLabels[k];
+          });
+        }
+      }
       function categoryOf(s) {
         for (var i = 0; i < CATS.length; i++) {
           if (CATS[i].types.indexOf(s.equipmentType) !== -1) return CATS[i].id;
@@ -1330,10 +1373,20 @@
         client.auth.getSession().then(function (s) {
           var token = s.data.session && s.data.session.access_token;
           if (!token) throw new Error('no session');
-          return fetch(SUPABASE_URL + '/storage/v1/object/strategy-library/strategies.json?cb=' + Date.now(), {
-            headers: { 'Authorization': 'Bearer ' + token, 'apikey': SUPABASE_KEY }
-          });
-        }).then(function (resp) {
+          var auth = { headers: { 'Authorization': 'Bearer ' + token, 'apikey': SUPABASE_KEY } };
+          var cb = '?cb=' + Date.now();
+          // The categories ride beside the table from the same publish. Optional: if they
+          // cannot be read, the page files things with its built-in map and still works.
+          var cats = fetch(SUPABASE_URL + '/storage/v1/object/strategy-library/categories.json' + cb, auth)
+            .then(function (r) { return r.ok ? r.json() : null; })
+            .catch(function () { return null; });
+          return Promise.all([
+            fetch(SUPABASE_URL + '/storage/v1/object/strategy-library/strategies.json' + cb, auth),
+            cats
+          ]);
+        }).then(function (res) {
+          useCategories(res[1]);
+          var resp = res[0];
           if (!resp.ok) throw new Error('HTTP ' + resp.status);
           return resp.text();
         }).then(function (txt) {
