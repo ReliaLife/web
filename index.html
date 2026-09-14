@@ -60,6 +60,17 @@
       margin: 0 0 16px; max-width: 20ch; text-wrap: balance;
     }
     .hero .lead { font-size: 17px; color: var(--muted); max-width: 56ch; margin: 0 0 32px; }
+    /* One line of news above the headline. A pill rather than a banner, so it reads as a note
+       on the page and not as an interruption; it links to the release it is about. */
+    .announce {
+      display: inline-flex; flex-wrap: wrap; align-items: center; gap: 4px 8px;
+      font-size: 13px; line-height: 1.45; color: var(--muted);
+      border: 1px solid var(--line); border-radius: 999px; padding: 6px 14px; margin: 0 0 22px;
+    }
+    .announce strong { color: var(--ink); font-weight: 600; }
+    .announce a { color: var(--ink); text-underline-offset: 2px; }
+    .an-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--ink); flex: none; }
+    @media (max-width: 560px) { .announce { border-radius: 12px; } }
     .doors { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; max-width: 720px; }
     /* Above this width the hero copy and the two doors sit side by side; below it they
        stack, which is the original single-column hero. */
@@ -373,6 +384,7 @@
 
     <section class="hero">
       <div class="hero-copy">
+      <p class="announce"><span class="an-dot" aria-hidden="true"></span><strong>ReliaLife 2.0 is coming to iPhone soon.</strong> <span>It&rsquo;s on the web today.</span> <a href="#releases" data-goto="releases">See What&rsquo;s New &rsaquo;</a></p>
       <h2>Stay ahead of the maintenance on everything you own.</h2>
       <p class="lead">ReliaLife is a maintenance tracker for your house, your cars, and your equipment, and for the machines a small business runs on. Tell it what you have, and it tells you what needs doing and when. It runs on iPhone and in any web browser, on the same account.</p>
       </div>
@@ -385,7 +397,7 @@
         <button class="door" data-goto="reliapro">
           <span class="k">Business</span>
           <span class="nm">ReliaPro</span>
-          <span class="d-p">For coffee shops, breweries, car washes, machine shops. Anywhere a breakdown costs you a day of business.</span>
+          <span class="d-p">For coffee shops, lawn crews, contractors, truckers, machine shops. Anywhere a breakdown costs you a day of business.</span>
         </button>
         <div class="lib-stats loading" id="lib-stats" aria-live="polite">
           <span class="k">In the Library</span>
@@ -424,8 +436,8 @@
           <p>You don't have to invent the schedules yourself. ReliaLife carries the maintenance schedule from the manufacturer's own guide for cars from more than forty makers, by year and model, and for a growing list of other equipment: espresso machines, commercial kitchens, car washes, appliances, mowers, boats, aircraft and firearms among them. Where a manufacturer publishes nothing, the app falls back on sensible general practice and says so, instead of dressing a guess up as fact. And where a regulation requires an inspection, the plan says that too, and links to the regulation.</p>
 
           <p class="meta-label">One app, two modes</p>
-          <p><strong>ReliaBase</strong> is the personal side and what you start in: your household, laid out simply. <strong>ReliaPro</strong> is the business side: the same tracking, plus the structure a shop needs, like locations, equipment tags, staff roles, and daily checklists.</p>
-          <p>Switching is one setting. Open <strong>Settings</strong>, pick the mode, and the app changes over. Nothing is installed, nothing is lost, and you can flip back whenever you like. Plenty of people use both: the house in ReliaBase, the shop in ReliaPro, one account.</p>
+          <p><strong>ReliaBase</strong> is the personal side: your household, laid out simply. <strong>ReliaPro</strong> is the business side: the same tracking, plus the structure a shop needs, like locations, equipment tags, staff roles, and daily checklists.</p>
+          <p>The first time you open the app, it asks which one you want. After that, switching is one setting: open <strong>Settings</strong>, pick the mode, and the app changes over. Nothing is installed, nothing is lost, and you can flip back whenever you like. Plenty of people use both: the house in ReliaBase, the shop in ReliaPro, one account.</p>
 
           <p class="meta-label">Who it's for</p>
           <p>ReliaLife started as a personal tool, and that's still its heart: anyone who wants their stuff to last and is tired of asking "when did I last change that filter?" But the same habits matter even more to a small business whose machines are the business. When the washer at a laundromat or the group head at a coffee bar goes down, the day's revenue goes with it, and most small shops don't have a maintenance planner on staff. ReliaPro is that planner.</p>
@@ -494,7 +506,7 @@
             <span class="chip on">iPhone + Web</span>
           </div>
 
-          <p>ReliaPro is built for small businesses with production-critical equipment: coffee shops and cafés, restaurant kitchens, breweries, wineries, distilleries, laundromats, car washes, vending routes and micro markets, machine shops and woodshops. The kind of place where the espresso machine, the fermenter, or the washer-extractor isn't background equipment; it's the reason the doors are open. If it goes down, so does the day.</p>
+          <p>ReliaPro is built for small businesses with production-critical equipment: coffee shops and cafés, restaurant kitchens, breweries, wineries, distilleries, laundromats, car washes, vending routes and micro markets, machine shops and woodshops, lawn care and landscaping crews, construction contractors, trucking outfits, heavy equipment operators, and small placer mines. The kind of place where the espresso machine, the fermenter, or the washer-extractor isn't background equipment; it's the reason the doors are open. If it goes down, so does the day.</p>
 
           <p>Your equipment gets real structure: a business, its locations, and the systems inside each one, with short tags so the fourth washer has a name everyone on staff uses. From there, ReliaPro builds a maintenance plan from real manufacturer service schedules where we have them, sized to how critical each one is to you, and splits the quick daily checks into rounds your staff can walk with a phone.</p>
 
@@ -558,7 +570,7 @@
             </div>
             <div class="module">
               <p class="m-name">Print Labels</p>
-              <p>QR stickers for the whole register, a sheet at a time, in sizes that match the label sheets you can buy. A scan opens that thing’s own page on whoever’s phone is standing in front of it.</p>
+              <p>QR stickers for the whole register, on label sheets, a roll label printer, or a pocket Bluetooth label maker straight from a computer, with your logo in the code if you want it. A scan opens that thing’s own page on whoever’s phone is standing in front of it.</p>
             </div>
             <div class="module">
               <p class="m-name">Spare Parts</p>
@@ -615,7 +627,7 @@
           </nav>
 
           <h3 class="guide-sec" id="g-start">Getting Started</h3>
-          <p>Create an account with an email and password, either in the iPhone app or at the web app. Then add your first asset: pick what kind of thing it is, give it a name, and fill in the basics. For a car that's year, make, and model, and it's worth being exact, because that's how the app finds the manufacturer's schedule.</p>
+          <p>Create an account with an email and password, or continue with Apple or Google (on the web now, and on iPhone from 2.0), either in the iPhone app or at the web app. The first time you open the app it asks whether you want ReliaBase for your home or ReliaPro for a business; pick either, since you can change it later. Then add your first asset: pick what kind of thing it is, give it a name, and fill in the basics. For a car that's year, make, and model, and it's worth being exact, because that's how the app finds the manufacturer's schedule.</p>
           <p>After the asset, the app offers to break it into components and to set up tasks. The suggested tasks are a starting list, not homework: tick the ones that apply, skip the rest. When you accept a task you'll be asked when it was last done. Answer as best you remember, because that's what makes the due dates honest from day one instead of everything showing up as overdue.</p>
 
           <h3 class="guide-sec" id="g-dashboard">The Dashboard</h3>
@@ -644,7 +656,7 @@
           <p>In practice the phone is the tool you carry and the web is where the bigger setup jobs are comfortable: building out a business's equipment, reviewing plans on a real keyboard, and managing deactivated assets, which lives on the web only. The phone looks for changes every time you come back to the app, so equipment you built out on the web is there the next time you pick the phone up.</p>
 
           <h3 class="guide-sec" id="g-modes">Switching Modes</h3>
-          <p>Open <strong>Settings</strong> and pick ReliaBase or ReliaPro. That's the whole procedure. The switch changes what the app shows, not what it stores, so you can move between your household and your business freely, and nothing is lost when you do.</p>
+          <p>The app asks the first time you open it. After that, open <strong>Settings</strong> and pick ReliaBase or ReliaPro. That's the whole procedure. The switch changes what the app shows, not what it stores, so you can move between your household and your business freely, and nothing is lost when you do.</p>
 
           <h3 class="guide-sec" id="g-pro-setup">ReliaPro: First Setup</h3>
           <p>Buildout is most comfortable on the web, and reading and doing work fine on the phone. Start with the structure: create your business, then its location or locations. The type of site you pick shapes which systems the app suggests, so a brewery gets brewing suggestions and not laundry ones. Add the systems that match how you think about the place: brewing, cold side, front of house.</p>
@@ -678,16 +690,18 @@
           <p class="lead">What each version brought. The web app updates continuously; iPhone releases go through the App Store, with small fixes arriving over the air in between.</p>
 
           <div class="release">
-            <div class="rel-head"><span class="rel-v">2.0.0</span><span class="rel-date">September 2026 &middot; On the web now</span></div>
+            <div class="rel-head"><span class="rel-v">2.0.0</span><span class="rel-date">September 2026 &middot; On the web now &middot; iPhone soon</span></div>
             <p class="rel-name">ReliaPro Becomes Real, and the Schedules Get Sources</p>
             <p class="rel-group">Setting Up</p>
             <ul>
+              <li>The first time you open the app, it asks: ReliaBase for your home, or ReliaPro for your business. Either can be changed any time in Settings.</li>
+              <li>Sign in with Apple or Google, as well as with an email and password.</li>
               <li>ReliaPro is now a working product, not a placeholder: switch modes in Settings, no separate app to buy or install.</li>
               <li>Business structure: businesses, sites, and systems, with an equipment registry, criticality, and short tags for everything in it. A business and each of its sites can say which US state they operate in, so the laws for the equipment follow the building.</li>
               <li>Build Out: tick your way through a whole site's equipment on one screen, with a count for the machines you have more than one of. Everything you add arrives with its maintenance schedule already deployed, so a fifteen-machine shop goes from an empty register to a scheduled one in a few minutes rather than an afternoon.</li>
               <li>Deploy Strategy: one button turns a room full of equipment into a working maintenance programme. Tick your machines, check how much each one matters &mdash; the library starts every type where it usually belongs, so the espresso machine that closes the shop isn't treated like the knock box &mdash; and press once. Scheduled maintenance, daily walk-round checks, the spare parts worth holding and any manufacturer recalls all arrive together, from the same strategy. Safe to run again whenever you add equipment: it adds what is missing and disturbs nothing already on the books.</li>
               <li>When a manufacturer&rsquo;s plan lists fewer jobs than the general plan for that kind of equipment, you choose: blend the two, the manufacturer&rsquo;s alone, or the general plan. Anything nobody answers gets the blend, so no item ends up with less than either plan on its own.</li>
-              <li>Everything you own gets its own page and its own QR sticker. The page gathers what was scattered across the modules &mdash; which strategy matched and what it holds, the maintenance and what&rsquo;s overdue, the walk-round checks, the spares on the shelf, any outstanding recalls, roughly when it will want replacing, and how much of its scheduled work actually got done &mdash; and every line taps through to where that thing lives. Print QR labels for the whole register a sheet at a time, in three sizes matched to the sticker sheets you can buy, and a scan opens that page on whoever&rsquo;s phone is standing in front of it. Open any module from that page and it lands on that item and its site.</li>
+              <li>Everything you own gets its own page and its own QR sticker. The page gathers what was scattered across the modules &mdash; which strategy matched and what it holds, the maintenance and what&rsquo;s overdue, the walk-round checks, the spares on the shelf, any outstanding recalls, roughly when it will want replacing, and how much of its scheduled work actually got done &mdash; and every line taps through to where that thing lives. Print QR labels for the whole register on sticker sheets, a roll label printer or a pocket Bluetooth label maker (printed straight from a computer), with your business&rsquo;s logo in the middle of the code if you want it, and a scan opens that page on whoever&rsquo;s phone is standing in front of it. Open any module from that page and it lands on that item and its site.</li>
               <li>Personal things and business equipment sit properly side by side: your house, car, and mower stay yours, keep their category, and can be moved in and out of a business without losing anything.</li>
               <li>Businesses can be edited and deleted, not just created.</li>
             </ul>
@@ -705,6 +719,7 @@
             <p class="rel-group">The Library</p>
             <ul>
               <li>Required by Law: inspections a regulation sets are their own class, named, quoted and linked to the regulation&rsquo;s text. That covers the FAA&rsquo;s aircraft inspections, OSHA&rsquo;s fire extinguisher and forklift checks, the fire code&rsquo;s sprinkler, alarm, emergency lighting and hood suppression tests, each state&rsquo;s boiler law and, where we&rsquo;ve read it, elevator law, state vehicle safety inspections, and the federal DOT inspection for heavy trucks. No manufacturer&rsquo;s plan can drop one and no criticality level trims one.</li>
+              <li>Five more trades for ReliaPro: trucking, heavy equipment, small placer mines, lawn care and landscaping, and construction. Each comes with the equipment those businesses actually run, the makes and models to pick from, and the inspections their regulators require, from a truck&rsquo;s DOT inspection to OSHA&rsquo;s and MSHA&rsquo;s checks.</li>
               <li>Life safety and elevators join the library: fire extinguishers, fire alarm systems, sprinkler systems, emergency and exit lighting, and elevators, offered to every kind of business.</li>
               <li>A library of maintenance schedules read from manufacturers' own service documents, covering coffee and caf&eacute;, restaurant kitchen, brewery, winery, distillery, laundromat, car wash, vending and micro market, machine shop and woodshop equipment, along with boats, aircraft, powersports, firearms, appliances, lawn and garden, and the house itself, with the source cited on every task. Where a maker publishes nothing, the entry says so plainly.</li>
               <li>The Strategy Library is browsable inside the app: every plan by category, make, and model, with the three criticality levels, the source of each task, and a button straight to the manufacturer's own document &mdash; the same browser as on this page, one tap from the dashboard.</li>
@@ -722,9 +737,10 @@
               <li>The phone and the web stop disagreeing: equipment built out on the web now reaches the phone, deletions stick on both, and the phone checks for changes every time you come back to the app.</li>
               <li>Sync repairs: several kinds of data could quietly fail to reach the cloud or reappear after deletion; both are fixed, and sync failures now say so instead of staying silent.</li>
               <li>Confirmation dialogs on the web actually confirm now (they previously did nothing at all).</li>
+              <li>Faster to open: the first screens no longer load the whole maintenance library before they can draw.</li>
               <li>Fixes can now reach the iPhone app over the air between App Store releases.</li>
             </ul>
-            <p class="rel-note">Live on the web app today. The iPhone release is still to come; until it lands, iPhones stay on 1.2.0.</p>
+            <p class="rel-note">Live on the web app today, and rolling out to iPhone soon through the App Store. Until the update reaches your phone, iPhones stay on 1.2.0.</p>
           </div>
 
           <div class="release">
@@ -777,7 +793,7 @@
 
           <p>When the app suggests maintenance for your car or your espresso machine, the suggestions come from here. For many of them that means the schedule from the maker's own service documents, with a link to the document and the exact line quoted. Where a maker publishes nothing, the entry says so instead of inventing numbers, and general-practice entries are labeled as exactly that. Inspections a regulation requires are marked Required by Law, with the section named and a link to its text.</p>
           <p>The library is also built into the app itself: look for Strategy Library on the ReliaPro dashboard, or in Settings at home. There it opens instantly, with no separate sign-in.</p>
-          <p>Browsing the library here requires a ReliaLife account. Sign in below with the same email and password you use in the app. If you don't have an account yet, create one in the iPhone app or the <a href="https://relialife.vercel.app/" target="_blank" rel="noopener">web app</a> first.</p>
+          <p>Browsing the library here requires a ReliaLife account. Sign in below with the same email and password you use in the app. If you don't have an account yet, create one in the iPhone app or the <a href="https://relialife.vercel.app/" target="_blank" rel="noopener">web app</a> first. If you sign in with Apple or Google, you have no password to type here; the same library is under Strategy Library in the web app.</p>
 
           <!-- Sign-in gate -->
           <div class="signin-card" id="str-signin">
@@ -894,9 +910,10 @@
         });
       });
 
-      // Hero doors jump to their section
-      Array.prototype.slice.call(document.querySelectorAll('.door')).forEach(function (d) {
-        d.addEventListener('click', function () {
+      // Hero doors (and the announcement's link) jump to their section
+      Array.prototype.slice.call(document.querySelectorAll('[data-goto]')).forEach(function (d) {
+        d.addEventListener('click', function (e) {
+          e.preventDefault();
           select(d.dataset.goto);
           history.replaceState(null, '', '#' + d.dataset.goto);
           layout.scrollIntoView({ behavior: 'smooth', block: 'start' });
