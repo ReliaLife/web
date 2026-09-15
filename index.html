@@ -1241,6 +1241,7 @@
           };
         }
         if (t.onCondition) return { main: 'When Indicated', sub: t.fallbackDays ? 'or ' + shortDays(t.fallbackDays) : null };
+        if (t.intervalUnpublished) return { main: 'You Decide', sub: 'None Printed' };
         return { main: t.once ? 'Once' : 'As Needed' };
       }
 
@@ -1344,7 +1345,7 @@
        * only to an owner who works the machine the way the maker names.
        */
       function bucketOf(t) {
-        if (t.onCondition || (t.milestonesUsage && t.milestonesUsage.length)) return 'unscheduled';
+        if (t.onCondition || t.intervalUnpublished || (t.milestonesUsage && t.milestonesUsage.length)) return 'unscheduled';
         if (t.severeOnly) return 'severe';
         return 'scheduled';
       }
@@ -1687,7 +1688,7 @@
           regulation: t.regulation, appliesWhere: t.appliesWhere,
           component: t.component, note: t.note, severeOnly: t.severeOnly,
           severeConditions: t.severeConditions, severeUsage: t.severeUsage,
-          usageUnit: t.usageUnit, onCondition: t.onCondition, parts: t.parts,
+          usageUnit: t.usageUnit, onCondition: t.onCondition, intervalUnpublished: t.intervalUnpublished, parts: t.parts,
           reading: t.reading, evidence: t.evidence,
           sourceNote: t.sourceNote, sourceUrl: t.sourceUrl
         };
@@ -1781,6 +1782,8 @@
             esc(fmtNum(a.severeUsage) + (a.usageUnit ? ' ' + shortUnit(a.usageUnit) : '')) + ' instead.</p>';
         }
         if (a.onCondition) d += '<p class="d-line">Due when it tells you: ' + esc(cleanTitle(a.onCondition)) + '</p>';
+        if (a.intervalUnpublished) d += '<p class="d-line">The maker asks for this work but never prints how often. ' +
+          'Set your own interval for now — version 2.1 will suggest one from what other owners report.</p>';
         if (a.parts && a.parts.length) d += '<p class="d-line">Parts: ' + esc(a.parts.join(', ')) + '</p>';
         if (a.reading && a.reading.unit) {
           d += '<p class="d-line">Write down a reading in ' + esc(a.reading.unit) +
@@ -1924,8 +1927,8 @@
 
         h += tableHtml('Not on a Schedule', unscheduled, allLevels, mixed,
           'The maker asks for this work, but not at a repeating interval — it falls due when it '
-          + 'tells you, or at odometer readings that don’t repeat. The app won’t put these on '
-          + 'your calendar, so they are yours to watch for.');
+          + 'tells you, at odometer readings that don’t repeat, or the maker never printed how often. '
+          + 'The app won’t put these on your calendar, so they are yours to watch for.');
 
         if (!tasks.length && !rounds.length && !unscheduled.length) {
           h += '<p class="empty-detail">' + (x.kind === 'no-published-schedule'
