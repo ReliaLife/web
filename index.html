@@ -336,7 +336,6 @@
     .str-group { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin: 20px 0 7px; }
     /* Long headings set in caps shout across the whole column, so the label stays two
        words and the part that explains it drops to a quiet line underneath. */
-    .str-note { font-size: 11.5px; color: var(--faint); margin: -4px 0 8px; }
     .str-row {
       appearance: none; background: none; font: inherit; cursor: pointer; text-align: left;
       display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%;
@@ -1091,6 +1090,10 @@
         // categoryOf() files anything unlisted under 'shop', so the map must still have it.
         if (!whole || !c.categories.some(function (x) { return x.id === 'shop'; })) return;
         CATS = c.categories;
+        if (Array.isArray(c.personalOrder) && c.personalOrder.length
+            && c.personalOrder.every(function (x) { return typeof x === 'string'; })) {
+          PERSONAL_ORDER = c.personalOrder;
+        }
         if (c.typeLabels && typeof c.typeLabels === 'object') {
           Object.keys(c.typeLabels).forEach(function (k) {
             if (typeof c.typeLabels[k] === 'string') TYPE_LABELS[k] = c.typeLabels[k];
@@ -1102,6 +1105,25 @@
           if (CATS[i].types.indexOf(s.equipmentType) !== -1) return CATS[i].id;
         }
         return 'shop';
+      }
+      // Every category a plan shows under: where it is filed, plus each business that owns its
+      // type (a category's `sites`, matched against the table's typeSites). A brewery's boiler and
+      // pumps show under Brewery too, as they do in the app.
+      // The category list is shown in two halves: Personal in the order ReliaBase's asset-type
+      // tiles use, with the home shop last, and everything else as Business, alphabetical. The app
+      // owns this order and publishes it beside the categories; this copy is only the fallback.
+      var PERSONAL_ORDER = ['house', 'vehicles', 'appliances', 'garden', 'aircraft', 'boats', 'powersports', 'firearms', 'garageshop'];
+
+      function categoriesOf(s) {
+        var home = categoryOf(s);
+        var out = [home];
+        var sites = DATA && DATA.typeSites && DATA.typeSites[s.equipmentType];
+        if (!Array.isArray(sites)) return out;
+        CATS.forEach(function (c) {
+          if (c.id === home || !Array.isArray(c.sites)) return;
+          if (c.sites.some(function (x) { return sites.indexOf(x) !== -1; })) out.push(c.id);
+        });
+        return out;
       }
       function catName(id) {
         for (var i = 0; i < CATS.length; i++) if (CATS[i].id === id) return CATS[i].name;
@@ -1417,7 +1439,7 @@
 
       /* ----------------------------- navigation */
       function strategiesIn(catId) {
-        return DATA.strategies.filter(function (s) { return categoryOf(s) === catId; });
+        return DATA.strategies.filter(function (s) { return categoriesOf(s).indexOf(catId) !== -1; });
       }
 
       function renderCrumbs(q) {
@@ -1503,23 +1525,42 @@
 
       function renderCats() {
         var counts = {};
-        DATA.strategies.forEach(function (s) { var c = categoryOf(s); counts[c] = (counts[c] || 0) + 1; });
-        el.count.textContent = DATA.strategies.length + ' plans, by category';
-        el.list.innerHTML = rowsHtml(CATS.filter(function (c) { return counts[c.id]; }).map(function (c) {
-          return { a: c.id, label: c.name, sub: counts[c.id] + (counts[c.id] === 1 ? ' plan' : ' plans') };
-        }));
+        DATA.strategies.forEach(function (s) {
+          categoriesOf(s).forEach(function (c) { counts[c] = (counts[c] || 0) + 1; });
+        });
+        var present = CATS.filter(function (c) { return counts[c.id]; });
+        function row(c) {
+          return { a: c.id, label: c.name, sub: fmtNum(counts[c.id]) + (counts[c.id] === 1 ? ' plan' : ' plans') };
+        }
+        // Personal keeps the app's hand-picked order; Business is alphabetical, because there is
+        // no reason a reader would expect a trade list in any other order.
+        var personal = PERSONAL_ORDER.map(function (id) {
+          for (var i = 0; i < present.length; i++) if (present[i].id === id) return present[i];
+          return null;
+        }).filter(Boolean);
+        var business = present.filter(function (c) { return PERSONAL_ORDER.indexOf(c.id) === -1; })
+          .sort(function (a, b) { return a.name.localeCompare(b.name); });
+
+        el.count.textContent = fmtNum(DATA.strategies.length) + ' plans, by category';
+        var html = '';
+        [{ title: 'Personal', rows: personal }, { title: 'Business', rows: business }]
+          .forEach(function (g) {
+            if (!g.rows.length) return;
+            html += '<p class="str-group">' + g.title + '</p>' + rowsHtml(g.rows.map(row));
+          });
+        el.list.innerHTML = html;
         bindRows(function (a) { nav.cat = a; render(); });
       }
 
       function renderMakes(inCat, makeNames, makeCounts) {
         var generals = inCat.filter(function (s) { return !s.make; });
         el.count.textContent = makeNames.length + (makeNames.length === 1 ? ' make' : ' makes') +
-          ' · ' + inCat.length + ' plans';
+          ' · ' + fmtNum(inCat.length) + ' plans';
         var html = rowsHtml(makeNames.map(function (m) {
           return { a: 'm:' + m, label: m, sub: makeCounts[m] + (makeCounts[m] === 1 ? ' plan' : ' plans') };
         }));
         if (generals.length) {
-          html += '<p class="str-group">General Plans</p><p class="str-note">For when your make isn’t listed.</p>';
+          html += '<p class="str-group">General Plans &mdash; When Your Make Isn’t Listed</p>';
           html += rowsHtml(generals.map(function (s) {
             return { a: 's:' + DATA.strategies.indexOf(s), label: modelLabel(s), sub: '' };
           }));
