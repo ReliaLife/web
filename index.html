@@ -60,17 +60,6 @@
       margin: 0 0 16px; max-width: 20ch; text-wrap: balance;
     }
     .hero .lead { font-size: 17px; color: var(--muted); max-width: 56ch; margin: 0 0 32px; }
-    /* One line of news above the headline. A pill rather than a banner, so it reads as a note
-       on the page and not as an interruption; it links to the release it is about. */
-    .announce {
-      display: inline-flex; flex-wrap: wrap; align-items: center; gap: 4px 8px;
-      font-size: 13px; line-height: 1.45; color: var(--muted);
-      border: 1px solid var(--line); border-radius: 999px; padding: 6px 14px; margin: 0 0 22px;
-    }
-    .announce strong { color: var(--ink); font-weight: 600; }
-    .announce a { color: var(--ink); text-underline-offset: 2px; }
-    .an-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--ink); flex: none; }
-    @media (max-width: 560px) { .announce { border-radius: 12px; } }
     .doors { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; max-width: 720px; }
     /* Above this width the hero copy and the two doors sit side by side; below it they
        stack, which is the original single-column hero. */
@@ -383,7 +372,6 @@
 
     <section class="hero">
       <div class="hero-copy">
-      <p class="announce"><span class="an-dot" aria-hidden="true"></span><strong>ReliaLife 2.0 is out on the App Store.</strong> <a href="#releases" data-goto="releases">See What&rsquo;s New &rsaquo;</a></p>
       <h2>Stay ahead of the maintenance on everything you own.</h2>
       <p class="lead">ReliaLife is a maintenance tracker for your house, your cars, and your equipment, and for the machines a small business runs on. Tell it what you have, and it tells you what needs doing and when. It runs on iPhone and in any web browser, on the same account.</p>
       </div>
@@ -432,7 +420,7 @@
 
           <p>The dashboard sorts it all into three piles: overdue, due soon, and further out. When you do the work, you mark it done, add a note if you want, and the app builds a service history you can actually look things up in later. Notifications keep the quiet stuff from sneaking past you.</p>
 
-          <p>You don't have to invent the schedules yourself. ReliaLife carries the maintenance schedule from the manufacturer's own guide for cars from more than forty makers, by year and model, and for a growing list of other equipment: espresso machines, commercial kitchens, car washes, appliances, mowers, boats, aircraft and firearms among them. Where a manufacturer publishes nothing, the app falls back on sensible general practice and says so, instead of dressing a guess up as fact. And where a regulation requires an inspection, the plan says that too, and links to the regulation.</p>
+          <p>You don't have to invent the schedules yourself. ReliaLife carries the maintenance schedule from the manufacturer's own guide for cars from more than forty makers, by year and model, and for a growing list of other equipment: espresso machines, commercial kitchens, woodshop and machine shop tools, car washes, gas stations, heavy equipment, appliances, mowers, boats, aircraft and firearms among them. Where a manufacturer publishes nothing, the app falls back on sensible general practice and says so, instead of dressing a guess up as fact. And where a regulation requires an inspection, the plan says that too, and links to the regulation.</p>
 
           <p class="meta-label">One app, two modes</p>
           <p><strong>ReliaBase</strong> is the personal side: your household, laid out simply. <strong>ReliaPro</strong> is the business side: the same tracking, plus the structure a shop needs, like locations, equipment tags, staff roles, and daily checklists.</p>
@@ -505,7 +493,7 @@
             <span class="chip on">iPhone + Web</span>
           </div>
 
-          <p>ReliaPro is built for small businesses with production-critical equipment: coffee shops and cafés, restaurant kitchens, breweries, wineries, distilleries, laundromats, car washes, vending routes and micro markets, machine shops and woodshops, lawn care and landscaping crews, construction contractors, trucking outfits, heavy equipment operators, and small placer mines. The kind of place where the espresso machine, the fermenter, or the washer-extractor isn't background equipment; it's the reason the doors are open. If it goes down, so does the day.</p>
+          <p>ReliaPro is built for small businesses with production-critical equipment: coffee shops and cafés, restaurant kitchens, breweries, wineries, distilleries, laundromats, car washes, vending routes and micro markets, machine shops and woodshops, lawn care and landscaping crews, construction contractors, trucking outfits, heavy equipment operators, small placer mines, cideries and co-packers, gas stations, self-storage, small hotels, and auto repair shops. The kind of place where the espresso machine, the fermenter, or the washer-extractor isn't background equipment; it's the reason the doors are open. If it goes down, so does the day.</p>
 
           <p>Your equipment gets real structure: a business, its locations, and the systems inside each one, with short tags so the fourth washer has a name everyone on staff uses. From there, ReliaPro builds a maintenance plan from real manufacturer service schedules where we have them, sized to how critical each one is to you, and splits the quick daily checks into rounds your staff can walk with a phone.</p>
 
@@ -549,7 +537,7 @@
           <div class="modules">
             <div class="module">
               <p class="m-name">Assets</p>
-              <p>The equipment registry: everything you run, with its make, model, tag, location, and how critical it is. Each item has its own page, and any module you open from there lands on that item and its site.</p>
+              <p>The equipment registry: everything you run, with its make, model, tag, location, and how critical it is. Each item has its own page &mdash; scanning its label opens it &mdash; and any module you open from there lands on that item and its site.</p>
             </div>
             <div class="module">
               <p class="m-name">Rounds</p>
@@ -569,7 +557,7 @@
             </div>
             <div class="module">
               <p class="m-name">Print Labels</p>
-              <p>QR stickers for the whole register, on label sheets, a roll label printer, or a pocket Bluetooth label maker straight from a computer, with your logo in the code if you want it. A scan opens that thing’s own page on whoever’s phone is standing in front of it.</p>
+              <p>QR stickers for the whole register, on label sheets, a roll label printer, or a pocket Bluetooth label maker straight from a computer, with your logo in the code if you want it. Point a phone camera at one and that thing’s own page opens in the app, for whoever is standing in front of it.</p>
             </div>
             <div class="module">
               <p class="m-name">Spare Parts</p>
@@ -581,7 +569,7 @@
             </div>
             <div class="module">
               <p class="m-name">People</p>
-              <p>Bring your staff in with roles: some run the rounds and log work, some can edit the plan, some just view. The shop's records stay the shop's.</p>
+              <p>One screen for everyone: the people you share the account with, each with a role from full admin down to view-only; the staff who do the work; and the crews they belong to. The Schedule hands work out from this list, so somebody can be given a job without an account of their own. The shop's records stay the shop's.</p>
             </div>
             <div class="module">
               <p class="m-name">Metrics</p>
@@ -622,6 +610,7 @@
             <a href="#guide" data-scroll="g-pro-pm">ReliaPro: The PM Plan</a>
             <a href="#guide" data-scroll="g-pro-law">ReliaPro: Required by Law</a>
             <a href="#guide" data-scroll="g-pro-rounds">ReliaPro: Rounds</a>
+            <a href="#guide" data-scroll="g-pro-labels">ReliaPro: Labels and Scanning</a>
             <a href="#guide" data-scroll="g-pro-people">ReliaPro: Staff and Roles</a>
           </nav>
 
@@ -679,14 +668,35 @@
           <p>For anything the library doesn't know, <strong>+ Custom Round</strong> starts a round from scratch and opens straight onto adding its checks. A check can cover one item or the <strong>Whole Site</strong>, for things like "fire exits clear" or "back door locked", so even a site with no equipment registered can have a round.</p>
           <p>Running a round is tapping through it: each check gets an OK, a flag with a note for anything that looks wrong, or a skip. Skipping asks whether to drop the check for this round or keep it open to finish later, and a walk in progress can be put down and picked back up on the same device. One activity that spans several machines, like washing four blind filters, shows up once with a checkbox per asset. Every completed walk is saved with who ran it and when, flags first when you read it back.</p>
 
+          <h3 class="guide-sec" id="g-pro-labels">ReliaPro: Labels and Scanning</h3>
+          <p>Every piece of equipment can wear a QR label. <strong>Print Labels</strong> lays the whole register out a sheet at a time on the Avery sheets you can buy, or sends labels one at a time to a roll printer, or to a pocket label maker over Bluetooth &mdash; a NIIMBOT B1 or D110, or a Phomemo &mdash; which works from a computer rather than from the phone. You choose what goes on the label, and your business logo can print inside the code itself.</p>
+          <p>After that, anyone can point a phone camera at a label and that item opens in the app: what it is, what&rsquo;s due, what was done, its spare parts and its round checks. On a phone without the app, or signed out, the same label opens the web app and lands on the item once you sign in.</p>
+
           <h3 class="guide-sec" id="g-pro-people">ReliaPro: Staff and Roles</h3>
           <p>Invite staff from the People screen with the role that fits: <strong>admin</strong> runs the account, <strong>editor</strong> can change the plan, <strong>doer</strong> can execute work and run rounds, and <strong>viewer</strong> can look. Whether someone can invite others is a separate switch from what they can touch. When someone leaves, revoke their membership and the records stay put, because they were always the shop's.</p>
+          <p>The same screen holds the roster: the names work can be handed to, and the crews they belong to. Somebody on the roster doesn&rsquo;t need a ReliaLife account, which is what lets every job on the Schedule carry a name from the first day.</p>
         </article>
 
         <!-- ============================================================ Releases -->
         <article class="panel" id="releases">
           <h2>Releases</h2>
           <p class="lead">What each version brought. The web app updates continuously; iPhone releases go through the App Store, with small fixes arriving over the air in between.</p>
+
+          <div class="release">
+            <div class="rel-head"><span class="rel-v">2.0.1</span><span class="rel-date">September 2026 &middot; iPhone and web</span></div>
+            <p class="rel-name">Scan a Label, Open the Item</p>
+            <ul>
+              <li>Point a phone camera at any ReliaLife QR label and that item opens in the app, with its history, schedule, spare parts and round checks. If the app isn&rsquo;t installed, or you&rsquo;re signed out, the same code opens the web app and lands on that item once you sign in.</li>
+              <li>Print labels from a computer: straight to a NIIMBOT B1 or D110, a Phomemo, or a roll label printer, or laid out on Avery sheets. Your business logo prints inside the code.</li>
+              <li>Label text that fits: the tag is never cut off, a long name wraps or shrinks to suit, and the smallest labels give up the code rather than print one too small to scan.</li>
+              <li>People, in one place: the people you share the account with, the staff who do the work, and the crews they belong to, all on one screen. The Schedule hands work out from that same list, and someone who only does the work doesn&rsquo;t need an account of their own.</li>
+              <li>The Strategy Library is sorted into Personal and Business, so the espresso machine isn&rsquo;t filed next to the lawn mower &mdash; in the app and on this page.</li>
+              <li>Five more trades, each with the equipment it runs: cideries, kombucha makers and co-packers; gas stations and convenience stores; self-storage; small hotels; and auto repair shops.</li>
+              <li>Hundreds more manufacturer maintenance plans, read from the makers&rsquo; own manuals, from woodshops and coffee bars to gas stations, car washes and heavy equipment.</li>
+              <li>Settings explains how to sign in on a computer.</li>
+              <li>Fixes: Custom Round and Build Rounds work at a business with a single site, and signing out leaves nothing behind for whoever signs in next.</li>
+            </ul>
+          </div>
 
           <div class="release">
             <div class="rel-head"><span class="rel-v">2.0.0</span><span class="rel-date">September 2026 &middot; iPhone and web</span></div>
@@ -909,7 +919,7 @@
         });
       });
 
-      // Hero doors (and the announcement's link) jump to their section
+      // Hero doors jump to their section. Anything with data-goto, so a link in the copy can too.
       Array.prototype.slice.call(document.querySelectorAll('[data-goto]')).forEach(function (d) {
         d.addEventListener('click', function (e) {
           e.preventDefault();
