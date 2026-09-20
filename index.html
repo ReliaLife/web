@@ -338,6 +338,17 @@
 
     #str-detail h3 { font-size: 26px; margin: 0 0 6px; }
     .manual-btn { margin: 4px 0 8px; }
+    .table-wrap.manuals { margin: 10px 0 4px; max-width: 74ch; }
+    .manual-row {
+      display: flex; align-items: center; gap: 12px; padding: 11px 13px; text-decoration: none;
+      border-top: 1px solid var(--line); color: var(--body); transition: background .1s ease;
+    }
+    .manual-row:first-child { border-top: 0; }
+    .manual-row:hover { background: var(--hover); }
+    .manual-row .m-main { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+    .manual-row .m-kind { font-size: 14px; font-weight: 600; color: var(--ink); }
+    .manual-row .m-title { font-size: 12px; color: var(--muted); overflow-wrap: anywhere; }
+    .manual-row .m-go { font-size: 14px; font-weight: 700; color: var(--muted); }
     .src-note { font-size: 14px; color: var(--muted); max-width: 74ch; margin: 0 0 6px; }
     .src-link { font-size: 13.5px; }
     .tier-note { font-size: 12.5px; color: var(--faint); margin-top: 14px; max-width: 80ch; }
@@ -968,7 +979,7 @@
 
       var client = null;
       var DATA = null;              // { tasks: [], strategies: [] }
-      var nav = { cat: null, make: null };
+      var nav = { cat: null, type: null, make: null };
       var current = null;           // strategy open in the detail view
       var level = 'medium';         // which of the three plans is showing
       var allLevels = false;        // compare all three at once, as H M L marks
@@ -1104,17 +1115,35 @@
             && c.personalOrder.every(function (x) { return typeof x === 'string'; })) {
           PERSONAL_ORDER = c.personalOrder;
         }
+        if (Array.isArray(c.generalTypes) && c.generalTypes.length
+            && c.generalTypes.every(function (x) { return typeof x === 'string'; })) {
+          GENERAL_TYPES = c.generalTypes;
+        }
         if (c.typeLabels && typeof c.typeLabels === 'object') {
           Object.keys(c.typeLabels).forEach(function (k) {
             if (typeof c.typeLabels[k] === 'string') TYPE_LABELS[k] = c.typeLabels[k];
           });
         }
       }
-      function categoryOf(s) {
+      function homeCategory(type) {
         for (var i = 0; i < CATS.length; i++) {
-          if (CATS[i].types.indexOf(s.equipmentType) !== -1) return CATS[i].id;
+          if (CATS[i].types.indexOf(type) !== -1) return CATS[i].id;
         }
         return 'shop';
+      }
+      function categoryOf(s) { return homeCategory(s.equipmentType); }
+      // Inside a business the asset classes are shown in two halves: Business Unique Equipment,
+      // which is what makes it that business, and General Equipment, which is what any business
+      // with a building, a yard or a truck ends up owning. A class is General when it is filed
+      // under no trade at all, or is named in GENERAL_TYPES - filed under one trade, but support
+      // equipment to every other trade that owns it. The app owns the list and publishes it
+      // beside the categories; this copy is only the fallback.
+      var GENERAL_TYPES = ['security-camera-system', 'access-control-system', 'gate-operator', 'site-lighting', 'atm', 'split-system-hvac', 'hydronic-boiler', 'ro-system', 'grease-interceptor', 'oil-water-separator', 'glass-front-cooler', 'reach-in-freezer', 'work-truck', 'straight-truck', 'liftgate', 'utility-vehicle', 'fuel-storage-tank', 'hot-water-pressure-washer', 'welder', 'parts-washer', 'cordless-tool-fleet', 'ladders', 'first-aid-kit', 'truck-plow', 'material-spreader', 'commercial-snow-blower'];
+      var NO_TRADE_CATS = ['shop', 'lifesafety'];
+      function isGeneralIn(type, catId) {
+        var home = homeCategory(type);
+        if (home === catId) return false;
+        return NO_TRADE_CATS.indexOf(home) !== -1 || GENERAL_TYPES.indexOf(type) !== -1;
       }
       // Every category a plan shows under: where it is filed, plus each business that owns its
       // type (a category's `sites`, matched against the table's typeSites). A brewery's boiler and
@@ -1123,6 +1152,12 @@
       // tiles use, with the home shop last, and everything else as Business, alphabetical. The app
       // owns this order and publishes it beside the categories; this copy is only the fallback.
       var PERSONAL_ORDER = ['house', 'vehicles', 'appliances', 'garden', 'aircraft', 'boats', 'powersports', 'firearms', 'garageshop'];
+
+      var MANUAL_LABELS = {
+        'owner': 'Owner’s Manual', 'service': 'Service Manual', 'parts': 'Parts Manual',
+        'maintenance': 'Maintenance Guide', 'installation': 'Installation Manual',
+        'bulletin': 'Service Bulletin', 'other': 'Manufacturer’s Document'
+      };
 
       function categoriesOf(s) {
         var home = categoryOf(s);
@@ -1370,7 +1405,7 @@
       function showSignin() {
         el.app.hidden = true;
         el.signin.hidden = false;
-        nav = { cat: null, make: null };
+        nav = { cat: null, type: null, make: null };
         current = null;
         el.search.value = '';
         setMsg('');
@@ -1457,12 +1492,15 @@
         var parts = [];
         var atRoot = !q && !nav.cat && !current;
         parts.push({ label: 'All Equipment', here: atRoot, fn: function () {
-          nav = { cat: null, make: null }; current = null; el.search.value = ''; render();
+          nav = { cat: null, type: null, make: null }; current = null; el.search.value = ''; render();
         } });
         if (q) {
           parts.push({ label: 'Search', here: true });
         } else {
-          if (nav.cat) parts.push({ label: catName(nav.cat), here: !nav.make && !current, fn: function () {
+          if (nav.cat) parts.push({ label: catName(nav.cat), here: !nav.type && !nav.make && !current, fn: function () {
+            nav.type = null; nav.make = null; current = null; render();
+          } });
+          if (nav.type) parts.push({ label: typeLabel(nav.type), here: !nav.make && !current, fn: function () {
             nav.make = null; current = null; render();
           } });
           if (nav.make) parts.push({ label: nav.make, here: !current, fn: function () {
@@ -1518,14 +1556,97 @@
         if (q) return renderSearch(q);
         if (nav.cat) {
           var inCat = strategiesIn(nav.cat);
+          // Its asset classes first - Espresso Machine, Grinder - not its makes: an owner knows
+          // what kind of thing they have before they know who else makes one.
+          if (!nav.type && !nav.make && !isFlatCat(nav.cat)) return renderClasses(inCat);
+          var scope = nav.type ? inCat.filter(function (s) { return s.equipmentType === nav.type; }) : inCat;
           var makes = {};
-          inCat.forEach(function (s) { if (s.make) makes[s.make] = (makes[s.make] || 0) + 1; });
+          scope.forEach(function (s) { if (s.make) (makes[s.make] = makes[s.make] || []).push(s); });
           var makeNames = Object.keys(makes).sort();
-          if (nav.make) return renderModels(inCat.filter(function (s) { return s.make === nav.make; }));
-          if (!makeNames.length) return renderPlans(inCat);
-          return renderMakes(inCat, makeNames, makes);
+          if (nav.make) return renderModels(scope.filter(function (s) { return s.make === nav.make; }));
+          if (!makeNames.length) return renderPlans(scope);
+          return renderMakes(scope, makeNames, makes);
         }
         renderCats();
+      }
+
+      // A category whose makes all belong to one asset class (Vehicles: every make is a car)
+      // skips the class level, because a list of one class tells nobody anything. A business
+      // never skips it: the two halves of its list are the point.
+      var flatCache = null;
+      function isFlatCat(catId) {
+        if (!flatCache || flatCache.data !== DATA || flatCache.cats !== CATS) {
+          var classes = {};
+          DATA.strategies.forEach(function (s) {
+            if (!s.make) return;
+            categoriesOf(s).forEach(function (c) { (classes[c] = classes[c] || {})[s.equipmentType] = 1; });
+          });
+          var flat = {};
+          CATS.forEach(function (c) {
+            if (!Array.isArray(c.sites) && Object.keys(classes[c.id] || {}).length <= 1) flat[c.id] = 1;
+          });
+          flatCache = { data: DATA, cats: CATS, flat: flat };
+        }
+        return !!flatCache.flat[catId];
+      }
+
+      // Where a plan lives in the walk, so landing on it from a search leaves the crumbs reading
+      // as if the reader had walked there. A class or a make holding only this plan is never a
+      // page of its own on the way in, so it is not one on the way back either.
+      function placeOf(s) {
+        var cat = categoryOf(s);
+        var flat = isFlatCat(cat);
+        var peers = strategiesIn(cat).filter(function (y) { return flat || y.equipmentType === s.equipmentType; });
+        var sameMake = peers.filter(function (y) { return y.make === s.make; }).length;
+        return {
+          cat: cat,
+          type: flat || peers.length <= 1 ? null : s.equipmentType,
+          make: s.make && sameMake > 1 ? s.make : null
+        };
+      }
+
+      function plansText(n) { return fmtNum(n) + (n === 1 ? ' plan' : ' plans'); }
+
+      function renderClasses(inCat) {
+        var byType = {};
+        inCat.forEach(function (s) { (byType[s.equipmentType] = byType[s.equipmentType] || []).push(s); });
+        // The "any car", "the home" plans lead their category; the rest read alphabetically.
+        var order = Object.keys(byType).sort(function (a, b) {
+          var ba = a.indexOf('base-') === 0 ? 1 : 0, bb = b.indexOf('base-') === 0 ? 1 : 0;
+          return bb - ba || typeLabel(a).localeCompare(typeLabel(b));
+        });
+        function row(k) {
+          var list = byType[k];
+          var makes = {};
+          list.forEach(function (s) { if (s.make) makes[s.make] = 1; });
+          var n = Object.keys(makes).length;
+          return {
+            // A class holding one plan opens it: a page listing a single row is a wasted click.
+            a: list.length === 1 ? 's:' + DATA.strategies.indexOf(list[0]) : 't:' + k,
+            label: typeLabel(k),
+            sub: n ? n + (n === 1 ? ' make' : ' makes') + ' · ' + plansText(list.length)
+              : (list.length === 1 ? 'General plan' : plansText(list.length))
+          };
+        }
+        var cat = null;
+        CATS.forEach(function (c) { if (c.id === nav.cat) cat = c; });
+        var groups = cat && Array.isArray(cat.sites)
+          ? [{ title: 'Business Unique Equipment', keys: order.filter(function (k) { return !isGeneralIn(k, nav.cat); }) },
+             { title: 'General Equipment', keys: order.filter(function (k) { return isGeneralIn(k, nav.cat); }) }]
+          : [{ title: null, keys: order }];
+        el.count.textContent = order.length + (order.length === 1 ? ' asset class' : ' asset classes') +
+          ' · ' + plansText(inCat.length);
+        var html = '';
+        groups.forEach(function (g) {
+          if (!g.keys.length) return;
+          if (g.title) html += '<p class="str-group">' + g.title + '</p>';
+          html += rowsHtml(g.keys.map(row));
+        });
+        el.list.innerHTML = html;
+        bindRows(function (a) {
+          if (a.indexOf('t:') === 0) { nav.type = a.slice(2); render(); }
+          else openDetail(DATA.strategies[+a.slice(2)]);
+        });
       }
 
       function bindRows(handler) {
@@ -1563,15 +1684,19 @@
         bindRows(function (a) { nav.cat = a; render(); });
       }
 
-      function renderMakes(inCat, makeNames, makeCounts) {
+      function renderMakes(inCat, makeNames, byMake) {
         var generals = inCat.filter(function (s) { return !s.make; });
         el.count.textContent = makeNames.length + (makeNames.length === 1 ? ' make' : ' makes') +
-          ' · ' + fmtNum(inCat.length) + ' plans';
+          ' · ' + plansText(inCat.length);
         var html = rowsHtml(makeNames.map(function (m) {
-          return { a: 'm:' + m, label: m, sub: makeCounts[m] + (makeCounts[m] === 1 ? ' plan' : ' plans') };
+          var list = byMake[m];
+          return list.length === 1
+            ? { a: 's:' + DATA.strategies.indexOf(list[0]), label: m, sub: modelLabel(list[0]) }
+            : { a: 'm:' + m, label: m, sub: plansText(list.length) };
         }));
         if (generals.length) {
-          html += '<p class="str-group">General Plans &mdash; When Your Make Isn’t Listed</p>';
+          html += '<p class="str-group">General Plan' + (generals.length === 1 ? '' : 's') +
+            ' &mdash; When Your Make Isn’t Listed</p>';
           html += rowsHtml(generals.map(function (s) {
             return { a: 's:' + DATA.strategies.indexOf(s), label: modelLabel(s), sub: '' };
           }));
@@ -1629,18 +1754,24 @@
       }
 
       function renderSearch(q) {
+        // Every word has to be somewhere in the plan's name, its asset class or a category it
+        // shows under, in any order: "grinder mahlkonig" finds the grinder without the model.
+        var words = q.split(/\s+/);
         var rows = DATA.strategies.filter(function (s) {
-          var hay = (stratName(s) + ' ' + typeLabel(s.equipmentType) + ' ' + catName(categoryOf(s))).toLowerCase();
-          return hay.indexOf(q) !== -1;
+          var hay = (stratName(s) + ' ' + typeLabel(s.equipmentType) + ' ' +
+            categoriesOf(s).map(catName).join(' ')).toLowerCase();
+          return words.every(function (w) { return hay.indexOf(w) !== -1; });
         }).sort(function (a, b) { return stratName(a).localeCompare(stratName(b)); });
         el.count.textContent = rows.length + (rows.length === 1 ? ' match' : ' matches');
         el.list.innerHTML = rows.length ? rowsHtml(rows.map(function (s) {
-          return { a: 's:' + DATA.strategies.indexOf(s), label: stratName(s), sub: catName(categoryOf(s)) };
+          // A general plan is named for its class already; everything else says which class it is.
+          var sub = s.kind === 'type-default' ? catName(categoryOf(s))
+            : typeLabel(s.equipmentType) + ' · ' + catName(categoryOf(s));
+          return { a: 's:' + DATA.strategies.indexOf(s), label: stratName(s), sub: sub };
         })) : '<p style="color:var(--muted);font-size:14px;padding-top:12px;">Nothing matches that search.</p>';
         bindRows(function (a) {
           var s = DATA.strategies[+a.slice(2)];
-          nav.cat = categoryOf(s);
-          nav.make = s.make || null;
+          nav = placeOf(s);
           el.search.value = '';
           openDetail(s);
         });
@@ -1881,7 +2012,21 @@
 
         if (x.note) h += '<p class="src-note">' + esc(x.note) + '</p>';
         if (x.source && x.source.note) h += '<p class="src-note">' + esc(x.source.note) + '</p>';
-        if (x.source && webUrl(x.source.url)) {
+        // Several documents for one make and model - the owner's manual, the service manual, the
+        // parts book - are a line each, saying what each one is. One is still the single button.
+        var manuals = (x.manuals || []).filter(function (m) { return m && webUrl(m.url); });
+        if (manuals.length > 1) {
+          h += '<div class="table-wrap manuals"><p class="table-caption">' +
+            '<span class="table-title">Manuals</span>' +
+            '<span class="table-count">' + manuals.length + '</span></p><div class="stable">';
+          manuals.forEach(function (m) {
+            h += '<a class="manual-row" href="' + esc(webUrl(m.url)) + '" target="_blank" rel="noopener">' +
+              '<span class="m-main"><span class="m-kind">' + esc(MANUAL_LABELS[m.kind] || MANUAL_LABELS.other) + '</span>' +
+              (m.title ? '<span class="m-title">' + esc(m.title) + '</span>' : '') + '</span>' +
+              '<span class="m-go">&nearr;</span></a>';
+          });
+          h += '</div></div>';
+        } else if (x.source && webUrl(x.source.url)) {
           h += '<p class="manual-btn"><a class="btn secondary" href="' + esc(webUrl(x.source.url)) +
             '" target="_blank" rel="noopener">Open the Manufacturer’s Document &nearr;</a></p>';
         }
