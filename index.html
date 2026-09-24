@@ -1503,18 +1503,29 @@
         // Fetched directly (not via client.storage.download) so a cache-buster can ride the
         // URL: the storage API sits behind a CDN edge cache that can otherwise keep serving
         // the previous build of the library after a publish.
-        client.auth.getSession().then(function (s) {
+        // The cache-buster is the checksum of the table the publisher last uploaded, read from
+        // the tiny public stats file - not the clock. A fresh value on every load made every
+        // visit an 18 MB download from Supabase itself, and that was most of a month's egress
+        // allowance in September 2026. With one value per publish, a repeat visit comes from
+        // the browser's own cache or the CDN edge, and the page still sees a new table the
+        // moment one is published. If the stats file cannot be read, the clock is the fallback.
+        var stats = fetch(SUPABASE_URL + '/storage/v1/object/public/strategy-stats/stats.json?cb=' + Date.now())
+          .then(function (r) { return r.ok ? r.json() : {}; })
+          .catch(function () { return {}; });
+        Promise.all([client.auth.getSession(), stats]).then(function (both) {
+          var s = both[0], st = both[1] || {};
           var token = s.data.session && s.data.session.access_token;
           if (!token) throw new Error('no session');
           var auth = { headers: { 'Authorization': 'Bearer ' + token, 'apikey': SUPABASE_KEY } };
-          var cb = '?cb=' + Date.now();
+          var tableCb = '?cb=' + (st.tableSha256 ? String(st.tableSha256).slice(0, 16) : Date.now());
+          var catsCb = '?cb=' + (st.categoriesSha256 ? String(st.categoriesSha256).slice(0, 16) : Date.now());
           // The categories ride beside the table from the same publish. Optional: if they
           // cannot be read, the page files things with its built-in map and still works.
-          var cats = fetch(SUPABASE_URL + '/storage/v1/object/strategy-library/categories.json' + cb, auth)
+          var cats = fetch(SUPABASE_URL + '/storage/v1/object/strategy-library/categories.json' + catsCb, auth)
             .then(function (r) { return r.ok ? r.json() : null; })
             .catch(function () { return null; });
           return Promise.all([
-            fetch(SUPABASE_URL + '/storage/v1/object/strategy-library/strategies.json' + cb, auth),
+            fetch(SUPABASE_URL + '/storage/v1/object/strategy-library/strategies.json' + tableCb, auth),
             cats
           ]);
         }).then(function (res) {
